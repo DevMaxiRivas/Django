@@ -35,9 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'helloDIUNSa',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'helloDIUNSa',
+    'portfolio'
 ]
 
 MIDDLEWARE = [
