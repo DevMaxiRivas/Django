@@ -57,6 +57,8 @@ class Libro(models.Model):
     genero = models.ManyToManyField(
         Genero, help_text="Seleccione un genero (o varios) para el libro"
     )
+    # imagen = models.ImageField("Seleccione una imágen")
+
     # ManyToManyField, porque un género puede contener muchos libros y un libro puede cubrir varios géneros.
     # La clase Genero ya fue definida, entonces podemos especificar el objeto arriba.
 
@@ -65,6 +67,11 @@ class Libro(models.Model):
 
     def __str__(self):
         return self.titulo
+
+    def muestra_genero(self):
+        return ", ".join([genero.nombre for genero in self.genero.all()[:3]])
+
+    muestra_genero.short_description = "Género/s"
 
 
 class Ejemplar(models.Model):
@@ -79,14 +86,14 @@ class Ejemplar(models.Model):
     )
     libro = models.ForeignKey(Libro, on_delete=models.SET_NULL, null=True)
     fechaDevolucion = models.DateField(null=True, blank=True)
-    
+
     ESTADO_EJEMPLAR = (
         ("m", "en Mantenimiento"),
         ("p", "Prestado"),
         ("d", "Disponible"),
         ("r", "Reservado"),
     )
-    
+
     estado = models.CharField(
         max_length=1,
         choices=ESTADO_EJEMPLAR,
@@ -94,7 +101,8 @@ class Ejemplar(models.Model):
         default="d",
         help_text="Disponibilidad del Ejemplar",
     )
-    
+
+
 class Idioma(models.Model):
     """
     Modelo que representa un idioma de algun libro
@@ -111,6 +119,7 @@ class Idioma(models.Model):
 
 class Meta:
     ordering = ["fechaDevolucion"]
+
 
 def __str__(self):
     return "%s (%s)" % (self.id, self.libro.titulo)
