@@ -1,21 +1,19 @@
 {% extends "base.html" %} {% block content %}
 
-<h1>DW2024: Catalogo</h1>
+<div class="card-body ">
+  <h2 class="card-title">DW2024: <b>Catálogo</b></h2>
+  <p class="card-text">Bienvenidos al <em>Catálogo</em>, una aplicación web desarrollada en Django.</p>
 
-<p>
-  Bienvenidos a <em>Catalogo</em>, una aplicación web desarrollada en Django.
-</p>
 
-<h2>Contenido dinámico</h2>
+  <ul class="list-group">
+    <li class="list-group-item">Nuestro catálogo se forma de:</li>
+    <li class="list-group-item"><strong>Autores:</strong> {{ nroAutores }}</li>
+    <!-- Las variables entre corchetes se obtiene del archivo views.py se obtiene de la variable context  -->
+    <li class="list-group-item"><strong>Libros:</strong> {{ nroLibros }}</li>
+    <li class="list-group-item"><strong>Ejemplares:</strong> {{ nroEjemplares }}</li>
+    <li class="list-group-item"><strong>Disponibles:</strong> {{ nroDisponibles }}</li>
+  </ul>
 
-<p>Nuestro catálogo se forma de :</p>
-
-<ul>
-  <li><strong>Autores:</strong> {{ nroAutores }}</li>
-  <!-- Las variables entre corchetes se obtiene del archivo views.py se obtiene de la variable context  -->
-  <li><strong>Libros:</strong> {{ nroLibros }}</li>
-  <li><strong>Ejemplares:</strong> {{ nroEjemplares }}</li>
-  <li><strong>Disponibles:</strong> {{ nroDisponibles }}</li>
-</ul>
+</div>
 
 {% endblock %}

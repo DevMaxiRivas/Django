@@ -1,0 +1,26 @@
+<!-- Plantilla de Detalle -->
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card-body ">
+    <h3 class="card-title">{{ autor.nombre }} {{ autor.apellido }}</h3>
+    <p><strong>Fecha de Nacimiento:</strong> {{ autor.fechaNac }}</p>
+    <p><strong>Fecha de Deceso:</strong>
+        {% if autor.fechaDeceso %}
+        {{ autor.fechaDeceso }}
+        {% else %}
+        -
+        {% endif %}
+    </p>
+    {% if autor.retrato %}
+
+    <p><strong>Retrato: </p>
+    <img src="{{ autor.retrato.url }}" alt="Retrato de {{ autor.nombre }} {{autor.apellido}}"
+        style="max-height: 300px; max-width: 300px;">
+
+    {% endif %}
+</div>
+
+{% endblock %}

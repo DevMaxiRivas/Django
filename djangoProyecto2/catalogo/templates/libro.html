@@ -1,0 +1,22 @@
+<!-- Plantilla de Detalle -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card-body ">
+    <h3 class="card-title">{{ libro.titulo }}</h3>
+    <p><strong>Autor:</strong> <a href="">{{ libro.autor }}</a></p>
+    <p><strong>Resumen:</strong> {{ libro.resumen }}</p>
+    <p><strong>ISBN:</strong> {{ libro.isbn }}</p>
+    <p><strong>Idioma:</strong> {{ libro.idioma }}</p>
+    <p><strong>Género:</strong> {{ libro.muestra_genero }}</p>
+
+    {% if libro.portada %}
+
+    <p><strong>Portada: </p>
+    <img src="{{ libro.portada.url }}" alt="Portada de {{ libro.titulo }}" style="max-height: 200px; max-width: 200px;">
+
+    {% endif %}
+</div>
+
+{% endblock %}

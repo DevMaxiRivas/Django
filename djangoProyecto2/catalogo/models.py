@@ -36,6 +36,13 @@ class Autor(models.Model):
         """
         return reverse("autorInfo", args=[str(self.id)])
 
+        # Devuelve el link donde se almacena la imagen
+
+    def get_retrato_url(self):
+        if self.retrato:
+            return self.retrato.url
+        return None
+
     def __str__(self):
         return "%s, %s" % (self.nombre, self.apellido)
 
@@ -72,6 +79,12 @@ class Libro(models.Model):
 
     def __str__(self):
         return self.titulo
+
+    # Devuelve el link donde se almacena la imagen
+    def get_portada_url(self):
+        if self.portada:
+            return self.portada.url
+        return None
 
     def muestra_genero(self):
         return ", ".join([genero.nombre for genero in self.genero.all()[:3]])
