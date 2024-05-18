@@ -26,6 +26,9 @@ class Autor(models.Model):
     apellido = models.CharField(max_length=50)
     fechaNac = models.DateField(null=True, blank=True)
     fechaDeceso = models.DateField("Fallecido", null=True, blank=True)
+    retrato = models.ImageField(
+        help_text="Seleccione un retrato", blank=True, upload_to="retratos/"
+    )
 
     def get_absolute_url(self):
         """
@@ -57,7 +60,9 @@ class Libro(models.Model):
     genero = models.ManyToManyField(
         Genero, help_text="Seleccione un genero (o varios) para el libro"
     )
-    # imagen = models.ImageField("Seleccione una imágen")
+    portada = models.ImageField(
+        help_text="Seleccione una portad", blank=True, upload_to="portadas/"
+    )
 
     # ManyToManyField, porque un género puede contener muchos libros y un libro puede cubrir varios géneros.
     # La clase Genero ya fue definida, entonces podemos especificar el objeto arriba.
