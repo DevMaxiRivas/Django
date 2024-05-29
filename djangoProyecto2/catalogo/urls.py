@@ -10,4 +10,13 @@ urlpatterns = [
     # Plantilla de Detalle
     path("libro/<pk>", views.LibroDetailView.as_view(), name="libro"),
     path("autor/<pk>", views.AutorDetailView.as_view(), name="autor"),
+    # Formularios
+    # Generos
+    path("generos/", views.genero_list, name="generos"),
+    path("genero/new/", views.genero_new, name="genero_new"),
+    path("genero/update/<pk>", views.genero_update, name="genero_update"),
+    # Autores
+    path("autores2/", views.autor_list, name="autores2"),
+    path("autores2/new/", views.autor_new, name="autor_new"),
+    path("autores2/update/<pk>", views.autor_update, name="autor_update"),
 ]

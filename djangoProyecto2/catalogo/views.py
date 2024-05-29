@@ -8,6 +8,10 @@ from django.views import generic
 # Vista de detalle basada en Clases
 from django.http import Http404
 
+# Formularios
+from django.shortcuts import redirect, get_object_or_404
+from catalogo.forms import GeneroForm, AutorForm
+
 
 # Desarrollo de Home
 def index(request):
@@ -107,23 +111,97 @@ class AutorDetailView(generic.DetailView):
         return render(request, "autor.html", context)
 
 
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.views import generic
-# from catalogo.models import Idioma, Genero, Libro, Ejemplar, Autor
-# from catalogo.forms import GeneroForm, AutorForm
+# Formularios
+# Generos
+def genero_new(request):
+    if request.method == "POST":
+        formulario = GeneroForm(request.POST)
+
+        if formulario.is_valid():
+            genero = formulario.save(commit=False)
+            genero.nombre = formulario.cleaned_data["nombre"]
+            genero.save()
+            return redirect("generos")
+
+    else:
+        formulario = GeneroForm()
+
+    return render(request, "genero_new.html", {"formulario": formulario})
 
 
-# # ....
-# def genero_new(request):
-#     if request.method == "POST":
-#         formulario = GeneroForm(request.POST)
+def genero_update(request, pk):
+    genero = get_object_or_404(Genero, pk=pk)
 
-#     if formulario.is_valid():
-#         genero = formulario.save(commit=False)
-#         genero.nombre = formulario.cleaned_data["nombre"]
-#         genero.save()
-#         return redirect("generos")
+    if request.method == "POST":
+        formulario = GeneroForm(request.POST, instance=genero)
+        if formulario.is_valid():
+            genero = formulario.save(commit=False)
+            genero.nombre = formulario.cleaned_data["nombre"]
+            genero.save()
+            return redirect("generos")
+    else:
+        formulario = GeneroForm(instance=genero)
 
-#     else:
-#         formulario = GeneroForm()
-#         return render(request, "genero_new.html", {"formulario": formulario})
+    return render(request, "genero_new.html", {"formulario": formulario})
+
+
+def genero_list(request):
+    # Obtener todos los géneros de la base de datos
+    generos = Genero.objects.all()
+    # Crear un contexto con los géneros obtenidos
+    context = {
+        "generos": generos,
+    }
+    # Renderizar la plantilla con el contexto
+    return render(request, "genero_list.html", context)
+
+
+# Autores
+def autor_new(request):
+    if request.method == "POST":
+        formulario = AutorForm(request.POST)
+
+        if formulario.is_valid():
+            autor = formulario.save(commit=False)
+            autor.nombre = formulario.cleaned_data["nombre"]
+            autor.apellido = formulario.cleaned_data["apellido"]
+            autor.fechaNac = formulario.cleaned_data["fechaNac"]
+            autor.fechaDeceso = formulario.cleaned_data["fechaDeceso"]
+            autor.retrato = formulario.cleaned_data["retrato"]
+            autor.save()
+            return redirect("autores2")
+
+    else:
+        formulario = AutorForm()
+
+    return render(request, "autor_new.html", {"formulario": formulario})
+
+
+def autor_update(request, pk):
+    autor = get_object_or_404(Autor, pk=pk)
+
+    if request.method == "POST":
+        formulario = AutorForm(request.POST, instance=autor)
+        if formulario.is_valid():
+            autor = formulario.save(commit=False)
+            autor.nombre = formulario.cleaned_data["nombre"]
+            autor.apellido = formulario.cleaned_data["apellido"]
+            autor.fechaNac = formulario.cleaned_data["fechaNac"]
+            autor.fechaDeceso = formulario.cleaned_data["fechaDeceso"]
+            autor.save()
+            return redirect("autores")
+    else:
+        formulario = AutorForm(instance=autor)
+
+    return render(request, "autor_new.html", {"formulario": formulario})
+
+
+def autor_list(request):
+    # Obtener todos los géneros de la base de datos
+    autores = Autor.objects.all()
+    # Crear un contexto con los géneros obtenidos
+    context = {
+        "autores": autores,
+    }
+    # Renderizar la plantilla con el contexto
+    return render(request, "autores_list.html", context)

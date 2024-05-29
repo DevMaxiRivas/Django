@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Generos</h1>
+<p>
+    <a class="btn btn-success" href="{% url 'genero_new' %}" role="button">Nuevo</a>
+</p>
+
+
+{% if generos %}
+<ul class="list-group">
+    {% for genero in generos %}
+    <li class="list-group-item">
+        <a class="list-group-item list-group-item-action" href="{% url 'genero_update' genero.id %}">
+            {{ genero.nombre}}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+
+{% else %}
+
+<p>Oops! No tenemos Géneros de Libros en catálogo.</p>
+
+{% endif %}
+
+{% endblock %}

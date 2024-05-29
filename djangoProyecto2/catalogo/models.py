@@ -26,9 +26,7 @@ class Autor(models.Model):
     apellido = models.CharField(max_length=50)
     fechaNac = models.DateField(null=True, blank=True)
     fechaDeceso = models.DateField("Fallecido", null=True, blank=True)
-    retrato = models.ImageField(
-        help_text="Seleccione un retrato", blank=True, upload_to="retratos/"
-    )
+    retrato = models.ImageField(blank=True, upload_to="retratos/")
 
     def get_absolute_url(self):
         """

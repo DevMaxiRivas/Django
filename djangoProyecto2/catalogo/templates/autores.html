@@ -22,8 +22,12 @@
                     </td>
                     <td>{{ autor.nombre }}</td>
                     <td>
+                        {% if autor.retrato.url != none %}
                         <img src="{{ autor.retrato.url }}" alt="Retrato de {{ autor.nombre }} {{autor.apellido}}"
                             style="max-height: 150px; max-width: 150px;">
+                        {% else %}
+                        No hay almacenado un retrato
+                        {% endif %}
                     </td>
                 </tr>
 
