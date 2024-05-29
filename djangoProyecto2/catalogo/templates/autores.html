@@ -2,68 +2,38 @@
 
 {% block content %}
 
-<div class="
-            card position-absolute
-            top-50 start-50
-            translate-middle 
-            h-auto d-inline-block
-            w-auto p-3
-            shadow p-3 mb-5 bg-white rounded
-            ">
-    <h5 class="card-header">Listado de Autores</h5>
-    <div class="card-body">
-        {% if autores %}
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Apellido</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Retrato</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for autor in autores %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'autor' autor.id %}">{{ autor.apellido }}</a>
-                        </td>
-                        <td>{{ autor.nombre }}</td>
-                        <td>
-                            <img src="{{ autor.retrato.url }}" alt="Retrato de {{ autor.nombre }} {{autor.apellido}}"
-                                style="max-height: 150px; max-width: 150px;">
-                        </td>
-                    </tr>
+<h5 class="card-header">Listado de Autores</h5>
+<div class="card-body">
+    {% if autores %}
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Apellido</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Retrato</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for autor in autores %}
+                <tr>
+                    <td>
+                        <a href="{% url 'autor' autor.id %}">{{ autor.apellido }}</a>
+                    </td>
+                    <td>{{ autor.nombre }}</td>
+                    <td>
+                        <img src="{{ autor.retrato.url }}" alt="Retrato de {{ autor.nombre }} {{autor.apellido}}"
+                            style="max-height: 150px; max-width: 150px;">
+                    </td>
+                </tr>
 
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <p>Oops! No tenemos autores en catálogo.</p>
-        {% endif %}
-
-
-        <!-- Paginación de listas -->
-        {% block pagination %}
-        {% if is_paginated %}
-        <div class="pagination d-flex justify-content-center mt-4">
-            <span class="page-links">
-                {% if page_obj.has_previous %}
-                <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Anterior</a>
-                {% endif %}
-                <span class="page-current">
-                    Pág. {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
-                </span>
-                {% if page_obj.has_next %}
-                <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">Siguiente</a>
-                {% endif %}
-            </span>
-        </div>
-        {% endif %}
-
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+    {% else %}
+    <p>Oops! No tenemos autores en catálogo.</p>
+    {% endif %}
 </div>
-{% endblock %}
 
 {% endblock %}

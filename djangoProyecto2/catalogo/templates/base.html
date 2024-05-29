@@ -50,6 +50,25 @@
                         ">
                 {% block content %}
                 {% endblock %}
+
+                <!-- Paginación de listas -->
+                {% block pagination %}
+                {% if is_paginated %}
+                <div class="pagination d-flex justify-content-center mt-4">
+                    <span class="page-links">
+                        {% if page_obj.has_previous %}
+                        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Anterior</a>
+                        {% endif %}
+                        <span class="page-current">
+                            Pág. {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                        </span>
+                        {% if page_obj.has_next %}
+                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">Siguiente</a>
+                        {% endif %}
+                    </span>
+                </div>
+                {% endif %}
+                {% endblock %}
             </div>
         </main>
     </div>

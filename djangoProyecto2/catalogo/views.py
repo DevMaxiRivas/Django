@@ -58,6 +58,8 @@ class LibroListView(generic.ListView):
 
 
 #     return context
+
+
 class AutorListView(generic.ListView):
     model = Autor
     paginate_by = 2
@@ -103,3 +105,25 @@ class AutorDetailView(generic.DetailView):
         }
 
         return render(request, "autor.html", context)
+
+
+# from django.shortcuts import render, redirect, get_object_or_404
+# from django.views import generic
+# from catalogo.models import Idioma, Genero, Libro, Ejemplar, Autor
+# from catalogo.forms import GeneroForm, AutorForm
+
+
+# # ....
+# def genero_new(request):
+#     if request.method == "POST":
+#         formulario = GeneroForm(request.POST)
+
+#     if formulario.is_valid():
+#         genero = formulario.save(commit=False)
+#         genero.nombre = formulario.cleaned_data["nombre"]
+#         genero.save()
+#         return redirect("generos")
+
+#     else:
+#         formulario = GeneroForm()
+#         return render(request, "genero_new.html", {"formulario": formulario})
