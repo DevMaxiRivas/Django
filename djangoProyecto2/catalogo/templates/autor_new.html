@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
-
 <h2>Nuevo Autor</h2>
-<form method="POST" class="post-form">{% csrf_token %}
-    {{ formulario.as_p }}
-    <button type="submit" class="save btn btn-default">Guardar</button>
-</form>
+<form method="POST" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <table>{{ formulario|crispy}}</table>
 
+    <button type="submit" class="btn btn-success">Guardar</button>
+</form>
 {% endblock %}

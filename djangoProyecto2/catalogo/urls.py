@@ -19,4 +19,11 @@ urlpatterns = [
     path("autores2/", views.autor_list, name="autores2"),
     path("autores2/new/", views.autor_new, name="autor_new"),
     path("autores2/update/<pk>", views.autor_update, name="autor_update"),
+    # Ejemplares
+    path("ejemplares/", views.ejemplar_list, name="ejemplares"),
+    path("ejemplares/new/", views.ejemplar_new, name="ejemplar_new"),
+    path("ejemplares/update/<pk>", views.ejemplar_update, name="ejemplar_update"),
+    # Idiomas
+    path("idiomas/", views.idioma_list, name="idiomas"),
+    path("idiomas/delete/<pk>", views.idioma_delete, name="idioma_delete"),
 ]

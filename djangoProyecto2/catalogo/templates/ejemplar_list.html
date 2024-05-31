@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Ejemplares</h1>
+<p>
+    <a class="btn btn-success" href="{% url 'ejemplar_new' %}" role="button">Nuevo</a>
+</p>
+
+
+{% if ejemplares %}
+<ul class="list-group">
+    {% for ejemplar in ejemplares %}
+    <li class="list-group-item">
+        <a class="list-group-item list-group-item-action" href="{% url 'ejemplar_update' ejemplar.id %}">
+            {{ ejemplar.id }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+
+{% else %}
+
+<p>Oops! No tenemos Ejemplares de Libros en catálogo.</p>
+
+{% endif %}
+
+{% endblock %}

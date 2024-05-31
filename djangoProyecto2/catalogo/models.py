@@ -27,6 +27,7 @@ class Autor(models.Model):
     fechaNac = models.DateField(null=True, blank=True)
     fechaDeceso = models.DateField("Fallecido", null=True, blank=True)
     retrato = models.ImageField(blank=True, upload_to="retratos/")
+    foto = models.ImageField(upload_to="catalogo/upload/img/", null=True)
 
     def get_absolute_url(self):
         """
@@ -43,6 +44,9 @@ class Autor(models.Model):
 
     def __str__(self):
         return "%s, %s" % (self.nombre, self.apellido)
+
+    class Meta:
+        ordering = ["apellido", "nombre"]
 
 
 class Libro(models.Model):
@@ -117,6 +121,12 @@ class Ejemplar(models.Model):
         default="d",
         help_text="Disponibilidad del Ejemplar",
     )
+
+    class Meta:
+        ordering = ["fechaDevolucion"]
+
+    def __str__(self):
+        return "%s (%s)" % (self.id, self.libro.titulo)
 
 
 class Idioma(models.Model):
