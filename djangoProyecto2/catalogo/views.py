@@ -10,7 +10,7 @@ from django.http import Http404
 
 # Formularios
 from django.shortcuts import redirect, get_object_or_404
-from catalogo.forms import GeneroForm, AutorForm, EjemplarForm
+from catalogo.forms import GeneroForm, AutorForm, EjemplarForm, IdiomaForm, LibroForm
 
 
 # Desarrollo de Home
@@ -76,6 +76,42 @@ class AutorListView(generic.ListView):
     # nombre del template
 
 
+class EjemplarListView(generic.ListView):
+    model = Ejemplar
+    paginate_by = 6
+
+    context_object_name = "ejemplares"
+    # en este caso va un modelo
+    queryset = Ejemplar.objects.all()
+    # si quiero filtrar
+    template_name = "ejemplares.html"
+    # nombre del template
+
+
+class GeneroListView(generic.ListView):
+    model = Genero
+    # paginate_by = 2
+
+    context_object_name = "generos"
+    # en este caso va un modelo
+    queryset = Genero.objects.all()
+    # si quiero filtrar
+    template_name = "generos.html"
+    # nombre del template
+
+
+class IdiomaListView(generic.ListView):
+    model = Idioma
+    # paginate_by = 2
+
+    context_object_name = "idiomas"
+    # en este caso va un modelo
+    queryset = Idioma.objects.all()
+    # si quiero filtrar
+    template_name = "idiomas.html"
+    # nombre del template
+
+
 # Vista de detalle basada en Clases
 class LibroDetailView(generic.DetailView):
     model = Libro
@@ -126,7 +162,7 @@ def genero_new(request):
     else:
         formulario = GeneroForm()
 
-    return render(request, "genero_new.html", {"formulario": formulario})
+    return render(request, "element_new.html", {"formulario": formulario})
 
 
 def genero_update(request, pk):
@@ -142,24 +178,84 @@ def genero_update(request, pk):
     else:
         formulario = GeneroForm(instance=genero)
 
-    return render(request, "genero_new.html", {"formulario": formulario})
+    return render(request, "element_new.html", {"formulario": formulario})
 
 
-def genero_list(request):
-    # Obtener todos los géneros de la base de datos
-    generos = Genero.objects.all()
-    # Crear un contexto con los géneros obtenidos
-    context = {
-        "generos": generos,
-    }
-    # Renderizar la plantilla con el contexto
-    return render(request, "genero_list.html", context)
+def genero_delete(request, pk):
+    genero = get_object_or_404(Genero, pk=pk)
+
+    genero.delete()
+
+    return redirect("generos")
+
+
+# def genero_list(request):
+#     # Obtener todos los géneros de la base de datos
+#     generos = Genero.objects.all()
+#     # Crear un contexto con los géneros obtenidos
+#     context = {
+#         "generos": generos,
+#     }
+#     # Renderizar la plantilla con el contexto
+#     return render(request, "genero_list.html", context)
+
+
+# Libros
+def libro_new(request):
+    if request.method == "POST":
+        formulario = LibroForm(request.POST, request.FILES)
+
+        if formulario.is_valid():
+            libro = formulario.save(commit=False)
+            libro.titulo = formulario.cleaned_data["titulo"]
+            libro.autor = formulario.cleaned_data["autor"]
+            libro.resumen = formulario.cleaned_data["resumen"]
+            libro.isbn = formulario.cleaned_data["isbn"]
+            libro.portada = formulario.cleaned_data["portada"]
+            libro.save()
+            # TENER EN CUENTA PARA RELACIONES ManyToManyField
+            formulario.save_m2m()
+            return redirect("libros")
+
+    else:
+        formulario = LibroForm()
+
+    return render(request, "element_new.html", {"formulario": formulario})
+
+
+def libro_update(request, pk):
+    libro = get_object_or_404(Libro, pk=pk)
+    if request.method == "POST":
+        formulario = LibroForm(request.POST, request.FILES, instance=libro)
+        if formulario.is_valid():
+            libro = formulario.save(commit=False)
+            libro.titulo = formulario.cleaned_data["titulo"]
+            libro.autor = formulario.cleaned_data["autor"]
+            libro.resumen = formulario.cleaned_data["resumen"]
+            libro.isbn = formulario.cleaned_data["isbn"]
+            libro.portada = formulario.cleaned_data["portada"]
+            libro.save()
+            # TENER EN CUENTA PARA RELACIONES ManyToManyField
+            formulario.save_m2m()
+            return redirect("libros")
+    else:
+        formulario = LibroForm(instance=libro)
+
+    return render(request, "element_new.html", {"formulario": formulario})
+
+
+def libro_delete(request, pk):
+    libro = get_object_or_404(Libro, pk=pk)
+
+    libro.delete()
+
+    return redirect("libros")
 
 
 # Autores
 def autor_new(request):
     if request.method == "POST":
-        formulario = AutorForm(request.POST)
+        formulario = AutorForm(request.POST, request.FILES)
 
         if formulario.is_valid():
             autor = formulario.save(commit=False)
@@ -169,40 +265,38 @@ def autor_new(request):
             autor.fechaDeceso = formulario.cleaned_data["fechaDeceso"]
             autor.retrato = formulario.cleaned_data["retrato"]
             autor.save()
-            return redirect("autores2")
+            return redirect("autores")
 
     else:
         formulario = AutorForm()
 
-    return render(request, "autor_new.html", {"formulario": formulario})
+    return render(request, "element_new.html", {"formulario": formulario})
 
 
 def autor_update(request, pk):
     autor = get_object_or_404(Autor, pk=pk)
     if request.method == "POST":
-        formulario = AutorForm(request.POST, request.FILES)
+        formulario = AutorForm(request.POST, request.FILES, instance=autor)
         if formulario.is_valid():
             autor.apellido = formulario.cleaned_data["apellido"]
             autor.nombre = formulario.cleaned_data["nombre"]
             autor.fechaNac = formulario.cleaned_data["fechaNac"]
             autor.fechaDeceso = formulario.cleaned_data["fechaDeceso"]
-            autor.foto = formulario.cleaned_data["foto"]
+            autor.retrato = formulario.cleaned_data["retrato"]
             autor.save()
             return redirect("autores")
     else:
         formulario = AutorForm(instance=autor)
-        return render(request, "autor_new.html", {"formulario": formulario})
+
+    return render(request, "element_new.html", {"formulario": formulario})
 
 
-def autor_list(request):
-    # Obtener todos los géneros de la base de datos
-    autores = Autor.objects.all()
-    # Crear un contexto con los géneros obtenidos
-    context = {
-        "autores": autores,
-    }
-    # Renderizar la plantilla con el contexto
-    return render(request, "autores_list.html", context)
+def autor_delete(request, pk):
+    autor = get_object_or_404(Autor, pk=pk)
+
+    autor.delete()
+
+    return redirect("autores")
 
 
 # Ejemplares
@@ -212,56 +306,98 @@ def ejemplar_new(request):
 
         if formulario.is_valid():
             ejemplar = formulario.save(commit=False)
+            ejemplar.id = formulario.cleaned_data["id"]
             ejemplar.libro = formulario.cleaned_data["libro"]
-            ejemplar.fechaDevolucion = formulario.cleaned_data["fechaDevolucion"]
-            ejemplar.ESTADO_EJEMPLAR = formulario.cleaned_data["ESTADO_EJEMPLAR"]
             ejemplar.estado = formulario.cleaned_data["estado"]
+            ejemplar.fechaDevolucion = formulario.cleaned_data["fechaDevolucion"]
             ejemplar.save()
             return redirect("ejemplares")
 
     else:
         formulario = EjemplarForm()
 
-    return render(request, "ejemplar_new.html", {"formulario": formulario})
+    return render(request, "element_new.html", {"formulario": formulario})
 
 
 def ejemplar_update(request, pk):
-    ejemplar = get_object_or_404(Genero, pk=pk)
+    ejemplar = get_object_or_404(Ejemplar, pk=pk)
 
     if request.method == "POST":
-        formulario = EjemplarForm(request.POST)
+        formulario = EjemplarForm(request.POST, instance=ejemplar)
 
         if formulario.is_valid():
             ejemplar = formulario.save(commit=False)
             ejemplar.libro = formulario.cleaned_data["libro"]
-            ejemplar.fechaDevolucion = formulario.cleaned_data["fechaDevolucion"]
-            ejemplar.ESTADO_EJEMPLAR = formulario.cleaned_data["ESTADO_EJEMPLAR"]
             ejemplar.estado = formulario.cleaned_data["estado"]
+            ejemplar.fechaDevolucion = formulario.cleaned_data["fechaDevolucion"]
             ejemplar.save()
             return redirect("ejemplares")
 
     else:
-        formulario = EjemplarForm()
+        formulario = EjemplarForm(instance=ejemplar)
 
-    return render(request, "ejemplar_new.html", {"formulario": formulario})
+    return render(request, "element_new.html", {"formulario": formulario})
 
 
-def ejemplar_list(request):
-    # Obtener todos los géneros de la base de datos
-    ejemplares = Ejemplar.objects.all()
-    # Crear un contexto con los géneros obtenidos
-    context = {
-        "ejemplares": ejemplares,
-    }
-    # Renderizar la plantilla con el contexto
-    return render(request, "ejemplar_list.html", context)
+def ejemplar_delete(request, pk):
+    ejemplar = get_object_or_404(Ejemplar, pk=pk)
+
+    ejemplar.delete()
+
+    return redirect("ejemplares")
+
+
+# def ejemplar_list(request):
+#     # Obtener todos los géneros de la base de datos
+#     ejemplares = Ejemplar.objects.all()
+#     # Crear un contexto con los géneros obtenidos
+#     context = {
+#         "ejemplares": ejemplares,
+#     }
+#     # Renderizar la plantilla con el contexto
+#     return render(request, "ejemplar_list.html", context)
+
+
+# Idiomas
+def idioma_new(request):
+    if request.method == "POST":
+        formulario = IdiomaForm(request.POST)
+
+        if formulario.is_valid():
+            idioma = formulario.save(commit=False)
+            idioma.nombre = formulario.cleaned_data["nombre"]
+            idioma.save()
+            return redirect("idiomas")
+
+    else:
+        formulario = IdiomaForm()
+
+    return render(request, "element_new.html", {"formulario": formulario})
+
+
+def idioma_update(request, pk):
+    idioma = get_object_or_404(Idioma, pk=pk)
+
+    if request.method == "POST":
+        formulario = IdiomaForm(request.POST, instance=idioma)
+
+        if formulario.is_valid():
+            idioma = formulario.save(commit=False)
+            idioma.nombre = formulario.cleaned_data["nombre"]
+            idioma.save()
+            return redirect("idiomas")
+
+    else:
+        formulario = IdiomaForm(instance=idioma)
+
+    return render(request, "element_new.html", {"formulario": formulario})
 
 
 # Manejo de Ventanas Modales
-def idioma_list(request):
-    idiomas = Idioma.objects.all()
-    context = {"idiomas": idiomas}
-    return render(request, "idioma_list.html", context)
+# def idioma_list(request):
+#     idiomas = Idioma.objects.all()
+#     context = {"idiomas": idiomas}
+#     return render(request, "idioma_list.html", context)
 
 
 def idioma_delete(request, pk):

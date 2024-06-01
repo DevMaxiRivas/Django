@@ -11,19 +11,35 @@
           <th scope="col">Portada</th>
           <th scope="col">Título</th>
           <th scope="col">Autor</th>
+          <th scope="col">Generos</th>
+          <th scope="col">Modificar</th>
         </tr>
       </thead>
       <tbody>
         {% for libro in libros %}
         <tr>
           <td>
+            {% if libro.portada.url != none %}
             <img src="{{ libro.portada.url }}" alt="Portada de {{ libro.titulo }}"
               style="max-height: 150px; max-width: 150px;">
+            {% else %}
+            No hay almacenada una portada
+            {% endif %}
           </td>
           <td>
             <a href="{% url 'libro' libro.id %}">{{ libro.titulo }}</a>
           </td>
           <td>{{ libro.autor }}</td>
+          <td>{{ libro.muestra_genero }}</td>
+          <td>
+            <a class="btn btn-primary" href="{% url 'libro_update' libro.id %}">
+              Editar
+            </a>
+            <a class="btn btn-danger" href="" data-toggle="modal" data-target="#exampleModal{{libro.id}}">
+              Eliminar
+            </a>
+          </td>
+          {% include "libro_modal.html" %}
         </tr>
         {% endfor %}
       </tbody>
@@ -32,7 +48,13 @@
   {% else %}
   <p>Oops! No tenemos libros en catálogo.</p>
   {% endif %}
+
+  <p>
+    <a class="btn btn-success" href="{% url 'libro_new' %}" role="button">Nuevo</a>
+  </p>
+
 </div>
+
 
 
 {% endblock %}

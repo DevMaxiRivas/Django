@@ -42,7 +42,7 @@ class AutorAdmin(admin.ModelAdmin):
 
 
 class EjemplarAdmin(admin.ModelAdmin):
-    list_display = ("libro", "estado", "fechaDevolucion")
+    list_display = ("id", "libro", "estado", "fechaDevolucion")
 
 
 # Registra clase Admin junto al modelo base

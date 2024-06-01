@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h5 class="card-header">Listado de Idiomas</h5>
+<div class="card-body">
+    {% if idiomas %}
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Modificar</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for idioma in idiomas %}
+                <tr>
+                    <td>{{ idioma.nombre }}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{% url 'idioma_update' idioma.id %}">
+                            Editar
+                        </a>
+                        <a class="btn btn-danger" href="" data-toggle="modal" data-target="#exampleModal{{idioma.id}}">
+                            Eliminar
+                        </a>
+                    </td>
+                    {% include "idioma_modal.html" %}
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Oops! No tenemos idiomas en catálogo.</p>
+    {% endif %}
+
+    <p>
+        <a class="btn btn-success" href="{% url 'idioma_new' %}" role="button">Nuevo</a>
+    </p>
+
+</div>
+
+{% endblock %}

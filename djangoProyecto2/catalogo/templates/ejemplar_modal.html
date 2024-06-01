@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="exampleModal{{idioma.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="exampleModal{{ejemplar.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -10,11 +10,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                Desea eliminar {{idioma.nombre}} ?
+                Desea eliminar {{ejemplar.id}} ?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <a class="btn btn-danger" href="{% url 'idioma_delete' idioma.id %}">Eliminar</a>
+                <a class="btn btn-danger" href="{% url 'ejemplar_delete' ejemplar.id %}">Eliminar</a>
             </div>
         </div>
     </div>

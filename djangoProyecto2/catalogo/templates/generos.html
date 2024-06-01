@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h5 class="card-header">Listado de Generos</h5>
+<div class="card-body">
+    {% if generos %}
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Modificar</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for genero in generos %}
+                <tr>
+                    <td>{{ genero.nombre }}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{% url 'genero_update' genero.id %}">
+                            Editar
+                        </a>
+                        <a class="btn btn-danger" href="" data-toggle="modal" data-target="#exampleModal{{genero.id}}">
+                            Eliminar
+                        </a>
+                    </td>
+                    {% include "genero_modal.html" %}
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Oops! No tenemos generos en catálogo.</p>
+    {% endif %}
+
+    <p>
+        <a class="btn btn-success" href="{% url 'genero_new' %}" role="button">Nuevo</a>
+    </p>
+
+</div>
+
+{% endblock %}

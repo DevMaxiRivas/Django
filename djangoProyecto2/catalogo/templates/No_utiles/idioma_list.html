@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Idiomas</h1>
 
-<p><a class="btn btn-outline-success" href="">Nuevo</a></p>
+<p><a class="btn btn-success" href="{% url 'idioma_new' %}" role="button">Nuevo</a></p>
 
 {% if idiomas %}
 <table>
@@ -15,19 +15,19 @@
     </tr>
 
     {% for idioma in idiomas %}
-
     <tr>
         <td>{{ idioma.nombre }}</td>
-        <td><a class="btn btn-sm btn-info" href="">Editar</a></td>
-
         <td>
-            <a class="btn btn-sm btn-danger" href="" data-toggle="modal" data-target="#exampleModal{{idioma.id}}">
+            <a class="btn btn-sm btn-info" href="{% url 'idioma_update' idioma.id %}">
+                Editar
+            </a>
+        </td>
+        <td>
+            <a class="btn btn-danger" href="" data-toggle="modal" data-target="#exampleModal{{idioma.id}}">
                 Eliminar
             </a>
         </td>
-
         {% include "idioma_modal.html" %}
-
     </tr>
 
     {% endfor %}

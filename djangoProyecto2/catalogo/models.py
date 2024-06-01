@@ -27,7 +27,6 @@ class Autor(models.Model):
     fechaNac = models.DateField(null=True, blank=True)
     fechaDeceso = models.DateField("Fallecido", null=True, blank=True)
     retrato = models.ImageField(blank=True, upload_to="retratos/")
-    foto = models.ImageField(upload_to="catalogo/upload/img/", null=True)
 
     def get_absolute_url(self):
         """
@@ -127,6 +126,19 @@ class Ejemplar(models.Model):
 
     def __str__(self):
         return "%s (%s)" % (self.id, self.libro.titulo)
+
+    def muestra_estado(self):
+        if self.estado:
+            # Convierto a diccionaria el valor estado ejemplar
+            ESTADO_EJEMPLAR = {
+                "m": "En Mantenimiento",
+                "p": "Prestado",
+                "d": "Disponible",
+                "r": "Reservado",
+            }
+            # Retornar el valor correspondiente
+            return ESTADO_EJEMPLAR.get(self.estado)
+        return None
 
 
 class Idioma(models.Model):

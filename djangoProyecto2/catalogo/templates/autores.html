@@ -11,7 +11,10 @@
                 <tr>
                     <th scope="col">Apellido</th>
                     <th scope="col">Nombre</th>
+                    <th scope="col">Nacimiento</th>
+                    <th scope="col">Deceso</th>
                     <th scope="col">Retrato</th>
+                    <th scope="col">Modificar</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,6 +24,14 @@
                         <a href="{% url 'autor' autor.id %}">{{ autor.apellido }}</a>
                     </td>
                     <td>{{ autor.nombre }}</td>
+                    <td>{{ autor.fechaNac }}</td>
+                    <td>
+                        {% if autor.fechaDeceso %}
+                        {{ autor.fechaDeceso }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
                     <td>
                         {% if autor.retrato.url != none %}
                         <img src="{{ autor.retrato.url }}" alt="Retrato de {{ autor.nombre }} {{autor.apellido}}"
@@ -29,6 +40,15 @@
                         No hay almacenado un retrato
                         {% endif %}
                     </td>
+                    <td>
+                        <a class="btn btn-primary" href="{% url 'autor_update' autor.id %}">
+                            Editar
+                        </a>
+                        <a class="btn btn-danger" href="" data-toggle="modal" data-target="#exampleModal{{autor.id}}">
+                            Eliminar
+                        </a>
+                    </td>
+                    {% include "autor_modal.html" %}
                 </tr>
 
                 {% endfor %}
@@ -38,6 +58,11 @@
     {% else %}
     <p>Oops! No tenemos autores en catálogo.</p>
     {% endif %}
+
+    <p>
+        <a class="btn btn-success" href="{% url 'autor_new' %}" role="button">Nuevo</a>
+    </p>
+
 </div>
 
 {% endblock %}
