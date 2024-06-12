@@ -2,8 +2,11 @@ from django.urls import path
 from catalogo import views
 
 urlpatterns = [
+    ## carousel: agregar ##
+    path("", views.index_carousel, name="index_carousel"),
+    path("api/", views.carousel_items.as_view(), name="carousel-items"),
     # Desarrollando Home
-    path("", views.index, name="index"),
+    path("menu", views.index, name="index"),
     # Planilla para Vista de Lista de Libros
     path("libros/", views.LibroListView.as_view(), name="libros"),
     path("libros/new/", views.libro_new, name="libro_new"),

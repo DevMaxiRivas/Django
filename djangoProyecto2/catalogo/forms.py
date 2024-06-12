@@ -41,6 +41,27 @@ class AutorForm(forms.ModelForm):
             "fechaDeceso": NumberInput(attrs={"type": "date"}),
         }
 
+    def clean(self):
+        super(AutorForm, self).clean()
+        apellido = self.cleaned_data.get("apellido")
+        nombre = self.cleaned_data.get("nombre")
+        fechaNac = self.cleaned_data.get("fechaNac")
+        fechaDeceso = self.cleaned_data.get("fechaDeceso")
+        if len(apellido) < 3:
+            self._errors["apellido"] = self.error_class(
+                ["El apellido debe tener al menos 3 caracteres"]
+            )
+        if len(nombre) < 5:
+            self._errors["nombre"] = self.error_class(
+                ["El nombre debe tener al menos 5 caracteres"]
+            )
+        if fechaNac != None and fechaDeceso != None:
+            if fechaDeceso < fechaNac:
+                self._errors["fechaDeceso"] = self.error_class(
+                    ["La fecha de deceso debe ser mayor a la de nacimiento"]
+                )
+        return self.cleaned_data
+
 
 # Estructura de Formulario Ejemplares
 

@@ -12,6 +12,13 @@ from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404
 from catalogo.forms import GeneroForm, AutorForm, EjemplarForm, IdiomaForm, LibroForm
 
+# Carousel dinámico
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework import generics
+from catalogo.serializers import dataSerializer
+
 
 # Desarrollo de Home
 def index(request):
@@ -285,6 +292,9 @@ def autor_update(request, pk):
             autor.retrato = formulario.cleaned_data["retrato"]
             autor.save()
             return redirect("autores")
+        else:
+            # redirijo
+            return render(request, "element_new.html", {"formulario": formulario})
     else:
         formulario = AutorForm(instance=autor)
 
@@ -406,3 +416,23 @@ def idioma_delete(request, pk):
     idioma.delete()
 
     return redirect("idiomas")
+
+
+# Carousel dinámico
+def index_carousel(request):
+    return render(request, "index2.html")
+
+
+class carousel_items(generics.ListCreateAPIView):
+    queryset = Autor.objects.all()
+    serializer_class = dataSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
