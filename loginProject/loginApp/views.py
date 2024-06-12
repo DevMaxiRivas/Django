@@ -3,9 +3,14 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 from django_htmx.http import HttpResponseClientRefresh
 from .forms import LoginForm
 
+# LogOut
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
 
 def home(request):
     if request.user.is_authenticated:
+        # if False:
         return render(request, "dashboard.html")
     return render(request, "home.html")
 
@@ -26,3 +31,8 @@ def login(request):
     context = {"form": form}
 
     return render(request, template_name, context)
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("home")

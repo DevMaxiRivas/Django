@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
-from crispy_bootstrap5 import bootstrap5
+from crispy_bootstrap5.bootstrap5 import FloatingField
 
 
 class LoginForm(AuthenticationForm):
@@ -11,6 +11,6 @@ class LoginForm(AuthenticationForm):
         self.helper.form_tag = False
         self.helper.include_media = False
         self.helper.layout = Layout(
-            bootstrap5.FloatingField("username", autocomplete="username"),
-            bootstrap5.FloatingField("password", autocomplete="current-password"),
+            FloatingField("username", autocomplete="username"),
+            FloatingField("password", autocomplete="current-password"),
         )
