@@ -4,7 +4,8 @@
 
 <head>
     <title>
-        {% block title %} DW2024
+        {% block title %}
+        DW2024
         {% endblock %}
     </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -26,6 +27,7 @@
     <script>
         function init_widgets_for_htmx_element(target) {
             // init other widgets
+
             // init modal dialogs
             if (target.tagName === 'DIALOG') {
                 target.showModal();
