@@ -19,7 +19,10 @@ def add_user_to_students_group(sender, instance, created, **kwargs):
         # Si no existe
         except Group.DoesNotExist:
             group1 = Group.objects.create(name="estudiantes")
-            group2 = Group.objects.create(name="profesors")
-            group3 = Group.objects.create(name="preceptors")
+            group2 = Group.objects.create(name="profesores")
+            group3 = Group.objects.create(name="preceptores")
             group4 = Group.objects.create(name="administrativos")
+            group5 = Group.objects.create(name="clientes")
+            group6 = Group.objects.create(name="vendedores")
+            group7 = Group.objects.create(name="dbas")
         instance.user.groups.add(group1)
