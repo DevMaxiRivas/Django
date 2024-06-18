@@ -1,36 +1,15 @@
 from django.urls import path
-from .views import (
-    HomeView,
-    # PricingView,
-    # RegisterView,
-    # ProfileView,
-    # CoursesView,
-    # CourseCreateView,
-    # CourseEditView,
-    # CourseDeleteView,
-    # CourseEnrollmentView,
-    # StudentListMarkView,
-    # UpdateMarkView,
-    # AttendanceListView,
-    # AddAttendanceView,
-    # evolution,
-    # ErrorView,
-    # ProfilePasswordChangeView,
-    # AddUserView,
-    # CustomLoginView,
-    # UserDetailsView,
-    # superuser_edit,
-)
+from .views import *
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     # PAGINA DE INICIO
     path("", HomeView.as_view(), name="home"),
     # PAGINA DE PRECIOS
-    # path('pricing/', PricingView.as_view(), name='pricing'),
+    path("pricing/", PricingView.as_view(), name="pricing"),
     # # PAGINA DE PREGUNTAS Y RESPUESTAS / PAGINA DE ACERCA DE (A CARGO DE LOS SEGUIDORES DEL CANAL)
     # # PAGINAS DE LOGIN Y REGISTRO (VIDEO 5)
-    # path('register/', RegisterView.as_view(), name='register'),
+    path("register/", RegisterView.as_view(), name="register"),
     # # PAGINAS DE PERFIL: VISTA DE PERFIL - EDICION DEL PERFIL (VIDEO 8)
     # path('profile/', login_required(ProfileView.as_view()), name='profile'),
     # # PAGINAS QUE ADMINISTRAN LOS CURSOS: LA LISTA DE CURSOS - (LA CREACION DE CURSOS - LA EDICION DE CURSOS - LA ELIMINACION DE CURSOS) (VIDEO 10)

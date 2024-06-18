@@ -15,6 +15,7 @@ def add_user_to_students_group(sender, instance, created, **kwargs):
     # Verificamos si existe el grupo estudiante
     if created:
         try:
+            # Si quiero quiero que el gpo al guardar por defecto sea estudiantes
             group1 = Group.objects.get(name="estudiantes")
         # Si no existe
         except Group.DoesNotExist:

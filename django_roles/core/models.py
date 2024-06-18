@@ -221,6 +221,7 @@ class Eventos(models.Model):
         ("d", "Desahabilitado"),
         ("s", "Suspendido"),
         ("f", "Finalizado"),
+        ("a", "Actualizado"),
     )
 
     hab_ev = models.CharField(
@@ -245,10 +246,19 @@ class Eventos(models.Model):
                 ("d", "Desahabilitado"),
                 ("s", "Suspendido"),
                 ("f", "Finalizado"),
+                ("a", "Actualizado"),
             }
             # Retornar el valor correspondiente
             return ESTADOS_TUPLA.get(self.estado)
         return None
+
+    # Funcion para actualizar el estado de los boletos si es que se actualiza el evento (No necesario, usado para pruebas)
+    def seActualizo(self):
+        boletos = Boletos.objects.filter(evt_bl=self)
+        for boleto in boletos:
+            if not boleto.enVenta_bl:
+                boleto.enVenta_bl = True
+                boleto.save()
 
 
 class LugaresDeEvento(models.Model):
@@ -331,7 +341,59 @@ class Ventas(models.Model):
         verbose_name_plural = "Ventas"
 
 
+class Boletos(models.Model):
+    id_bl = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        help_text="ID único para cada venta",
+    )
+    cli_bl = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        # Con esto limitamos a que se puedan agregar solo clientes
+        limit_choices_to={"groups__name": "clientes"},
+        verbose_name="Cliente",
+    )
+    evt_bl = models.ForeignKey(
+        Eventos,
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name="Evento",
+    )
+    ve_bl = models.ForeignKey(
+        Ventas,
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name="Venta",
+    )
+    enVenta_bl = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # Si es el mismo evento con el que se creo la venta no modificar el precio
+        if self._state.adding:
+            if self.ve_bl:
+                self.cli_bl = self.ve_bl.cli_ve
+                self.evt_bl = self.ve_bl.evt_ve
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "%s (%s)" % (self.cli_bl, self.evt_bl)
+
+    class Meta:
+        ordering = ["-id_bl"]
+        verbose_name = "Boleto"
+        verbose_name_plural = "Boletos"
+
+
 @receiver(post_save, sender=Attendance)
 @receiver(post_delete, sender=Attendance)
 def update_registration_enabled_status(sender, instance, **kwargs):
     instance.update_registration_enabled_status()
+
+
+@receiver(post_save, sender=Eventos)
+@receiver(post_delete, sender=Eventos)
+def update_an_event(sender, instance, **kwargs):
+    instance.seActualizo()

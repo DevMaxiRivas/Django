@@ -7,6 +7,7 @@ from .models import (
     Provincias,
     Eventos,
     Ventas,
+    Boletos,
     Registration,
     Mark,
     Attendance,
@@ -40,7 +41,12 @@ class VentasAdmin(admin.ModelAdmin):
     readonly_fields = ["pr_ve"]
 
 
+class BoletosAdmin(admin.ModelAdmin):
+    readonly_fields = ["cli_bl", "evt_bl"]
+
+
 admin.site.register(Ventas, VentasAdmin)
+admin.site.register(Boletos, BoletosAdmin)
 
 # Cursos
 admin.site.register(Registration)

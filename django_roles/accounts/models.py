@@ -32,7 +32,7 @@ class Profile(models.Model):
         return self.user.username
 
 
-# Con esto cuando se crea un usuario => se crea un perfil
+# Con esto cuando se crea un usuario => se crea un perfil con un grupo predeterminado "estudiantes"
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
