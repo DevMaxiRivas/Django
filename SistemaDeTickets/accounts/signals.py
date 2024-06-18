@@ -1,0 +1,26 @@
+from django.contrib.auth.models import Group
+
+# Herramienta para manejar señales (signals)
+from django.dispatch import receiver
+
+from django.db.models.signals import post_save
+from .models import Profile
+
+# Archivo que actua cuando recibe la grabacion de un usuario
+# este lo asigna a un grupo
+
+
+@receiver(post_save, sender=Profile)
+def add_user_to_students_group(sender, instance, created, **kwargs):
+    # Verificamos si existe el grupo estudiante
+    if created:
+        try:
+            # Si quiero quiero que el gpo al guardar por defecto sea estudiantes
+            group1 = Group.objects.get(name="clientes")
+        # Si no existe
+        except Group.DoesNotExist:
+            group1 = Group.objects.create(name="clientes")
+            group2 = Group.objects.create(name="vendedores")
+            group3 = Group.objects.create(name="dbas")
+            group4 = Group.objects.create(name="administrativos")
+        instance.user.groups.add(group1)
