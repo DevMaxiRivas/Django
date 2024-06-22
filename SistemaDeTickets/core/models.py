@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
@@ -67,8 +68,8 @@ class BusStop(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Parada de autobus"
-        verbose_name_plural = "Paradas de autobus"
+        verbose_name = "Parada de colectivo"
+        verbose_name_plural = "Paradas de colectivo"
 
     def __str__(self):
         return self.name
@@ -130,7 +131,7 @@ class Bus(models.Model):
 
 class SeatCategory(models.Model):
     name = models.CharField(max_length=100)
-    price_multiplier = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     enabled = models.CharField(
         max_length=1,
@@ -180,7 +181,7 @@ class Seat(models.Model):
         return None
 
     # def save(self, *args, **kwargs):
-    #         # Si es el mismo evento con el que se creo la venta no modificar el precio
+    #         # Si es el mismo asiento con el que se creo la venta no modificar el precio
     #         if self._state.adding:
     #             if self.ve_bl:
     #                 self.cli_bl = self.ve_bl.cli_ve
@@ -260,6 +261,25 @@ class Journey(models.Model):
 
     type = models.CharField(max_length=20, choices=JOURNEY_TYPE_CHOICES)
     description = models.TextField()
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    class Meta:
+        ordering = ["type"]
+        verbose_name = "Recorrido"
+        verbose_name_plural = "Recorridos"
 
     def __str__(self):
         return f"{self.get_type_display()} - {self.description}"
@@ -353,12 +373,24 @@ class JourneySchedule(models.Model):
         return f"{self.journey} on {self.departure_time}"
 
 
-class Ticket(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    schedule = models.ForeignKey(JourneySchedule, on_delete=models.CASCADE)
-    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
-    purchase_date = models.DateTimeField(auto_now_add=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+class Passenger(models.Model):
+    name = models.CharField(max_length=100)
+    dni_or_passport = models.CharField(max_length=50)
+    origin_country = models.CharField(max_length=100)
+
+    GENDER = (
+        ("m", "Male"),
+        ("w", "Female"),
+    )
+
+    gender = models.CharField(
+        max_length=1,
+        choices=GENDER,
+        blank=True,
+        default="m",
+        help_text="Genero del pasajero",
+    )
+
     enabled = models.CharField(
         max_length=1,
         choices=STATES1,
@@ -366,26 +398,32 @@ class Ticket(models.Model):
         default="h",
     )
 
-    # Funcion para reservar el asiento
-    def reservarAsiento(self):
-        asiento = Seat.objects.filter(pk=self.seat.pk)
-        asiento.hab_as = "v"
-        asiento.save()
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
 
-    # def save(self, *args, **kwargs):
-    #     # Si es el mismo evento con el que se creo la venta no modificar el precio
-    #     if self._state.adding:
-    #         if self.evt_ve:
-    #             self.pr_ve = self.evt_ve.precio_ev
-    #     # Sino es el mismo evento con el que se creo la venta modificar el precio de la venta al precio del evento nuevo seleccionado.
-    #     else:
-    #         # Si el objeto ya existe en la base de datos
-    #         old_instance = Ticket.objects.get(pk=self.pk)
-    #         if old_instance.evt_ve != self.evt_ve:
-    #             self.pr_ve = self.evt_ve.precio_ev
+    class Meta:
+        ordering = ["dni_or_passport"]
+        verbose_name = "Pasajero"
+        verbose_name_plural = "Pasajeros"
 
-    #     self.reservarAsiento(self)
-    #     super().save(*args, **kwargs)
+    def __str__(self):
+        return self.name
+
+
+class TicketSales(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    purchase_date = models.DateTimeField(default=timezone.now)
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
 
     def status_sample(self):
         if self.enabled:
@@ -395,26 +433,138 @@ class Ticket(models.Model):
         return None
 
     def __str__(self):
-        return f"Ticket for {self.user.username} on {self.schedule}"
+        return f"Sale for {self.user.username} on {self.purchase_date}"
 
     class Meta:
-        ordering = ["purchase_date"]
+        ordering = ["user"]
+        verbose_name = "Venta de Boletos"
+        verbose_name_plural = "Ventas de Boletos"
+
+
+class Ticket(models.Model):
+    sale = models.ForeignKey(TicketSales, related_name="sale", on_delete=models.CASCADE)
+    passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE)
+    schedule = models.ForeignKey(JourneySchedule, on_delete=models.CASCADE)
+    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Ticket for {self.passenger.name} purchased by {self.user.username}"
+
+    # Funcion para reservar el asiento
+    def reserveSeat(self):
+        asiento = self.seat
+        asiento.enabled = "v"
+        asiento.save()
+
+    def save(self, *args, **kwargs):
+        # Si es el mismo asiento con el que se creo la venta no modificar el precio
+        if self._state.adding:
+            if self.seat:
+                self.price = self.seat.category.price
+        # Sino es el mismo asiento con el que se creo la venta modificar el precio de la venta al precio del asiento nuevo seleccionado.
+        else:
+            # Si el objeto ya existe en la base de datos
+            old_instance = Ticket.objects.get(pk=self.pk)
+            if old_instance.seat != self.seat:
+                self.price = self.seat.category.price
+
+        self.reserveSeat()
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # Cambiar el campo enabled del asiento asociado a 'h' antes de eliminar el ticket
+        self.seat.enabled = "h"
+        self.seat.save()
+        super().delete(*args, **kwargs)
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    def __str__(self):
+        return f"Ticket for {self.passenger.name}"
+
+    class Meta:
         verbose_name = "Boleto"
         verbose_name_plural = "Boletos"
 
 
-class MealOrder(models.Model):
-    ticket = models.ForeignKey(
-        Ticket, related_name="meal_orders", on_delete=models.CASCADE
+class PurchaseReceipt(models.Model):
+    ticket = models.ForeignKey(Ticket, related_name="receipt", on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    purchase_date = models.DateTimeField(default=timezone.now)
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    def __str__(self):
+        return f"Sale for {self.ticket.passenger.name} on {self.purchase_date}"
+
+    class Meta:
+        ordering = ["ticket"]
+        verbose_name = "Factura de Venta"
+        verbose_name_plural = "Facturas de Ventas"
+
+
+class DetailFoodOrder(models.Model):
+    receipt = models.ForeignKey(
+        PurchaseReceipt, related_name="meal_receipt", on_delete=models.CASCADE
     )
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     enabled = models.CharField(
         max_length=1,
         choices=STATES1,
         blank=True,
         default="h",
     )
+
+    def delete(self, *args, **kwargs):
+        # Cambiar el campo enabled del asiento asociado a 'h' antes de eliminar el ticket
+        self.receipt.price = self.receipt.price - self.unit_price * self.quantity
+        self.receipt.save()
+        super().delete(*args, **kwargs)
+
+    def update_receipt(self):
+        receipt = self.receipt
+        receipt.price = receipt.price + (self.unit_price * self.quantity)
+        receipt.save()
+
+    def save(self, *args, **kwargs):
+        # Si es el mismo asiento con el que se creo la venta no modificar el precio
+        if self._state.adding:
+            if self.meal:
+                self.unit_price = self.meal.price
+                self.update_receipt()
+
+        # Sino es el mismo asiento con el que se creo la venta modificar el precio de la venta al precio del asiento nuevo seleccionado.
+        else:
+            # Si el objeto ya existe en la base de datos
+            old_instance = DetailFoodOrder.objects.get(pk=self.pk)
+            if old_instance.meal != self.meal:
+                # Quitar mercaderia del recibo
+                self.receipt.price = self.receipt.price - (
+                    old_instance.unit_price * old_instance.quantity
+                )
+                self.unit_price = self.meal.price
+                self.update_receipt()
+
+        super().save(*args, **kwargs)
 
     def status_sample(self):
         if self.enabled:
@@ -424,20 +574,21 @@ class MealOrder(models.Model):
         return None
 
     def __str__(self):
-        return f"{self.quantity} x {self.meal.name} for {self.ticket.user.username}"
+        return f"{self.quantity} x {self.meal.name}"
 
     class Meta:
-        ordering = ["ticket"]
-        verbose_name = "Orden de plato"
-        verbose_name_plural = "Ordenes de platos"
+        ordering = ["receipt"]
+        verbose_name = "Detalle de la Orden de platos"
+        verbose_name_plural = "Detalles de la Orden de platos"
 
 
-class MerchandiseOrder(models.Model):
-    ticket = models.ForeignKey(
-        Ticket, related_name="merchandise_orders", on_delete=models.CASCADE
+class DetailsMerchandiseOrder(models.Model):
+    receipt = models.ForeignKey(
+        PurchaseReceipt, related_name="merchandise_receipt", on_delete=models.CASCADE
     )
     merchandise = models.ForeignKey(Merchandise, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     enabled = models.CharField(
         max_length=1,
@@ -445,6 +596,38 @@ class MerchandiseOrder(models.Model):
         blank=True,
         default="h",
     )
+
+    def delete(self, *args, **kwargs):
+        # Cambiar el campo enabled del asiento asociado a 'h' antes de eliminar el ticket
+        self.receipt.price = self.receipt.price - self.unit_price * self.quantity
+        self.receipt.save()
+        super().delete(*args, **kwargs)
+
+    def update_receipt(self):
+        receipt = self.receipt
+        receipt.price = receipt.price + (self.unit_price * self.quantity)
+        receipt.save()
+
+    def save(self, *args, **kwargs):
+        # Si es el mismo asiento con el que se creo la venta no modificar el precio
+        if self._state.adding:
+            if self.merchandise:
+                self.unit_price = self.merchandise.price
+                self.update_receipt()
+
+        # Sino es el mismo asiento con el que se creo la venta modificar el precio de la venta al precio del asiento nuevo seleccionado.
+        else:
+            # Si el objeto ya existe en la base de datos
+            old_instance = DetailsMerchandiseOrder.objects.get(pk=self.pk)
+            if old_instance.merchandise != self.merchandise:
+                # Quitar mercaderia del recibo
+                self.receipt.price = self.receipt.price - (
+                    old_instance.unit_price * old_instance.quantity
+                )
+                self.unit_price = self.merchandise.price
+                self.update_receipt()
+
+        super().save(*args, **kwargs)
 
     def status_sample(self):
         if self.enabled:
@@ -454,14 +637,12 @@ class MerchandiseOrder(models.Model):
         return None
 
     class Meta:
-        ordering = ["ticket"]
-        verbose_name = "Orden de mercadería"
-        verbose_name_plural = "Ordenes de mercadería"
+        ordering = ["receipt"]
+        verbose_name = "Detalle de la Orden de mercadería"
+        verbose_name_plural = "Detalles de la Orden de mercadería"
 
     def __str__(self):
-        return (
-            f"{self.quantity} x {self.merchandise.name} for {self.ticket.user.username}"
-        )
+        return f"{self.quantity} x {self.merchandise.name}"
 
 
 # @receiver(post_save, sender=Ventas)
