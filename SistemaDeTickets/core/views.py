@@ -1,32 +1,12 @@
-# # import os
-# from typing import Any
-# from django.shortcuts import render, redirect
-
-# # Autenticacion
-# from django.contrib.auth import authenticate, login
-
-# # Vistas
-# from django.views.generic import (
-#     ListView,
-#     TemplateView,
-# )
-
-# # Grupos
-# from django.contrib.auth.models import Group
-
-# # Formularios
-# from .forms import RegisterForm
-
-# from django.views import View
-
 # # PAGINA DE INICIO
-# @add_group_name_to_context
-
 
 from typing import Any
 from django.shortcuts import render, redirect, get_object_or_404
 
+# # Autenticacion
 from django.contrib.auth import authenticate, login
+
+# # Vistas
 from django.views.generic import (
     ListView,
     TemplateView,
@@ -36,11 +16,13 @@ from django.views.generic import (
     DetailView,
 )
 
+# # Grupos
 from django.contrib.auth.models import Group
 
-# from .forms import RegisterForm, UserForm, ProfileForm, CourseForm, UserCreationForm
+# # Formularios
 from .forms import RegisterForm, UserCreationForm
 from django.views import View
+
 
 class HomeView(TemplateView):
     template_name = "home.html"
@@ -57,6 +39,7 @@ class HomeView(TemplateView):
 
         context["group_name"] = group_name
         return context
+
 
 # # REGISTRO DE USUARIOS
 class RegisterView(View):

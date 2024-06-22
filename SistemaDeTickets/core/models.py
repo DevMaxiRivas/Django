@@ -4,435 +4,467 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 import uuid  # Requerida para las instancias de tuplas únicas
 
+from django.conf import settings
 
-ESTADOS_TUPLA = (
+
+STATES1 = (
     ("h", "Habilitado"),
     ("d", "Desahabilitado"),
 )
 
-ESTADOS_TUPLA2 = (
+STATES2 = (
     ("h", "Habilitado"),
     ("d", "Desahabilitado"),
     ("s", "Suspendido"),
     ("f", "Finalizado"),
 )
 
-ESTADOS_TUPLA3 = (
+STATES3 = (
     ("h", "Habilitado"),
     ("d", "Desahabilitado"),
     ("v", "Vendido"),
     ("r", "Devuelto"),
 )
 
-class Provincias(models.Model):
-    id_pv  = models.CharField(
-        primary_key=True,
-        max_length=1,
-        blank=True,
-        help_text="ID único para cada provincia",
-    )
-    nomb_pv = models.CharField(max_length=200)
 
-    hab_pv = models.CharField(
+class Station(models.Model):
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=255)
+
+    enabled = models.CharField(
         max_length=1,
-        choices=ESTADOS_TUPLA,
+        choices=STATES1,
         blank=True,
         default="h",
     )
 
+    def __str__(self):
+        return self.name
+
     class Meta:
-        ordering = ["nomb_pv"]
-        verbose_name = "Provincia"
-        verbose_name_plural = "Provincias"
-    
-    def muestra_estado(self):
-        if self.hab_pv:
-            ESTADOS = set(ESTADOS_TUPLA)
+        ordering = ["name"]
+        verbose_name = "Estacion"
+        verbose_name_plural = "Estaciones"
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
             # Retornar el valor correspondiente
-            return ESTADOS.get(self.hab_pv)
+            return STATES.get(self.hab_pv)
         return None
 
-    def __str__(self):
-        return "%s (%s)" % (self.id_pv, self.nomb_pv)
 
+class BusStop(models.Model):
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=255)
 
-class Localidades(models.Model):
-    cod_post_lc = models.CharField(
-        primary_key=True,
-        max_length=6,
-        help_text="ID único para cada localidad",
-    )
-    nomb_lc = models.CharField(max_length=200)
-    id_pv = models.ForeignKey(Provincias, on_delete=models.CASCADE, null=True)
-
-
-    hab_lc = models.CharField(
+    enabled = models.CharField(
         max_length=1,
-        choices=ESTADOS_TUPLA,
+        choices=STATES1,
         blank=True,
         default="h",
     )
 
     class Meta:
-        ordering = ["nomb_lc"]
-        verbose_name = "Localidad"
-        verbose_name_plural = "Localidades"
+        ordering = ["name"]
+        verbose_name = "Parada de autobus"
+        verbose_name_plural = "Paradas de autobus"
 
     def __str__(self):
-        return "%s (%s)" % (self.cod_post_lc, self.nomb_lc)
-    
-class LugaresDeVenta(models.Model):
-    id_lv = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        help_text="ID único para cada evento",
+        return self.name
+
+
+class Train(models.Model):
+    name = models.CharField(max_length=100)
+    total_seats = models.PositiveIntegerField()
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
     )
-    desc_lv = models.CharField(max_length=200)
-    dir_lv = models.CharField(max_length=200)
-    tel_lv = models.CharField(max_length=15)
-    lat_lv = models.DecimalField(max_digits=10, decimal_places=7)
-    lng_lv = models.DecimalField(max_digits=10, decimal_places=7)
-    cod_post_lc = models.ForeignKey(
-        Localidades,
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Tren"
+        verbose_name_plural = "Trenes"
+
+    def __str__(self):
+        return self.name
+
+
+class Bus(models.Model):
+    name = models.CharField(max_length=100)
+    capacity = models.PositiveIntegerField()
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Colectivo"
+        verbose_name_plural = "Colectivos"
+
+    def __str__(self):
+        return self.name
+
+
+class SeatCategory(models.Model):
+    name = models.CharField(max_length=100)
+    price_multiplier = models.DecimalField(max_digits=5, decimal_places=2)
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+
+    def status_sample(self):
+        if self.enabled:
+
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Categoria de Asiento"
+        verbose_name_plural = "Categorias de Asiento"
+
+    def __str__(self):
+        return self.name
+
+
+class Seat(models.Model):
+    train = models.ForeignKey(Train, related_name="seats", on_delete=models.CASCADE)
+    seat_number = models.CharField(max_length=10)
+    category = models.ForeignKey(
+        SeatCategory, related_name="seats", on_delete=models.CASCADE
+    )
+    is_reserved = models.BooleanField(default=False)
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES3,
+        blank=True,
+        default="h",
+    )
+
+    def status_sample(self):
+        if self.enabled:
+
+            STATES = set(STATES3)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    # def save(self, *args, **kwargs):
+    #         # Si es el mismo evento con el que se creo la venta no modificar el precio
+    #         if self._state.adding:
+    #             if self.ve_bl:
+    #                 self.cli_bl = self.ve_bl.cli_ve
+    #                 self.evt_bl = self.ve_bl.evt_ve
+
+    #         super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ["seat_number"]
+        verbose_name = "Asiento"
+        verbose_name_plural = "Asientos"
+
+    def __str__(self):
+        return f"{self.seat_number} ({self.category.name})"
+
+
+class Meal(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES2,
+        blank=True,
+        default="h",
+    )
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Plato"
+        verbose_name_plural = "Platos"
+
+    def __str__(self):
+        return self.name
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES2)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+
+class Merchandise(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField()
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Mercaderia"
+        verbose_name_plural = "Mercaderias"
+
+    def __str__(self):
+        return self.name
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES2)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+
+class Journey(models.Model):
+    JOURNEY_TYPE_CHOICES = [
+        ("TRAIN_ONLY", "Train Only"),
+        ("BUS_AND_TRAIN", "Bus and Train"),
+    ]
+
+    type = models.CharField(max_length=20, choices=JOURNEY_TYPE_CHOICES)
+    description = models.TextField()
+
+    def __str__(self):
+        return f"{self.get_type_display()} - {self.description}"
+
+
+class JourneyStage(models.Model):
+    journey = models.ForeignKey(
+        Journey, related_name="stages", on_delete=models.CASCADE
+    )
+    order = models.PositiveIntegerField()
+    start_station = models.ForeignKey(
+        Station,
+        related_name="start_stages",
         on_delete=models.CASCADE,
         null=True,
-        verbose_name="Código Postal",
-    )
-
-    hab_lv = models.CharField(
-        max_length=1,
-        choices=ESTADOS_TUPLA,
         blank=True,
-        default="h",
     )
-
-    class Meta:
-        ordering = ["desc_lv"]
-        verbose_name = "Lugar de Venta"
-        verbose_name_plural = "Lugares de Venta"
-
-    def __str__(self):
-        return "%s (%s)" % (self.desc_lv, self.dir_lv)
-
-    def muestra_estado(self):
-        if self.hab_lv:
-            ESTADOS = set(ESTADOS_TUPLA)
-            # Retornar el valor correspondiente
-            return ESTADOS.get(self.hab_lv)
-        return None
-
-class LugaresDeEvento(models.Model):
-    id_le = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        help_text="ID único para cada evento",
-    )
-    desc_le = models.CharField(max_length=200)
-    tel_le = models.CharField(max_length=15)
-    lat_le = models.DecimalField(max_digits=10, decimal_places=7)
-    lng_le = models.DecimalField(max_digits=10, decimal_places=7)
-    cod_post_lc = models.ForeignKey(Localidades, on_delete=models.CASCADE, null=True, verbose_name="Código Postal")
-    
-
-    hab_le = models.CharField(
-        max_length=1,
-        choices=ESTADOS_TUPLA,
-        blank=True,
-        default="h",
-    )
-    
-    def muestra_estado(self):
-        if self.hab_le:
-            ESTADOS = set(ESTADOS_TUPLA)
-            # Retornar el valor correspondiente
-            return ESTADOS.get(self.hab_le)
-        return None
-
-    class Meta:
-        ordering = ["id_le"]
-        verbose_name = "Lugar de Evento"
-        verbose_name_plural = "Lugares de Evento"
-
-    def __str__(self):
-        return "%s" % (self.desc_le)
-
-
-class Secciones(models.Model):
-    id_scc = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        help_text="ID único para cada seccion por lugar de evento",
-    )
-    desc_scc = models.CharField(max_length=200)
-    id_le = models.ForeignKey(LugaresDeEvento, on_delete=models.CASCADE, null=True, verbose_name="Lugar de Evento")
-    
-
-    hab_scc = models.CharField(
-        max_length=1,
-        choices=ESTADOS_TUPLA,
-        blank=True,
-        default="h",
-    )
-    
-    def muestra_estado(self):
-        if self.hab_scc:
-
-            ESTADOS = set(ESTADOS_TUPLA)
-            # Retornar el valor correspondiente
-            return ESTADOS.get(self.hab_scc)
-        return None
-
-    class Meta:
-        ordering = ["id_le"]
-        verbose_name = "Sección por Lugar"
-        verbose_name_plural = "Secciones por Lugar"
-
-    def __str__(self):
-        return "%s (%s)" % (self.desc_scc, self.id_le.desc_le)
-    
-class Sectores(models.Model):
-    id_sc = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        help_text="ID único para cada seccion por lugar de evento",
-    )
-    desc_sc = models.CharField(max_length=200)
-    id_scc = models.ForeignKey(Secciones, on_delete=models.CASCADE, null=True, verbose_name="Seccion")
-    
-    filas_sc = models.CharField(max_length=20, help_text="Formato: inicio-final")
-    columns_sc = models.CharField(max_length=20, help_text="Formato: inicio-final")
-    hab_sc = models.CharField(
-        max_length=1,
-        choices=ESTADOS_TUPLA,
-        blank=True,
-        default="h",
-    )
-    
-    def muestra_estado(self):
-        if self.hab_sc:
-
-            ESTADOS = set(ESTADOS_TUPLA)
-            # Retornar el valor correspondiente
-            return ESTADOS.get(self.hab_sc)
-        return None
-
-    class Meta:
-        ordering = ["id_scc"]
-        verbose_name = "Sector por Sección"
-        verbose_name_plural = "Sectores por Sección"
-
-    def __str__(self):
-        return "%s (%s)" % (self.desc_sc, self.id_scc.desc_scc)
-    
-class Asientos(models.Model):
-    id_as = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        help_text="ID único para cada asiento",
-    )
-    fila_as = models.CharField(max_length=20)
-    column_as = models.CharField(max_length=20)
-    id_scc = models.ForeignKey(Secciones, on_delete=models.CASCADE, null=True, verbose_name="Seccion")
-    
-    hab_as = models.CharField(
-        max_length=1,
-        choices=ESTADOS_TUPLA3,
-        blank=True,
-        default="h",
-    )
-    
-    def muestra_estado(self):
-        if self.hab_as:
-
-            ESTADOS = set(ESTADOS_TUPLA3)
-            # Retornar el valor correspondiente
-            return ESTADOS.get(self.hab_as)
-        return None
-
-    class Meta:
-        ordering = ["id_scc"]
-        verbose_name = "Asiento por Sección"
-        verbose_name_plural = "Asientos por Sección"
-
-    def __str__(self):
-        return "Asiento (%s %s)" % (self.fila_as, self.column_as)
-
-
-
-class Eventos(models.Model):
-    id_ev = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        help_text="ID único para cada evento",
-    )
-    nomb_ev = models.CharField(max_length=200)
-    desc_ev = models.CharField(max_length=200)
-    fec_ini_ev = models.DateField(null=True, blank=True)
-    fec_fin_ev = models.DateField(null=True, blank=True)
-    precio_ev = models.FloatField(null=True, blank=True)
-
-    hab_ev = models.CharField(
-        max_length=1,
-        choices=ESTADOS_TUPLA2,
-        blank=True,
-        default="h",
-    )
-
-    class Meta:
-        ordering = ["fec_ini_ev"]
-        verbose_name = "Evento"
-        verbose_name_plural	 = "Eventos"
-
-    def __str__(self):
-        return "%s (%s)" % (self.nomb_ev, self.desc_ev)
-
-    def muestra_estado(self):
-        if self.hab_ev:
-            ESTADOS = set(ESTADOS_TUPLA2)
-            # Retornar el valor correspondiente
-            return ESTADOS.get(self.hab_ev)
-        return None
-
-class EventosPorSeccion(models.Model):
-    id_exs = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        help_text="ID único para cada evento por seccion",
-    )
-    fec_hr_ini_exs = models.DateTimeField(auto_now_add=True)
-    fec_hr_fin_exs = models.DateTimeField(auto_now_add=True)
-    id_scc = models.ForeignKey(Secciones, on_delete=models.CASCADE, null=True, verbose_name="Seccion")
-    id_ev = models.ForeignKey(Eventos, on_delete=models.CASCADE, null=True, verbose_name="Evento")
-    
-    hab_exs = models.CharField(
-        max_length=1,
-        choices=ESTADOS_TUPLA2,
-        blank=True,
-        default="h",
-    )
-
-    class Meta:
-        ordering = ["fec_hr_ini_exs"]
-        verbose_name = "Evento por Sección"
-        verbose_name_plural	 = "Eventos por Sección"
-
-    def __str__(self):
-        return "%s (%s)" % (self.id_ev.desc_ev, self.id_scc.desc_scc)
-
-    def muestra_estado(self):
-        if self.hab_exs:
-            ESTADOS = set(ESTADOS_TUPLA2)
-            # Retornar el valor correspondiente
-            return ESTADOS.get(self.hab_exs)
-        return None
-
-
-class Ventas(models.Model):
-    id_ve = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        help_text="ID único para cada venta",
-    )
-    cli_ve = models.ForeignKey(
-        User,
+    end_station = models.ForeignKey(
+        Station,
+        related_name="end_stages",
         on_delete=models.CASCADE,
         null=True,
-        # Con esto limitamos a que se puedan agregar solo clientes
-        limit_choices_to={"groups__name": "clientes"},
-        verbose_name="Cliente",
+        blank=True,
     )
-    evt_ve = models.ForeignKey(
-        Eventos,
+    start_bus_stop = models.ForeignKey(
+        BusStop,
+        related_name="start_stages",
         on_delete=models.CASCADE,
         null=True,
-        verbose_name="Evento",
+        blank=True,
     )
-    as_ve = models.ForeignKey(
-        Asientos,
+    end_bus_stop = models.ForeignKey(
+        BusStop,
+        related_name="end_stages",
         on_delete=models.CASCADE,
         null=True,
-        verbose_name="Asiento",
+        blank=True,
     )
-    pr_ve = models.DecimalField(max_digits=10, decimal_places=2)
+    train = models.ForeignKey(Train, on_delete=models.CASCADE, null=True, blank=True)
+    bus = models.ForeignKey(Bus, on_delete=models.CASCADE, null=True, blank=True)
+    duration = models.DurationField()
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    class Meta:
+        ordering = ["order"]
+        verbose_name = "Etapa de Recorrido"
+        verbose_name_plural = "Etapas de Recorrido"
+
+    def __str__(self):
+        return f"{self.journey} - Stage {self.order}"
+
+
+class JourneySchedule(models.Model):
+    journey = models.ForeignKey(Journey, on_delete=models.CASCADE)
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    class Meta:
+        ordering = ["journey"]
+        verbose_name = "Cronograma de Recorrido"
+        verbose_name_plural = "Cronogramas de Recorrido"
+
+    def __str__(self):
+        return f"{self.journey} on {self.departure_time}"
+
+
+class Ticket(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    schedule = models.ForeignKey(JourneySchedule, on_delete=models.CASCADE)
+    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
+    purchase_date = models.DateTimeField(auto_now_add=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
 
     # Funcion para reservar el asiento
     def reservarAsiento(self):
-        asiento = Asientos.objects.filter(pk=self.as_ve.pk)
+        asiento = Seat.objects.filter(pk=self.seat.pk)
         asiento.hab_as = "v"
         asiento.save()
-        
 
-    def save(self, *args, **kwargs):
-        # Si es el mismo evento con el que se creo la venta no modificar el precio
-        if self._state.adding:
-            if self.evt_ve:
-                self.pr_ve = self.evt_ve.precio_ev
-        # Sino es el mismo evento con el que se creo la venta modificar el precio de la venta al precio del evento nuevo seleccionado.
-        else:
-            # Si el objeto ya existe en la base de datos
-            old_instance = Ventas.objects.get(pk=self.pk)
-            if old_instance.evt_ve != self.evt_ve:
-                self.pr_ve = self.evt_ve.precio_ev
-                
-        self.reservarAsiento(self)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Si es el mismo evento con el que se creo la venta no modificar el precio
+    #     if self._state.adding:
+    #         if self.evt_ve:
+    #             self.pr_ve = self.evt_ve.precio_ev
+    #     # Sino es el mismo evento con el que se creo la venta modificar el precio de la venta al precio del evento nuevo seleccionado.
+    #     else:
+    #         # Si el objeto ya existe en la base de datos
+    #         old_instance = Ticket.objects.get(pk=self.pk)
+    #         if old_instance.evt_ve != self.evt_ve:
+    #             self.pr_ve = self.evt_ve.precio_ev
 
-    def __str__(self):
-        return "%s (%s)" % (self.id_ve, self.pr_ve)
+    #     self.reservarAsiento(self)
+    #     super().save(*args, **kwargs)
 
-    class Meta:
-        ordering = ["-id_ve"]
-        verbose_name = "Venta"
-        verbose_name_plural = "Ventas"
-
-
-class Boletos(models.Model):
-    id_bl = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        help_text="ID único para cada venta",
-    )
-    cli_bl = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True,
-        # Con esto limitamos a que se puedan agregar solo clientes
-        limit_choices_to={"groups__name": "clientes"},
-        verbose_name="Cliente",
-    )
-    evt_bl = models.ForeignKey(
-        Eventos,
-        on_delete=models.CASCADE,
-        null=True,
-        verbose_name="Evento",
-    )
-    ve_bl = models.ForeignKey(
-        Ventas,
-        on_delete=models.CASCADE,
-        null=True,
-        verbose_name="Venta",
-    )
-    enVenta_bl = models.BooleanField(default=False)
-
-    def save(self, *args, **kwargs):
-        # Si es el mismo evento con el que se creo la venta no modificar el precio
-        if self._state.adding:
-            if self.ve_bl:
-                self.cli_bl = self.ve_bl.cli_ve
-                self.evt_bl = self.ve_bl.evt_ve
-
-        super().save(*args, **kwargs)
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
 
     def __str__(self):
-        return "%s (%s)" % (self.cli_bl, self.evt_bl)
+        return f"Ticket for {self.user.username} on {self.schedule}"
 
     class Meta:
-        ordering = ["-id_bl"]
+        ordering = ["purchase_date"]
         verbose_name = "Boleto"
         verbose_name_plural = "Boletos"
 
 
-@receiver(post_save, sender=Ventas)
-@receiver(post_delete, sender=Ventas)
-def update_an_sale(sender, instance, **kwargs):
-    instance.reservarAsiento()
+class MealOrder(models.Model):
+    ticket = models.ForeignKey(
+        Ticket, related_name="meal_orders", on_delete=models.CASCADE
+    )
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    def __str__(self):
+        return f"{self.quantity} x {self.meal.name} for {self.ticket.user.username}"
+
+    class Meta:
+        ordering = ["ticket"]
+        verbose_name = "Orden de plato"
+        verbose_name_plural = "Ordenes de platos"
+
+
+class MerchandiseOrder(models.Model):
+    ticket = models.ForeignKey(
+        Ticket, related_name="merchandise_orders", on_delete=models.CASCADE
+    )
+    merchandise = models.ForeignKey(Merchandise, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    enabled = models.CharField(
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+
+    def status_sample(self):
+        if self.enabled:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.enabled)
+        return None
+
+    class Meta:
+        ordering = ["ticket"]
+        verbose_name = "Orden de mercadería"
+        verbose_name_plural = "Ordenes de mercadería"
+
+    def __str__(self):
+        return (
+            f"{self.quantity} x {self.merchandise.name} for {self.ticket.user.username}"
+        )
+
+
+# @receiver(post_save, sender=Ventas)
+# @receiver(post_delete, sender=Ventas)
+# def update_an_sale(sender, instance, **kwargs):
+#     instance.reservarAsiento()
