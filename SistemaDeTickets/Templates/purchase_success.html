@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tickets Reserved Successfully</title>
+</head>
+
+<body>
+    {% extends 'base.html' %}
+
+    {% block content %}
+    <h2>Purchase Successful!</h2>
+    <p>Thank you for your purchase. Your tickets have been reserved successfully.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">Return to Home</a>
+    {% endblock %}
+</body>
+
+</html>
