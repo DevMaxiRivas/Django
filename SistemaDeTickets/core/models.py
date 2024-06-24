@@ -432,6 +432,10 @@ class TicketSales(models.Model):
             return STATES.get(self.enabled)
         return None
 
+    def update_total_price(self):
+        self.price = sum(ticket.price for ticket in self.tickets.all())
+        self.save()
+
     def __str__(self):
         return f"Sale for {self.user.username} on {self.purchase_date}"
 
@@ -442,7 +446,9 @@ class TicketSales(models.Model):
 
 
 class Ticket(models.Model):
-    sale = models.ForeignKey(TicketSales, related_name="sale", on_delete=models.CASCADE)
+    sale = models.ForeignKey(
+        TicketSales, related_name="tickets", on_delete=models.CASCADE
+    )
     passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE)
     schedule = models.ForeignKey(JourneySchedule, on_delete=models.CASCADE)
     seat = models.ForeignKey(Seat, on_delete=models.CASCADE)

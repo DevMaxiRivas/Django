@@ -74,59 +74,53 @@ from django.contrib.auth.decorators import login_required
 from .models import TicketSales, Ticket
 from django.db import transaction
 from .forms import TicketFormSet, TicketFormSetHelper
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.core.exceptions import ValidationError
+from .forms import TicketSalesForm, TicketFormSet
 
 
-@login_required  # Unicamente los usuarios logueados pueden reservar boletos
-@transaction.atomic  # Si la funcion devuelve un error, se elimina la venta se hace un rolback en la base de datos
+@login_required
+@transaction.atomic
 def purchase_tickets(request):
-    if request.method == "POST":  # Si se envio el formulario
-        # queryset=Ticket.objects.none() indica que estamos creando nuevos tickets, no editando existente
-        formset = TicketFormSet(request.POST, queryset=Ticket.objects.none())
-        if formset.is_valid():
-            try:
-                with transaction.atomic():
-                    # Crea una nueva venta (TicketSales) asociada al usuario actual.
-                    sale = TicketSales.objects.create(user=request.user)
+    if request.method == "POST":
+        print("POST data:", request.POST)
+        sales_form = TicketSalesForm(request.POST)
+        if sales_form.is_valid():
+            sale = sales_form.save(commit=False)
+            sale.user = request.user
+            sale.save()
+            print("Sale created:", sale)
 
-                    total_price = 0
-                    # Itera sobre cada formulario en el formset. form.cleaned_data contiene los datos validados del formulario.
-                    for form in formset:
-                        if form.cleaned_data and not form.cleaned_data.get(
-                            "DELETE", False
-                        ):
-                            # Crea un nuevo objeto Ticket pero no lo guarda en la base de datos aún (commit=False).
-                            ticket = form.save(commit=False)
-                            ticket.sale = sale
-                            ticket.price = ticket.seat.category.price
-
-                            # Verifica que el asiento no este reservado.
-                            if ticket.seat.is_reserved:
-                                raise ValidationError(
-                                    f"Seat {ticket.seat} is already reserved."
-                                )
-                            # Guarda el ticket en la base de datos
-                            ticket.save()
-                            ticket.reserveSeat()
-                            total_price += ticket.price
-
-                    # Actualiza el precio total de la venta y la guarda en la base de datos.
-                    sale.price = total_price
-                    sale.save()
-
-                # Si todo ha ido bien, redirige al usuario a la página de éxito de la compra.
+            formset = TicketFormSet(request.POST, instance=sale)
+            print("Formset is bound:", formset.is_bound)
+            print("Formset is valid:", formset.is_valid())
+            if formset.is_valid():
+                tickets = formset.save(commit=False)
+                print("Number of tickets:", len(tickets))
+                for ticket in tickets:
+                    ticket.sale = sale
+                    ticket.save()
+                    print("Ticket saved:", ticket)
+                formset.save_m2m()
+                sale.update_total_price()
                 return redirect("purchase_success")
-            except ValidationError as e:
-                # Si se produce un error de validación, elimina la venta creada y añade el error al formset para mostrarlo al usuario.
-                sale.delete()
-                formset.add_error(None, str(e))
+            else:
+                print("Formset errors:", formset.errors)
+                print("Non-form errors:", formset.non_form_errors())
+        else:
+            print("Sales form errors:", sales_form.errors)
     else:
-        # Si la solicitud no es POST crea un formset vacío.
-        formset = TicketFormSet(queryset=Ticket.objects.none())
-    # Crea un helper de crispy forms para el formset
-    helper = TicketFormSetHelper()
-    return render(
-        request, "purchase_tickets.html", {"formset": formset, "helper": helper}
-    )
+        sales_form = TicketSalesForm()
+        formset = TicketFormSet(instance=TicketSales())
+
+    context = {
+        "sales_form": sales_form,
+        "formset": formset,
+        "empty_form": TicketFormSet(instance=TicketSales()).empty_form,
+    }
+    return render(request, "purchase_tickets.html", context)
 
 
 def purchase_success(request):
