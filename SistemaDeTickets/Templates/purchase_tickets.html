@@ -20,35 +20,35 @@
     <div class="container mt-5">
         <h2 class="mb-4">Purchase Tickets</h2>
         <form method="post">
-        {% csrf_token %}
-    	{{ sales_form|crispy }}
-	{{ formset.management_form }}
-	    <div id="ticket-forms">
-        	{% for form in formset %}
-	        <div class="ticket-form card mb-3">
-        	        <div class="card-body">
-                	    <h5 class="card-title">Ticket {{ forloop.counter }}</h5>
-	                    {% for field in form.visible_fields %}
-        	                <div class="form-group">
-                	            {{ field.label_tag }}
-                        	    {{ field }}
-	                            {% if field.errors %}
-        	                        <div class="invalid-feedback">
-                	                    {{ field.errors }}
-                        	        </div>
-	                            {% endif %}
-        	                </div>
-                   	    {% endfor %}
-	                    {% for hidden in form.hidden_fields %}
-        	                {{ hidden }}
-                	    {% endfor %}
+            {% csrf_token %}
+            {{ sales_form|crispy }}
+            {{ formset.management_form }}
+            <div id="ticket-forms">
+                {% for form in formset %}
+                <div class="ticket-form card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Ticket {{ forloop.counter }}</h5>
+                        {% for field in form.visible_fields %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="invalid-feedback">
+                                {{ field.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                        {% endfor %}
+                    </div>
                 </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </div>
-    <button type="button" id="add-ticket" class="btn btn-secondary mt-2 mb-2">Add Another Ticket</button>
-    <button type="submit" class="btn btn-primary">Purchase Tickets</button>
-</form>
+            <button type="button" id="add-ticket" class="btn btn-secondary mt-2 mb-2">Add Another Ticket</button>
+            <button type="submit" class="btn btn-primary">Purchase Tickets</button>
+        </form>
     </div>
 
     <div id="empty-form" style="display:none">
@@ -61,15 +61,14 @@
     </div>
 
     <script>
-       $(document).ready(function() {
-        var formCount = {{ formset.total_form_count }};
+    $(document).ready(function() {
         $('#add-ticket').click(function() {
-            var form_idx = $('#id_ticket_set-TOTAL_FORMS').val();
-            $('#ticket-forms').append($('#empty-form').html().replace(/__prefix__/g, form_idx));
-            $('#id_ticket_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-            formCount++;
-       	});
-       });
+            var form_idx = $('#id_tickets-TOTAL_FORMS').val();
+            var empty_form_html = $('#empty-form').html().replace(/__prefix__/g, form_idx);
+            $('#ticket-forms').append(empty_form_html);
+            $('#id_tickets-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+        });
+    });
     </script>
 </body>
 </html>

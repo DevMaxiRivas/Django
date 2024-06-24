@@ -87,15 +87,15 @@ def purchase_tickets(request):
     if request.method == "POST":
         print("POST data:", request.POST)
         sales_form = TicketSalesForm(request.POST)
+        formset_prefix = "tickets"
+        formset = TicketFormSet(request.POST, prefix=formset_prefix)
+
         if sales_form.is_valid():
             sale = sales_form.save(commit=False)
             sale.user = request.user
             sale.save()
             print("Sale created:", sale)
 
-            formset = TicketFormSet(request.POST, instance=sale)
-            print("Formset is bound:", formset.is_bound)
-            print("Formset is valid:", formset.is_valid())
             if formset.is_valid():
                 tickets = formset.save(commit=False)
                 print("Number of tickets:", len(tickets))
@@ -113,12 +113,13 @@ def purchase_tickets(request):
             print("Sales form errors:", sales_form.errors)
     else:
         sales_form = TicketSalesForm()
-        formset = TicketFormSet(instance=TicketSales())
+        formset_prefix = "tickets"
+        formset = TicketFormSet(prefix=formset_prefix)
 
     context = {
         "sales_form": sales_form,
         "formset": formset,
-        "empty_form": TicketFormSet(instance=TicketSales()).empty_form,
+        "empty_form": TicketFormSet(prefix=formset_prefix).empty_form,
     }
     return render(request, "purchase_tickets.html", context)
 
