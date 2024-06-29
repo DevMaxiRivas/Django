@@ -5,24 +5,17 @@
 
 <head>
     {% load static %}
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <!-- Libreria BoxIcons -->
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
-    <!-- Libreria RemixIcons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-
     <title>Venta de Boletos</title>
 </head>
 
@@ -31,7 +24,7 @@
     <section class="section_ps home_register_ps form-register">
         <div class="container mt-5 center-text">
             <h2 class="mb-4">Purchase Tickets</h2>
-            <form id="ticket-form" method="post" action="{% url 'purchase_tickets' %}">
+            <form id="ticket-form" method="post">
                 {% csrf_token %}
                 {{ sales_form|crispy }}
                 {{ formset.management_form }}
@@ -95,7 +88,7 @@
     <script>
         $(document).ready(function () {
             $('#ticket-form').submit(function (e) {
-                e.preventDefault(); // Prevenir el envío estándar del formulario
+                e.preventDefault();
                 $.ajax({
                     url: $(this).attr('action'),
                     type: 'POST',
@@ -104,12 +97,18 @@
                     success: function (response) {
                         if (response.success) {
                             window.location.href = response.redirect_url;
+                        } else {
+                            for (var key in response.errors) {
+                                var field = $('#' + key);
+                                field.addClass('is-invalid');
+                                field.siblings('.invalid-feedback').text(response.errors[key]);
+                            }
                         }
                     },
                     error: function (xhr) {
                         var response = xhr.responseJSON;
-                        if (response && response.error && response.dni_or_passport) {
-                            openCreatePassengerModal(response.dni_or_passport);
+                        if (response && response.error && response.missing_passengers) {
+                            openCreatePassengerModal(response.missing_passengers);
                         } else {
                             alert('An unexpected error occurred. Please try again.');
                         }
@@ -125,6 +124,11 @@
                     alert('Failed to load modal content. Please try again.');
                 });
             }
+
+            // $('#add-ticket').click(function () {
+            //     var newForm = $('#empty-form').html().replace(/__prefix__/g, $('#ticket-forms .ticket-form').length);
+            //     $('#ticket-forms').append(newForm);
+            // });
 
             $('#add-ticket').click(function () {
                 var form_idx = $('#id_tickets-TOTAL_FORMS').val();

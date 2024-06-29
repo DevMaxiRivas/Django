@@ -416,7 +416,7 @@ class Passenger(models.Model):
 
 
 class TicketSales(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     purchase_date = models.DateTimeField(default=timezone.now)
     enabled = models.CharField(
@@ -438,7 +438,9 @@ class TicketSales(models.Model):
         self.save()
 
     def __str__(self):
-        return f"Sale for {self.user.username} on {self.purchase_date}"
+        if self.user:
+            return f"Sale for {self.user.username} on {self.purchase_date}"
+        return f"Sale on {self.purchase_date}"
 
     class Meta:
         ordering = ["user"]

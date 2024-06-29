@@ -61,9 +61,13 @@ from .models import TicketSales, Ticket
 
 
 class TicketSalesForm(forms.ModelForm):
+    email = forms.EmailField(required=False, label="Email (if not logged in)")
+
     class Meta:
         model = TicketSales
-        fields = []
+        fields = [
+            "email",
+        ]
 
 
 class TicketForm(forms.ModelForm):

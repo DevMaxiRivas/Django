@@ -132,18 +132,21 @@ def purchase_success(request):
 
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.core.mail import send_mail
+from django.conf import settings
 
 
-@login_required
 @require_http_methods(["GET", "POST"])
 @transaction.atomic
 def purchase_tickets(request):
     if request.method == "POST":
+        msg = ""
         sales_form = TicketSalesForm(request.POST)
         formset = TicketFormSet(request.POST, prefix="tickets")
+
         if sales_form.is_valid() and formset.is_valid():
-            # Verificar todos los pasajeros antes de guardar la venta
             all_passengers_exist = True
+
             for form in formset:
                 if form.cleaned_data:
                     dni_or_passport = form.cleaned_data["dni_or_passport"]
@@ -152,35 +155,55 @@ def purchase_tickets(request):
                     ).first()
                     if not passenger:
                         all_passengers_exist = False
-                        return JsonResponse(
-                            {
-                                "error": f"Passenger with DNI/Passport {dni_or_passport} does not exist.",
-                                "dni_or_passport": dni_or_passport,
-                            },
-                            status=400,
-                        )
+                        missing_passengers = dni_or_passport
+                        # break
 
-            # Si todos los pasajeros existen, guardar la venta y los tickets
             if all_passengers_exist:
                 sale = sales_form.save(commit=False)
-                sale.user = request.user
+                email = sales_form.cleaned_data.get("email")
+
+                if request.user.is_authenticated:
+                    sale.user = request.user
+
                 sale.save()
 
                 for form in formset:
                     if form.cleaned_data:
+                        print(form.cleaned_data["dni_or_passport"])
+                        print("Siguiente")
                         dni_or_passport = form.cleaned_data["dni_or_passport"]
-                        passenger = Passenger.objects.get(
+                        passenger = Passenger.objects.filter(
                             dni_or_passport=dni_or_passport
-                        )
+                        ).first()
+                        print(passenger)
                         ticket = form.save(commit=False)
                         ticket.sale = sale
                         ticket.passenger = passenger
+                        msg += "\n" + passenger.dni_or_passport
                         ticket.save()
 
                 sale.update_total_price()
+
+                if not request.user.is_authenticated and email:
+                    send_mail(
+                        "Your Tickets Purchased",
+                        f"Here is the information about your ticket purchase. {msg}",
+                        settings.DEFAULT_FROM_EMAIL,
+                        [email],
+                        fail_silently=False,
+                    )
+
                 return JsonResponse(
                     {"success": True, "redirect_url": reverse("purchase_success")}
                 )
+
+            return JsonResponse(
+                {
+                    "error": "Some passengers are not loaded. Please provide missing details.",
+                    "missing_passengers": missing_passengers,
+                },
+                status=400,
+            )
         else:
             errors = {}
             if not sales_form.is_valid():
@@ -190,6 +213,7 @@ def purchase_tickets(request):
                     if form_errors:
                         errors[f"ticket_{i}"] = form_errors
             return JsonResponse({"errors": errors}, status=400)
+
     else:
         sales_form = TicketSalesForm()
         formset = TicketFormSet(prefix="tickets")
