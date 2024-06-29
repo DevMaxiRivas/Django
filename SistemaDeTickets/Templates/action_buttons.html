@@ -4,6 +4,7 @@
         {% csrf_token %}
         <button class="btn btn-lg btn-danger" type="submit">Cerrar Sesión</button>
         <a href="{% url 'purchase_tickets' %}" class="btn btn-lg btn-success">Reserve su boleto</a>
+        <a href="{% url 'client_purchases' %}" class="btn btn-lg btn-success">Boletos Reservados</a>
     </form>
     {% else %}
     <a class="btn btn-lg btn-primary" href="{% url 'login' %}">Iniciar Sesión</a>

@@ -1,29 +1,49 @@
-# # PAGINA DE INICIO
-
 from typing import Any
-from django.forms import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 
-# # Autenticacion
+# Autenticacion
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required, user_passes_test
 
-# # Vistas
 from django.urls import reverse
+
+# Vistas
+from django.views import View
+from django.views.decorators.http import require_http_methods
 from django.views.generic import (
     ListView,
     TemplateView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-    DetailView,
 )
+
 
 # # Grupos
 from django.contrib.auth.models import Group
 
 # # Formularios
-from .forms import RegisterForm, UserCreationForm
-from django.views import View
+from .forms import (
+    TicketSalesForm,
+    PassengerForm,
+    RegisterForm,
+    TicketFormSet,
+)
+
+# Modelos
+from .models import Passenger, TicketSales, Ticket
+
+# Base de Datos
+from django.db import transaction
+
+# Response
+from django.http import JsonResponse
+
+# Mails
+from django.core.mail import send_mail
+
+# Configuraciones para Mails
+from django.conf import settings
+
+# Listas
+from django.views import generic
 
 
 class HomeView(TemplateView):
@@ -70,70 +90,8 @@ class RegisterView(View):
         return render(request, "registration/register.html", data)
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .models import TicketSales, Ticket, Passenger
-from django.db import transaction
-from .forms import TicketFormSet, TicketFormSetHelper
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.db import transaction
-from django.core.exceptions import ValidationError
-from .forms import TicketSalesForm, TicketFormSet, PassengerForm
-from django.http import JsonResponse
-
-
-# @login_required
-# @transaction.atomic
-# def purchase_tickets(request):
-#     if request.method == "POST":
-#         print("POST data:", request.POST)
-#         sales_form = TicketSalesForm(request.POST)
-#         formset_prefix = "tickets"
-#         formset = TicketFormSet(request.POST, prefix=formset_prefix)
-
-#         if sales_form.is_valid():
-#             sale = sales_form.save(commit=False)
-#             sale.user = request.user
-#             sale.save()
-#             print("Sale created:", sale)
-
-#             if formset.is_valid():
-#                 tickets = formset.save(commit=False)
-#                 print("Number of tickets:", len(tickets))
-#                 for ticket in tickets:
-#                     ticket.sale = sale
-#                     ticket.save()
-#                     print("Ticket saved:", ticket)
-#                 formset.save_m2m()
-#                 sale.update_total_price()
-#                 return redirect("purchase_success")
-#             else:
-#                 print("Formset errors:", formset.errors)
-#                 print("Non-form errors:", formset.non_form_errors())
-#         else:
-#             print("Sales form errors:", sales_form.errors)
-#     else:
-#         sales_form = TicketSalesForm()
-#         formset_prefix = "tickets"
-#         formset = TicketFormSet(prefix=formset_prefix)
-
-#     context = {
-#         "sales_form": sales_form,
-#         "formset": formset,
-#         "empty_form": TicketFormSet(prefix=formset_prefix).empty_form,
-#     }
-#     return render(request, "purchase_tickets.html", context)
-
-
 def purchase_success(request):
     return render(request, "purchase_success.html")
-
-
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.core.mail import send_mail
-from django.conf import settings
 
 
 @require_http_methods(["GET", "POST"])
@@ -249,3 +207,38 @@ def check_passenger(request):
         else:
             return JsonResponse({"exists": False})
     return JsonResponse({"error": "No DNI/Passport provided"}, status=400)
+
+
+# LISTAS
+
+
+def is_client(user):
+    return user.groups.filter(name="clientes").exists()
+
+
+@login_required
+@user_passes_test(is_client)
+def client_purchases(request):
+    sales = TicketSales.objects.filter(user=request.user)
+    sales_with_urls = []
+    for sale in sales:
+        sale_detail_url = reverse("sale_detail", args=[sale.id])
+        sales_with_urls.append(
+            {
+                "sale": sale,
+                "detail_url": sale_detail_url,
+            }
+        )
+    return render(
+        request, "client_purchases.html", {"sales_with_urls": sales_with_urls}
+    )
+
+
+@login_required
+@user_passes_test(is_client)
+def sale_detail(request, sale_id):
+    sale = TicketSales.objects.get(id=sale_id, user=request.user)
+    tickets = (
+        sale.tickets.all()
+    )  # Utiliza el related_name 'tickets' para obtener todos los tickets asociados a esa venta
+    return render(request, "sale_detail.html", {"sale": sale, "tickets": tickets})

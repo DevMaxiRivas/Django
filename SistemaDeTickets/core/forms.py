@@ -1,10 +1,19 @@
 from django import forms
+
+# Autenticacion
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
+# Formularios
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
-from .models import Ticket, Passenger, TicketSales
+from crispy_forms.layout import Submit, Layout, Fieldset, ButtonHolder
+
+# Modelos
+from .models import Passenger, Ticket, TicketSales
+
+# Vistas
+from django.forms import modelformset_factory
+from django.forms import inlineformset_factory
 
 
 class LoginForm(AuthenticationForm):
@@ -36,11 +45,6 @@ class RegisterForm(UserCreationForm):
         return email_field
 
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
-from .models import Passenger, Ticket, TicketSales
-
-
 class PassengerForm(forms.ModelForm):
     class Meta:
         model = Passenger
@@ -51,13 +55,6 @@ class PassengerForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = "post"
         self.helper.add_input(Submit("submit", "Save"))
-
-
-from django.forms import modelformset_factory
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder
-from .models import Ticket, Passenger, JourneySchedule, Seat
-from django.forms import inlineformset_factory
-from .models import TicketSales, Ticket
 
 
 class TicketSalesForm(forms.ModelForm):
@@ -86,22 +83,6 @@ TicketFormSet = inlineformset_factory(
     extra=1,
     can_delete=True,
 )
-
-
-# class TicketForm(forms.ModelForm):
-#     class Meta:
-#         model = Ticket
-#         fields = ["passenger", "schedule", "seat"]
-
-
-# TicketFormSet = inlineformset_factory(
-#     TicketSales,
-#     Ticket,
-#     form=TicketForm,
-#     fields=["passenger", "schedule", "seat"],
-#     extra=1,
-#     can_delete=True,
-# )
 
 
 class TicketFormSetHelper(FormHelper):
