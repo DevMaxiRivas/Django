@@ -66,6 +66,24 @@ class TicketSalesForm(forms.ModelForm):
         fields = []
 
 
+# class TicketForm(forms.ModelForm):
+#     dni_or_passport = forms.CharField(max_length=50, label="DNI/Passport")
+
+#     class Meta:
+#         model = Ticket
+#         fields = ["dni_or_passport", "schedule", "seat"]
+
+
+# TicketFormSet = inlineformset_factory(
+#     TicketSales,
+#     Ticket,
+#     form=TicketForm,
+#     fields=["dni_or_passport", "schedule", "seat"],
+#     extra=1,
+#     can_delete=True,
+# )
+
+
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket

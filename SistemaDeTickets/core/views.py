@@ -126,3 +126,66 @@ def purchase_tickets(request):
 
 def purchase_success(request):
     return render(request, "purchase_success.html")
+
+
+# @login_required
+# @transaction.atomic
+# def purchase_tickets(request):
+#     if request.method == "POST":
+#         sales_form = TicketSalesForm(request.POST)
+#         formset = TicketFormSet(request.POST, prefix="tickets")
+#         if sales_form.is_valid() and formset.is_valid():
+#             sale = sales_form.save(commit=False)
+#             sale.user = request.user
+#             sale.save()
+
+#             for form in formset:
+#                 if form.cleaned_data:
+#                     dni_or_passport = form.cleaned_data["dni_or_passport"]
+#                     passenger, created = Passenger.objects.get_or_create(
+#                         dni_or_passport=dni_or_passport
+#                     )
+
+#                     if created:
+#                         # If a new passenger was created, you might want to set some default values
+#                         passenger.name = "New Passenger"  # You might want to prompt for this information
+#                         passenger.save()
+
+#                     ticket = form.save(commit=False)
+#                     ticket.sale = sale
+#                     ticket.passenger = passenger
+#                     ticket.save()
+
+#             sale.update_total_price()
+#             return redirect("purchase_success")
+#     else:
+#         sales_form = TicketSalesForm()
+#         formset = TicketFormSet(prefix="tickets")
+
+#     context = {
+#         "sales_form": sales_form,
+#         "formset": formset,
+#     }
+#     return render(request, "purchase_tickets.html", context)
+
+
+# def check_passenger(request):
+#     dni_or_passport = request.GET.get("dni_or_passport", None)
+#     if dni_or_passport:
+#         passenger = Passenger.objects.filter(dni_or_passport=dni_or_passport).first()
+#         if passenger:
+#             return JsonResponse({"exists": True, "name": passenger.name})
+#         else:
+#             return JsonResponse({"exists": False})
+#     return JsonResponse({"error": "No DNI/Passport provided"}, status=400)
+
+
+# def create_passenger(request):
+#     if request.method == "POST":
+#         form = PassengerForm(request.POST)
+#         if form.is_valid():
+#             passenger = form.save()
+#             return JsonResponse({"success": True, "name": passenger.name})
+#     else:
+#         form = PassengerForm()
+#     return render(request, "create_passenger.html", {"form": form})
