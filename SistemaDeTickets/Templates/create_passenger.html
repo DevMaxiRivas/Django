@@ -1,7 +1,34 @@
 {% load crispy_forms_tags %}
-
-<form id="passenger-form" method="post">
+<form id="new-passenger-form" method="post" action="{% url 'create_passenger' %}">
     {% csrf_token %}
     {{ form|crispy }}
     <button type="submit" class="btn btn-primary">Create Passenger</button>
 </form>
+
+<script>
+    $(document).ready(function () {
+        $('#new-passenger-form').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        $('#passenger-modal').modal('hide');
+                        alert('Passenger created successfully. Please resubmit your ticket form.');
+                    }
+                },
+                error: function (xhr) {
+                    var response = xhr.responseJSON;
+                    if (response && response.errors) {
+                        alert('Error creating passenger. Please check the form for errors.');
+                    } else {
+                        alert('An unexpected error occurred. Please try again.');
+                    }
+                }
+            });
+        });
+    });
+</script>
