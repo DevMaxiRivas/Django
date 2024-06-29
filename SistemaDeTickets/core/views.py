@@ -142,18 +142,16 @@ def purchase_tickets(request):
         sales_form = TicketSalesForm(request.POST)
         formset = TicketFormSet(request.POST, prefix="tickets")
         if sales_form.is_valid() and formset.is_valid():
-            sale = sales_form.save(commit=False)
-            sale.user = request.user
-            sale.save()
-
+            # Verificar todos los pasajeros antes de guardar la venta
+            all_passengers_exist = True
             for form in formset:
                 if form.cleaned_data:
                     dni_or_passport = form.cleaned_data["dni_or_passport"]
                     passenger = Passenger.objects.filter(
                         dni_or_passport=dni_or_passport
                     ).first()
-
                     if not passenger:
+                        all_passengers_exist = False
                         return JsonResponse(
                             {
                                 "error": f"Passenger with DNI/Passport {dni_or_passport} does not exist.",
@@ -162,15 +160,27 @@ def purchase_tickets(request):
                             status=400,
                         )
 
-                    ticket = form.save(commit=False)
-                    ticket.sale = sale
-                    ticket.passenger = passenger
-                    ticket.save()
+            # Si todos los pasajeros existen, guardar la venta y los tickets
+            if all_passengers_exist:
+                sale = sales_form.save(commit=False)
+                sale.user = request.user
+                sale.save()
 
-            sale.update_total_price()
-            return JsonResponse(
-                {"success": True, "redirect_url": reverse("purchase_success")}
-            )
+                for form in formset:
+                    if form.cleaned_data:
+                        dni_or_passport = form.cleaned_data["dni_or_passport"]
+                        passenger = Passenger.objects.get(
+                            dni_or_passport=dni_or_passport
+                        )
+                        ticket = form.save(commit=False)
+                        ticket.sale = sale
+                        ticket.passenger = passenger
+                        ticket.save()
+
+                sale.update_total_price()
+                return JsonResponse(
+                    {"success": True, "redirect_url": reverse("purchase_success")}
+                )
         else:
             errors = {}
             if not sales_form.is_valid():
