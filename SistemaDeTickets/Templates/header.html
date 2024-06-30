@@ -14,7 +14,13 @@
         {% if user.is_authenticated %}
         <li>
             <a class="nav-link px-2 text-white" href="#">
-                Rol: {{ group_name|title }} | User: {{ user.username }}</a>
+                User: {{ user.username }}</a>
+        </li>
+        <li>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-light me-2" type="submit">Cerrar Sesión</button>
+            </form>
         </li>
         {% else %}
         <a class="btn btn-outline-light me-2" href="{% url 'login' %}">Iniciar Sesión</a>

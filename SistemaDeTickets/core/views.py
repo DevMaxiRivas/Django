@@ -210,8 +210,6 @@ def check_passenger(request):
 
 
 # LISTAS
-
-
 def is_client(user):
     return user.groups.filter(name="clientes").exists()
 

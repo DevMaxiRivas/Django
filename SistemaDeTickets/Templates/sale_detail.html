@@ -19,9 +19,9 @@
 
 <body>
     {% include 'header.html' %}
-    <section class="section_ps form-register">
-        <div class="container mt-5 center-text">
-            <h2 class="mb-4">Detalles de Venta</h2>
+    <section class="section_ps home_ps form-register">
+        <div class="card container mt-5 center-text">
+            <h1 class="mb-3 mt-3">Detalles de Venta</h1>
             <h4>Venta ID: {{ sale.id }}</h4>
             <p>Total: {{ sale.price }}</p>
             <p>Fecha: {{ sale.purchase_date }}</p>
@@ -52,11 +52,15 @@
             {% else %}
             <p>No hay tickets asociados a esta venta.</p>
             {% endif %}
+            <div class="mb-3">
+                {% include 'action_buttons.html' %}
+            </div>
         </div>
     </section>
 
-    {% include 'action_buttons.html' %}
-    {% include 'footer.html' %}
+    <div class="body_ps">
+        {% include 'footer.html' %}
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

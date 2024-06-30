@@ -279,6 +279,13 @@
     letter-spacing: 6px;
 }
 
+.center-text h1 {
+    font-weight: 800;
+    color: #000000;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+}
+
 .tour-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, auto));
