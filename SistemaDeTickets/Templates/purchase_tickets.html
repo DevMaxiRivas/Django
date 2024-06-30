@@ -92,6 +92,26 @@
         $(document).ready(function () {
             $('#ticket-form').submit(function (e) {
                 e.preventDefault();
+
+                // Validacion de campos de formulario
+                var formValid = true;
+                $('#ticket-forms .ticket-form').each(function () {
+                    $(this).find('.form-control').each(function () {
+                        if ($.trim($(this).val()) === '') {
+                            $(this).addClass('is-invalid');
+                            formValid = false;
+                        } else {
+                            $(this).removeClass('is-invalid');
+                        }
+                    });
+                });
+
+                if (!formValid) {
+                    alert("Please fill out all fields in each ticket form.");
+                    return;
+                }
+
+                // Si los formularios estan completos
                 $.ajax({
                     url: $(this).attr('action'),
                     type: 'POST',
@@ -120,18 +140,15 @@
             });
 
             function openCreatePassengerModal(dni_or_passport) {
-                $.get('{% url "create_passenger" %}', { dni_or_passport: dni_or_passport }, function (data) {
+                $.get('{% url "create_passenger" %}', {
+                    dni_or_passport: dni_or_passport
+                }, function (data) {
                     $('#new-passenger-form-container').html(data);
                     $('#passenger-modal').modal('show');
                 }).fail(function () {
                     alert('Failed to load modal content. Please try again.');
                 });
             }
-
-            // $('#add-ticket').click(function () {
-            //     var newForm = $('#empty-form').html().replace(/__prefix__/g, $('#ticket-forms .ticket-form').length);
-            //     $('#ticket-forms').append(newForm);
-            // });
 
             $('#add-ticket').click(function () {
                 var form_idx = $('#id_tickets-TOTAL_FORMS').val();

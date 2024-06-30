@@ -104,8 +104,9 @@ def purchase_tickets(request):
 
         if sales_form.is_valid() and formset.is_valid():
             all_passengers_exist = True
-
+            # print(formset)
             for form in formset:
+                print(type(form))
                 if form.cleaned_data:
                     dni_or_passport = form.cleaned_data["dni_or_passport"]
                     passenger = Passenger.objects.filter(
@@ -114,7 +115,17 @@ def purchase_tickets(request):
                     if not passenger:
                         all_passengers_exist = False
                         missing_passengers = dni_or_passport
-                        # break
+                        break
+                else:
+                    # Si hay un formulario vacío en el formset
+                    print("Formulario vacío")
+                    return JsonResponse(
+                        {
+                            "error": "All ticket forms must be filled out.",
+                            "empty_form": True,
+                        },
+                        status=400,
+                    )
 
             if all_passengers_exist:
                 sale = sales_form.save(commit=False)
