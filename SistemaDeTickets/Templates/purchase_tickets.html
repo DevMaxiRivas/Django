@@ -140,7 +140,11 @@
                         if (response && response.error && response.missing_passengers) {
                             openCreatePassengerModal(response.missing_passengers);
                         } else {
-                            alert('An unexpected error occurred. Please try again.');
+                            if (response && response.empty_form) {
+                                alert('All tickets are marked for deletion');
+                            } else {
+                                alert('An unexpected error occurred. Please try again.');
+                            }
                         }
                     }
                 });

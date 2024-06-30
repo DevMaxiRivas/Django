@@ -104,10 +104,14 @@ def purchase_tickets(request):
 
         if sales_form.is_valid() and formset.is_valid():
             all_passengers_exist = True
+            all_passengers_no_deleted = False
             # print(formset)
             for form in formset:
-                print(type(form))
-                if form.cleaned_data:
+                # print(type(form))
+                if form.cleaned_data and not form.cleaned_data.get("DELETE"):
+                    # print(form.cleaned_data)
+                    all_passengers_no_deleted = True
+                    # print(all_passengers_no_deleted)
                     dni_or_passport = form.cleaned_data["dni_or_passport"]
                     passenger = Passenger.objects.filter(
                         dni_or_passport=dni_or_passport
@@ -115,17 +119,15 @@ def purchase_tickets(request):
                     if not passenger:
                         all_passengers_exist = False
                         missing_passengers = dni_or_passport
-                        # break
-                # else:
-                #     # Si hay un formulario vacío en el formset
-                #     print("Formulario vacío")
-                #     return JsonResponse(
-                #         {
-                #             "error": "All ticket forms must be filled out.",
-                #             "empty_form": True,
-                #         },
-                #         status=400,
-                #     )
+
+            if not all_passengers_no_deleted:
+                return JsonResponse(
+                    {
+                        "error": "All ticket forms must be filled out.",
+                        "empty_form": True,
+                    },
+                    status=400,
+                )
 
             if all_passengers_exist:
                 sale = sales_form.save(commit=False)
@@ -138,13 +140,13 @@ def purchase_tickets(request):
 
                 for form in formset:
                     if form.cleaned_data and not form.cleaned_data.get("DELETE"):
-                        print(form.cleaned_data)
-                        print("Siguiente")
+                        # print(form.cleaned_data)
+                        # print("Siguiente")
                         dni_or_passport = form.cleaned_data["dni_or_passport"]
                         passenger = Passenger.objects.filter(
                             dni_or_passport=dni_or_passport
                         ).first()
-                        print(passenger)
+                        # print(passenger)
                         ticket = form.save(commit=False)
                         ticket.sale = sale
                         ticket.passenger = passenger
