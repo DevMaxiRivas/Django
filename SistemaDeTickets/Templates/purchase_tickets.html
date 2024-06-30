@@ -34,6 +34,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Ticket {{ forloop.counter }}</h5>
                             {% for field in form.visible_fields %}
+                            {% if field.name != 'delete_ticket' %}
                             <div class="form-group">
                                 {{ field.label_tag }}
                                 {{ field }}
@@ -43,6 +44,12 @@
                                 </div>
                                 {% endif %}
                             </div>
+                            {% else %}
+                            <div class="form-check">
+                                {{ field }}
+                                <label class="form-check-label" for="{{ field.id_for_label }}">Eliminar</label>
+                            </div>
+                            {% endif %}
                             {% endfor %}
                             {% for hidden in form.hidden_fields %}
                             {{ hidden }}

@@ -69,6 +69,7 @@ class TicketSalesForm(forms.ModelForm):
 
 class TicketForm(forms.ModelForm):
     dni_or_passport = forms.CharField(max_length=50, label="DNI/Passport")
+    # delete_ticket = forms.BooleanField(required=False, label="Eliminar")
 
     class Meta:
         model = Ticket
