@@ -503,7 +503,9 @@ class Ticket(models.Model):
 
 
 class PurchaseReceipt(models.Model):
-    ticket = models.ForeignKey(Ticket, related_name="receipt", on_delete=models.CASCADE)
+    passenger = models.ForeignKey(
+        Passenger, on_delete=models.CASCADE, null=True, blank=True
+    )
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     purchase_date = models.DateTimeField(default=timezone.now)
     enabled = models.CharField(
@@ -520,18 +522,22 @@ class PurchaseReceipt(models.Model):
             return STATES.get(self.enabled)
         return None
 
+    def update_total_price(self):
+        self.price = sum(meal.unit_price * meal.quantity for meal in self.meals.all())
+        self.save()
+
     def __str__(self):
         return f"Sale for {self.ticket.passenger.name} on {self.purchase_date}"
 
     class Meta:
-        ordering = ["ticket"]
+        ordering = ["purchase_date"]
         verbose_name = "Factura de Venta"
         verbose_name_plural = "Facturas de Ventas"
 
 
 class DetailFoodOrder(models.Model):
     receipt = models.ForeignKey(
-        PurchaseReceipt, related_name="meal_receipt", on_delete=models.CASCADE
+        PurchaseReceipt, related_name="meals", on_delete=models.CASCADE
     )
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)

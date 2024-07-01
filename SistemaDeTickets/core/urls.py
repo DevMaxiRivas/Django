@@ -13,7 +13,11 @@ urlpatterns = [
     path("purchase-success/", views.purchase_success, name="purchase_success"),
     path("check_passenger/", views.check_passenger, name="check_passenger"),
     path("create_passenger/", views.create_passenger, name="create_passenger"),
+    # VENTAS DE COMIDAS
+    path("purchase-foods/", views.purchase_food, name="purchase_foods"),
     # Listas
     path("my-purchases/", client_purchases, name="client_purchases"),
     path("sale/<int:sale_id>/", sale_detail, name="sale_detail"),
+    path("sales/<int:sale_id>/", sale_details, name="sale_details"),
+    path("purchases/", purchases, name="purchases"),
 ]

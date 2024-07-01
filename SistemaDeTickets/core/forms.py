@@ -9,7 +9,14 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, ButtonHolder
 
 # Modelos
-from .models import Passenger, Ticket, TicketSales
+from .models import (
+    Passenger,
+    Ticket,
+    TicketSales,
+    PurchaseReceipt,
+    DetailFoodOrder,
+    DetailsMerchandiseOrder,
+)
 
 # Vistas
 from django.forms import modelformset_factory
@@ -98,3 +105,33 @@ class TicketFormSetHelper(FormHelper):
         )
         self.render_required_fields = True
         self.form_tag = True
+
+    # PurchaseReceipt,
+    # DetailFoodOrder,
+    # DetailsMerchandiseOrder,
+
+
+class PurchaseReceiptForm(forms.ModelForm):
+    dni_or_passport = forms.CharField(max_length=50, label="DNI/Passport")
+
+    class Meta:
+        model = TicketSales
+        fields = [
+            "dni_or_passport",
+        ]
+
+
+class DetailFoodOrderForm(forms.ModelForm):
+    class Meta:
+        model = DetailFoodOrder
+        fields = ["meal", "quantity"]
+
+
+DetailFoodOrderFormSet = inlineformset_factory(
+    PurchaseReceipt,
+    DetailFoodOrder,
+    form=DetailFoodOrderForm,
+    fields=["meal", "quantity"],
+    extra=1,
+    can_delete=True,
+)

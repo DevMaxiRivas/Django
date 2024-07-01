@@ -21,10 +21,12 @@ from django.contrib.auth.models import Group
 
 # # Formularios
 from .forms import (
+    DetailFoodOrderFormSet,
+    PurchaseReceiptForm,
+    TicketFormSet,
     TicketSalesForm,
     PassengerForm,
     RegisterForm,
-    TicketFormSet,
 )
 
 # Modelos
@@ -90,6 +92,7 @@ class RegisterView(View):
         return render(request, "registration/register.html", data)
 
 
+# Registros de Ventas
 def purchase_success(request):
     return render(request, "purchase_success.html")
 
@@ -222,9 +225,95 @@ def check_passenger(request):
     return JsonResponse({"error": "No DNI/Passport provided"}, status=400)
 
 
+# Ventas Comidas
+# PROBAR HACER UNA COMPRA PARA VERIFICAR EL ERROR
+@require_http_methods(["GET", "POST"])
+@transaction.atomic
+def purchase_food(request):
+    if request.method == "POST":
+        sales_form = PurchaseReceiptForm(request.POST)
+        formset = DetailFoodOrderFormSet(request.POST, prefix="meals")
+
+        if sales_form.is_valid() and formset.is_valid():
+            all_foods_no_deleted = False
+            # print(formset)
+            for form in formset:
+                # print(type(form))
+                if form.cleaned_data and not form.cleaned_data.get("DELETE"):
+                    all_foods_no_deleted = True
+
+            if not all_foods_no_deleted:
+                return JsonResponse(
+                    {
+                        "error": "All foods forms must be filled out.",
+                        "empty_form": True,
+                    },
+                    status=400,
+                )
+
+            dni_or_passport = sales_form.cleaned_data.get("dni_or_passport")
+            if dni_or_passport:
+                passenger = Passenger.objects.filter(
+                    dni_or_passport=dni_or_passport
+                ).first()
+
+            if passenger:
+                sale = sales_form.save(commit=False)
+                sale.passenger = passenger
+                sale.save()
+
+                for form in formset:
+                    if form.cleaned_data and not form.cleaned_data.get("DELETE"):
+                        # print(form.cleaned_data)
+                        # print("Siguiente")
+                        # print(passenger)
+                        ticket = form.save(commit=False)
+                        print(sale)
+                        ticket.receipt = sale
+                        ticket.save()
+
+                sale.update_total_price()
+
+                return JsonResponse(
+                    {"success": True, "redirect_url": reverse("purchase_success")}
+                )
+
+            return JsonResponse(
+                {
+                    "error": "Passenger are not loaded. Please provide missing details.",
+                    "no_exist_passenger": True,
+                },
+                status=400,
+            )
+        else:
+            errors = {}
+            if not sales_form.is_valid():
+                errors.update(sales_form.errors)
+            if not formset.is_valid():
+                for i, form_errors in enumerate(formset.errors):
+                    if form_errors:
+                        errors[f"ticket_{i}"] = form_errors
+            return JsonResponse({"errors": errors}, status=400)
+
+    else:
+        sales_form = PurchaseReceiptForm()
+        formset = DetailFoodOrderFormSet(prefix="meals")
+
+    context = {
+        "sales_form": sales_form,
+        "formset": formset,
+        "empty_form": DetailFoodOrderFormSet(prefix="meals").empty_form,
+    }
+    return render(request, "purchase_tickets.html", context)
+
+
 # LISTAS
 def is_client(user):
     return user.groups.filter(name="clientes").exists()
+
+
+def is_salesman(user):
+    return user.groups.filter(name="vendedores").exists()
 
 
 @login_required
@@ -248,7 +337,33 @@ def client_purchases(request):
 @login_required
 @user_passes_test(is_client)
 def sale_detail(request, sale_id):
-    sale = TicketSales.objects.get(id=sale_id, user=request.user)
+    sale = TicketSales.objects.all(id=sale_id)
+    tickets = (
+        sale.tickets.all()
+    )  # Utiliza el related_name 'tickets' para obtener todos los tickets asociados a esa venta
+    return render(request, "sale_detail.html", {"sale": sale, "tickets": tickets})
+
+
+@login_required
+@user_passes_test(is_salesman)
+def purchases(request):
+    sales = TicketSales.objects.all()
+    sales_with_urls = []
+    for sale in sales:
+        sale_detail_url = reverse("sale_details", args=[sale.id])
+        sales_with_urls.append(
+            {
+                "sale": sale,
+                "detail_url": sale_detail_url,
+            }
+        )
+    return render(request, "purchases.html", {"sales_with_urls": sales_with_urls})
+
+
+@login_required
+@user_passes_test(is_salesman)
+def sale_details(request, sale_id):
+    sale = TicketSales.objects.get(id=sale_id)
     tickets = (
         sale.tickets.all()
     )  # Utiliza el related_name 'tickets' para obtener todos los tickets asociados a esa venta
