@@ -211,13 +211,6 @@
                                 $('#passenger-gender').text(data.passenger.gender);
                                 $('#passenger-origin_country').text(data.passenger.origin_country);
                                 $('#view-passenger-modal').modal('show');
-
-                                // Opcionalmente, llenar los campos del formulario con la información del pasajero
-                                inputField.closest('.ticket-form').find('.passenger-name').val(data.passenger.name);
-                                inputField.closest('.ticket-form').find('.passenger-gender').val(data.passenger.gender);
-                                inputField.closest('.ticket-form').find('.passenger-origin_country').val(data.passenger.origin_country);
-                            } else {
-                                alert(data.error);
                             }
                         }
                     });
