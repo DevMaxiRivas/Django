@@ -527,7 +527,9 @@ class PurchaseReceipt(models.Model):
         self.save()
 
     def __str__(self):
-        return f"Sale for {self.ticket.passenger.name} on {self.purchase_date}"
+        if self.passenger:
+            return f"Sale for {self.passenger.name} on {self.purchase_date}"
+        return f"Sale on {self.purchase_date}"
 
     class Meta:
         ordering = ["purchase_date"]

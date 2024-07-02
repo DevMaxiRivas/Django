@@ -115,7 +115,7 @@ class PurchaseReceiptForm(forms.ModelForm):
     dni_or_passport = forms.CharField(max_length=50, label="DNI/Passport")
 
     class Meta:
-        model = TicketSales
+        model = PurchaseReceipt
         fields = [
             "dni_or_passport",
         ]

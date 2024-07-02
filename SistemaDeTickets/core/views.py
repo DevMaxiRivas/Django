@@ -233,12 +233,11 @@ def purchase_food(request):
     if request.method == "POST":
         sales_form = PurchaseReceiptForm(request.POST)
         formset = DetailFoodOrderFormSet(request.POST, prefix="meals")
-
+        # print(formset)
         if sales_form.is_valid() and formset.is_valid():
             all_foods_no_deleted = False
             # print(formset)
-            for form in formset:
-                # print(type(form))
+            for form in formset:  # print(type(form))
                 if form.cleaned_data and not form.cleaned_data.get("DELETE"):
                     all_foods_no_deleted = True
 
@@ -264,9 +263,8 @@ def purchase_food(request):
 
                 for form in formset:
                     if form.cleaned_data and not form.cleaned_data.get("DELETE"):
-                        # print(form.cleaned_data)
-                        # print("Siguiente")
-                        # print(passenger)
+                        print(form.cleaned_data)
+                        print("Siguiente")
                         ticket = form.save(commit=False)
                         print(sale)
                         ticket.receipt = sale
@@ -280,7 +278,7 @@ def purchase_food(request):
 
             return JsonResponse(
                 {
-                    "error": "Passenger are not loaded. Please provide missing details.",
+                    "error": "Passenger are not loaded.",
                     "no_exist_passenger": True,
                 },
                 status=400,
@@ -304,7 +302,7 @@ def purchase_food(request):
         "formset": formset,
         "empty_form": DetailFoodOrderFormSet(prefix="meals").empty_form,
     }
-    return render(request, "purchase_tickets.html", context)
+    return render(request, "purchase_food.html", context)
 
 
 # LISTAS
