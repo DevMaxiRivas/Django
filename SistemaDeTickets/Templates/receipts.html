@@ -14,20 +14,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <title>Mis Compras</title>
+    <title>Ventas</title>
 </head>
 
 <body>
     {% include 'header.html' %}
     <section class="section_ps home_ps form-register">
         <div class="card container mt-5 center-text">
-            <h1 class="mb-3 mt-3">Mis Compras</h1>
+            <h1 class="mb-3 mt-3">Ventas</h1>
             {% if sales_with_urls %}
             <div class="list-group">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Pasajero</th>
                             <th>Total</th>
                             <th>Fecha</th>
                             <th>Acción</th>
@@ -36,9 +37,10 @@
                     <tbody>
                         {% for item in sales_with_urls %}
                         <tr>
-                            <td>{{ item.sale.id }}</td>
-                            <td>{{ item.sale.price }}</td>
-                            <td>{{ item.sale.purchase_date }}</td>
+                            <td>{{ item.receipt.id }}</td>
+                            <td>{{ item.receipt.passenger.dni_or_passport }}</td>
+                            <td>{{ item.receipt.price }}</td>
+                            <td>{{ item.receipt.purchase_date }}</td>
                             <td>
                                 <a href="{{ item.detail_url }}" class="btn btn-primary">Ver Tickets</a>
                             </td>
@@ -48,7 +50,7 @@
                 </table>
             </div>
             {% else %}
-            <p>No has realizado ninguna compra.</p>
+            <p>No se ha realizado ninguna venta.</p>
             {% endif %}
         </div>
     </section>

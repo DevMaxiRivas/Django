@@ -14,41 +14,46 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <title>Mis Compras</title>
+    <title>Detalles de Venta</title>
 </head>
 
 <body>
     {% include 'header.html' %}
     <section class="section_ps home_ps form-register">
         <div class="card container mt-5 center-text">
-            <h1 class="mb-3 mt-3">Mis Compras</h1>
-            {% if sales_with_urls %}
-            <div class="list-group">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Total</th>
-                            <th>Fecha</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in sales_with_urls %}
-                        <tr>
-                            <td>{{ item.sale.id }}</td>
-                            <td>{{ item.sale.price }}</td>
-                            <td>{{ item.sale.purchase_date }}</td>
-                            <td>
-                                <a href="{{ item.detail_url }}" class="btn btn-primary">Ver Tickets</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <h1 class="mb-3 mt-3">Detalles de Venta</h1>
+            <h4>Venta ID: {{ receipt.id }}</h4>
+            <h4>Pasajero: {{ receipt.passenger.dni_or_passport }}</h4>
+            <p>Total: {{ receipt.price }}</p>
+            <p>Fecha: {{ receipt.purchase_date }}</p>
+
+            {% if details %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID Detalle</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detail in details %}
+                    <tr>
+                        <td>{{ detail.id }}</td>
+                        {% if detail.meal %}
+                        <td>{{ detail.meal }}</td>
+                        {% elif detail.merchandise %}
+                        <td>{{ detail.merchandise }}</td>
+                        {% endif %}
+                        <td>{{ detail.quantity }}</td>
+                        <td>{{ detail.unit_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             {% else %}
-            <p>No has realizado ninguna compra.</p>
+            <p>No hay detalles asociados a este recibo.</p>
             {% endif %}
         </div>
     </section>

@@ -528,6 +528,13 @@ class PurchaseReceipt(models.Model):
         self.price = sum(meal.unit_price * meal.quantity for meal in self.meals.all())
         self.save()
 
+    def update_total_price_of_merchandise(self):
+        self.price = sum(
+            merchandise.unit_price * merchandise.quantity
+            for merchandise in self.merchandises.all()
+        )
+        self.save()
+
     def __str__(self):
         if self.passenger:
             return f"Sale for {self.passenger.name} on {self.purchase_date}"
@@ -603,7 +610,7 @@ class DetailFoodOrder(models.Model):
 
 class DetailsMerchandiseOrder(models.Model):
     receipt = models.ForeignKey(
-        PurchaseReceipt, related_name="merchandise_receipt", on_delete=models.CASCADE
+        PurchaseReceipt, related_name="merchandises", on_delete=models.CASCADE
     )
     merchandise = models.ForeignKey(Merchandise, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)

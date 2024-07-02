@@ -54,15 +54,13 @@
                 </table>
             </div>
             {% else %}
-            <p>No has realizado ninguna compra.</p>
+            <p>No se ha realizado ninguna compra de boletos.</p>
             {% endif %}
-            <div class="mb-3">
-                {% include 'action_buttons.html' %}
-            </div>
         </div>
     </section>
 
     <div class="body_ps">
+        {% include 'action_buttons.html' %}
         {% include 'footer.html' %}
     </div>
 

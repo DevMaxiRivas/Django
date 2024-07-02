@@ -16,9 +16,19 @@ urlpatterns = [
     path("get_passenger_info/", get_passenger_info, name="get_passenger_info"),
     # VENTAS DE COMIDAS
     path("purchase-foods/", views.purchase_food, name="purchase_foods"),
+    path(
+        "purchase-merchandise/", views.purchase_merchandise, name="purchase_merchandise"
+    ),
     # Listas
+    # Clientes
     path("my-purchases/", client_purchases, name="client_purchases"),
     path("sale/<int:sale_id>/", sale_detail, name="sale_detail"),
+    # Vendedores
     path("sales/<int:sale_id>/", sale_details, name="sale_details"),
+    # Administradores
     path("purchases/", purchases, name="purchases"),
+    path("receipts/", receipts, name="receipts"),
+    path("receipt-details/<int:receipt_id>/", receipt_details, name="receipt_details"),
+    path("journeys/", journeys, name="journeys"),
+    path("journey_schedules/", journey_schedules, name="journey_schedules"),
 ]

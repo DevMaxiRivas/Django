@@ -21,6 +21,7 @@ from django.contrib.auth.models import Group
 
 # # Formularios
 from .forms import (
+    DetailsMerchandiseOrderSet,
     DetailFoodOrderFormSet,
     PurchaseReceiptForm,
     TicketFormSet,
@@ -30,7 +31,7 @@ from .forms import (
 )
 
 # Modelos
-from .models import Passenger, TicketSales, Ticket
+from .models import Passenger, TicketSales, PurchaseReceipt, Journey, JourneySchedule
 
 # Base de Datos
 from django.db import transaction
@@ -46,6 +47,19 @@ from django.conf import settings
 
 # Listas
 from django.views import generic
+
+
+# Control de Acceso
+def is_client(user):
+    return user.groups.filter(name="clientes").exists()
+
+
+def is_salesman(user):
+    return user.groups.filter(name="vendedores").exists()
+
+
+def is_admin(user):
+    return user.groups.filter(name="administrativos").exists()
 
 
 class HomeView(TemplateView):
@@ -247,9 +261,9 @@ def check_passenger(request):
 
 
 # Ventas Comidas
-# PROBAR HACER UNA COMPRA PARA VERIFICAR EL ERROR
 @require_http_methods(["GET", "POST"])
 @transaction.atomic
+@user_passes_test(is_salesman)
 def purchase_food(request):
     if request.method == "POST":
         sales_form = PurchaseReceiptForm(request.POST)
@@ -286,10 +300,10 @@ def purchase_food(request):
                     if form.cleaned_data and not form.cleaned_data.get("DELETE"):
                         print(form.cleaned_data)
                         print("Siguiente")
-                        ticket = form.save(commit=False)
+                        order_detail = form.save(commit=False)
                         print(sale)
-                        ticket.receipt = sale
-                        ticket.save()
+                        order_detail.receipt = sale
+                        order_detail.save()
 
                 sale.update_total_price()
 
@@ -311,7 +325,7 @@ def purchase_food(request):
             if not formset.is_valid():
                 for i, form_errors in enumerate(formset.errors):
                     if form_errors:
-                        errors[f"ticket_{i}"] = form_errors
+                        errors[f"order_detail_{i}"] = form_errors
             return JsonResponse({"errors": errors}, status=400)
 
     else:
@@ -326,15 +340,87 @@ def purchase_food(request):
     return render(request, "purchase_food.html", context)
 
 
+# Ventas Productos
+@require_http_methods(["GET", "POST"])
+@transaction.atomic
+@user_passes_test(is_salesman)
+def purchase_merchandise(request):
+    if request.method == "POST":
+        sales_form = PurchaseReceiptForm(request.POST)
+        formset = DetailsMerchandiseOrderSet(request.POST, prefix="merchandises")
+        # print(formset)
+        if sales_form.is_valid() and formset.is_valid():
+            all_merchandises_no_deleted = False
+            # print(formset)
+            for form in formset:  # print(type(form))
+                if form.cleaned_data and not form.cleaned_data.get("DELETE"):
+                    all_merchandises_no_deleted = True
+
+            if not all_merchandises_no_deleted:
+                return JsonResponse(
+                    {
+                        "error": "All merchandise forms must be filled out.",
+                        "empty_form": True,
+                    },
+                    status=400,
+                )
+
+            dni_or_passport = sales_form.cleaned_data.get("dni_or_passport")
+            if dni_or_passport:
+                passenger = Passenger.objects.filter(
+                    dni_or_passport=dni_or_passport
+                ).first()
+
+            if passenger:
+                sale = sales_form.save(commit=False)
+                sale.passenger = passenger
+                sale.save()
+
+                for form in formset:
+                    if form.cleaned_data and not form.cleaned_data.get("DELETE"):
+                        print(form.cleaned_data)
+                        print("Siguiente")
+                        order_detail = form.save(commit=False)
+                        print(sale)
+                        order_detail.receipt = sale
+                        order_detail.save()
+
+                sale.update_total_price_of_merchandise()
+
+                return JsonResponse(
+                    {"success": True, "redirect_url": reverse("purchase_success")}
+                )
+
+            return JsonResponse(
+                {
+                    "error": "Passenger are not loaded.",
+                    "no_exist_passenger": True,
+                },
+                status=400,
+            )
+        else:
+            errors = {}
+            if not sales_form.is_valid():
+                errors.update(sales_form.errors)
+            if not formset.is_valid():
+                for i, form_errors in enumerate(formset.errors):
+                    if form_errors:
+                        errors[f"order_detail_{i}"] = form_errors
+            return JsonResponse({"errors": errors}, status=400)
+
+    else:
+        sales_form = PurchaseReceiptForm()
+        formset = DetailsMerchandiseOrderSet(prefix="merchandises")
+
+    context = {
+        "sales_form": sales_form,
+        "formset": formset,
+        "empty_form": DetailsMerchandiseOrderSet(prefix="merchandises").empty_form,
+    }
+    return render(request, "purchase_merchandise.html", context)
+
+
 # LISTAS
-def is_client(user):
-    return user.groups.filter(name="clientes").exists()
-
-
-def is_salesman(user):
-    return user.groups.filter(name="vendedores").exists()
-
-
 @login_required
 @user_passes_test(is_client)
 def client_purchases(request):
@@ -387,3 +473,48 @@ def sale_details(request, sale_id):
         sale.tickets.all()
     )  # Utiliza el related_name 'tickets' para obtener todos los tickets asociados a esa venta
     return render(request, "sale_detail.html", {"sale": sale, "tickets": tickets})
+
+
+@login_required
+@user_passes_test(is_admin)
+def receipts(request):
+    sales = PurchaseReceipt.objects.all()
+    sales_with_urls = []
+    for sale in sales:
+        print(sale)
+        sale_detail_url = reverse("receipt_details", args=[sale.id])
+        sales_with_urls.append(
+            {
+                "receipt": sale,
+                "detail_url": sale_detail_url,
+            }
+        )
+    return render(request, "receipts.html", {"sales_with_urls": sales_with_urls})
+
+
+@login_required
+@user_passes_test(is_admin)
+def receipt_details(request, receipt_id):
+    receipt = PurchaseReceipt.objects.get(id=receipt_id)
+    details = receipt.merchandises.all()
+    if details.count() == 0:
+        details = receipt.meals.all()
+    return render(
+        request, "receipt_detail.html", {"receipt": receipt, "details": details}
+    )
+
+
+@login_required
+@user_passes_test(is_admin)
+def journeys(request):
+    journeys = Journey.objects.all()
+    return render(request, "journeys.html", {"journeys": journeys})
+
+
+@login_required
+@user_passes_test(is_admin)
+def journey_schedules(request):
+    journey_schedules = JourneySchedule.objects.all()
+    return render(
+        request, "journey_schedules.html", {"journey_schedules": journey_schedules}
+    )

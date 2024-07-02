@@ -21,34 +21,32 @@
     {% include 'header.html' %}
     <section class="section_ps home_ps form-register">
         <div class="card container mt-5 center-text">
-            <h1 class="mb-3 mt-3">Mis Compras</h1>
-            {% if sales_with_urls %}
+            <h1 class="mb-3 mt-3">Cronograma de Recorridos</h1>
+            {% if journey_schedules %}
             <div class="list-group">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Total</th>
-                            <th>Fecha</th>
-                            <th>Acción</th>
+                            <th>Tipo de Recorrido </th>
+                            <th>Hora de Salida</th>
+                            <th>Hora de Llegada</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in sales_with_urls %}
+                        {% for journey_schedule in journey_schedules %}
                         <tr>
-                            <td>{{ item.sale.id }}</td>
-                            <td>{{ item.sale.price }}</td>
-                            <td>{{ item.sale.purchase_date }}</td>
-                            <td>
-                                <a href="{{ item.detail_url }}" class="btn btn-primary">Ver Tickets</a>
-                            </td>
+                            <td>{{ journey_schedule.id }}</td>
+                            <td>{{ journey_schedule.journey }}</td>
+                            <td>{{ journey_schedule.departure_time }}</td>
+                            <td>{{ journey_schedule.arrival_time }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
             {% else %}
-            <p>No has realizado ninguna compra.</p>
+            <p>No se registraron cronogramas para recorridos.</p>
             {% endif %}
         </div>
     </section>

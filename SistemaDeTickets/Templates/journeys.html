@@ -21,34 +21,30 @@
     {% include 'header.html' %}
     <section class="section_ps home_ps form-register">
         <div class="card container mt-5 center-text">
-            <h1 class="mb-3 mt-3">Mis Compras</h1>
-            {% if sales_with_urls %}
+            <h1 class="mb-3 mt-3">Recorridos</h1>
+            {% if journeys %}
             <div class="list-group">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Total</th>
-                            <th>Fecha</th>
-                            <th>Acción</th>
+                            <th>Tipo</th>
+                            <th>Descripcion</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in sales_with_urls %}
+                        {% for journey in journeys %}
                         <tr>
-                            <td>{{ item.sale.id }}</td>
-                            <td>{{ item.sale.price }}</td>
-                            <td>{{ item.sale.purchase_date }}</td>
-                            <td>
-                                <a href="{{ item.detail_url }}" class="btn btn-primary">Ver Tickets</a>
-                            </td>
+                            <td>{{ journey.id }}</td>
+                            <td>{{ journey.type }}</td>
+                            <td>{{ journey.description }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
             {% else %}
-            <p>No has realizado ninguna compra.</p>
+            <p>No se registraron recorridos.</p>
             {% endif %}
         </div>
     </section>

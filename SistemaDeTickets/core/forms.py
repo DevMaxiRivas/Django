@@ -141,3 +141,19 @@ DetailFoodOrderFormSet = inlineformset_factory(
     extra=1,
     can_delete=True,
 )
+
+
+class DetailsMerchandiseOrderForm(forms.ModelForm):
+    class Meta:
+        model = DetailsMerchandiseOrder
+        fields = ["merchandise", "quantity"]
+
+
+DetailsMerchandiseOrderSet = inlineformset_factory(
+    PurchaseReceipt,
+    DetailsMerchandiseOrder,
+    form=DetailsMerchandiseOrderForm,
+    fields=["merchandise", "quantity"],
+    extra=1,
+    can_delete=True,
+)
