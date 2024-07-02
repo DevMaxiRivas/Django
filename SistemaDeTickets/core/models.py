@@ -377,6 +377,8 @@ class Passenger(models.Model):
     name = models.CharField(max_length=100)
     dni_or_passport = models.CharField(max_length=50)
     origin_country = models.CharField(max_length=100)
+    emergency_telephone = models.CharField(max_length=50, null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     # Telefono (Emergencia)
     # Fecha de Nacimiento
     GENDER = (

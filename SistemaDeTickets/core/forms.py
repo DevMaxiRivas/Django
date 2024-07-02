@@ -55,7 +55,14 @@ class RegisterForm(UserCreationForm):
 class PassengerForm(forms.ModelForm):
     class Meta:
         model = Passenger
-        fields = ["name", "dni_or_passport", "gender", "origin_country"]
+        fields = [
+            "name",
+            "dni_or_passport",
+            "emergency_telephone",
+            "date_of_birth",
+            "gender",
+            "origin_country",
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -75,8 +82,11 @@ class TicketSalesForm(forms.ModelForm):
 
 
 class TicketForm(forms.ModelForm):
-    dni_or_passport = forms.CharField(max_length=50, label="DNI/Passport")
-    # delete_ticket = forms.BooleanField(required=False, label="Eliminar")
+    dni_or_passport = forms.CharField(
+        max_length=50,
+        label="DNI/Passport",
+        widget=forms.TextInput(attrs={"class": "dni_or_passport"}),
+    )
 
     class Meta:
         model = Ticket
@@ -105,10 +115,6 @@ class TicketFormSetHelper(FormHelper):
         )
         self.render_required_fields = True
         self.form_tag = True
-
-    # PurchaseReceipt,
-    # DetailFoodOrder,
-    # DetailsMerchandiseOrder,
 
 
 class PurchaseReceiptForm(forms.ModelForm):

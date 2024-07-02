@@ -73,6 +73,29 @@
         </div>
     </section>
 
+    <!-- Modal para visualizar información del pasajero -->
+    <div id="view-passenger-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Passenger Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Name: <span id="passenger-name"></span></p>
+                    <p>DNI/Passport: <span id="passenger-dni_or_passport"></span></p>
+                    <p>Emergency Telephone: <span id="passenger-emergency_telephone"></span></p>
+                    <p>Date of Birth: <span id="passenger-date_of_birth"></span></p>
+                    <p>Gender: <span id="passenger-gender"></span></p>
+                    <p>Origin Country: <span id="passenger-origin_country"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para crear un nuevo pasajero -->
     <div id="passenger-modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -167,6 +190,40 @@
                 $('#ticket-forms').append(empty_form_html);
                 $('#id_tickets-TOTAL_FORMS').val(parseInt(form_idx) + 1);
             });
+
+            $(document).on('blur', '.dni_or_passport', function () {
+                var dni_or_passport = $(this).val();
+                var inputField = $(this); // Referencia al campo de entrada
+                console.log(dni_or_passport);
+                if (dni_or_passport) {
+                    $.ajax({
+                        url: '{% url "get_passenger_info" %}',
+                        data: {
+                            'dni_or_passport': dni_or_passport
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.success) {
+                                $('#passenger-name').text(data.passenger.name);
+                                $('#passenger-dni_or_passport').text(data.passenger.dni_or_passport);
+                                $('#passenger-date_of_birth').text(data.passenger.date_of_birth);
+                                $('#passenger-emergency_telephone').text(data.passenger.emergency_telephone);
+                                $('#passenger-gender').text(data.passenger.gender);
+                                $('#passenger-origin_country').text(data.passenger.origin_country);
+                                $('#view-passenger-modal').modal('show');
+
+                                // Opcionalmente, llenar los campos del formulario con la información del pasajero
+                                inputField.closest('.ticket-form').find('.passenger-name').val(data.passenger.name);
+                                inputField.closest('.ticket-form').find('.passenger-gender').val(data.passenger.gender);
+                                inputField.closest('.ticket-form').find('.passenger-origin_country').val(data.passenger.origin_country);
+                            } else {
+                                alert(data.error);
+                            }
+                        }
+                    });
+                }
+            });
+
         });
     </script>
 </body>

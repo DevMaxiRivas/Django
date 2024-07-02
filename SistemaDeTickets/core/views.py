@@ -200,6 +200,27 @@ def purchase_tickets(request):
     return render(request, "purchase_tickets.html", context)
 
 
+def get_passenger_info(request):
+    dni_or_passport = request.GET.get("dni_or_passport")
+    try:
+        passenger = Passenger.objects.get(dni_or_passport=dni_or_passport)
+        if passenger.gender == "m":
+            genero = "Man"
+        else:
+            genero = "Woman"
+        data = {
+            "name": passenger.name,
+            "dni_or_passport": passenger.dni_or_passport,
+            "emergency_telephone": passenger.emergency_telephone,
+            "date_of_birth": passenger.date_of_birth,
+            "gender": genero,
+            "origin_country": passenger.origin_country,
+        }
+        return JsonResponse({"success": True, "passenger": data})
+    except Passenger.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Passenger not found"})
+
+
 def create_passenger(request):
     if request.method == "POST":
         form = PassengerForm(request.POST)

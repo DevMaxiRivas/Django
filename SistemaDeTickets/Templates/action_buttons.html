@@ -1,7 +1,7 @@
 <div class="text-center mt-3">
     {% if user.is_authenticated %}
     <a href="{% url 'purchase_tickets' %}" class="btn btn-lg btn-success">Reserve su boleto</a>
-    <a href="{% url 'purchase_foods' %}" class="btn btn-lg btn-success">Venda Comida</a>
+    <a href="{% url 'purchase_foods' %}" class="btn btn-lg btn-success">Venta Platillos</a>
     <a href="{% url 'client_purchases' %}" class="btn btn-lg btn-primary">Boletos Reservados</a>
     <a href="{% url 'purchases' %}" class="btn btn-lg btn-primary">Boletos</a>
     {% else %}
