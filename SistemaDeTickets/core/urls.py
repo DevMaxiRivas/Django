@@ -11,6 +11,11 @@ urlpatterns = [
     # VENTA DE TICKETS
     path("purchase-tickets/", views.purchase_tickets, name="purchase_tickets"),
     path("purchase-success/", views.purchase_success, name="purchase_success"),
+    # Pagos
+    path("payment_successful/", views.payment_successful, name="payment_successful"),
+    path("payment_failed/", views.payment_failed, name="payment_failed"),
+    path("payment_pending/", views.payment_pending, name="payment_pending"),
+    # COMPROBACIÓN DE PASAJEROS
     path("check_passenger/", views.check_passenger, name="check_passenger"),
     path("create_passenger/", views.create_passenger, name="create_passenger"),
     path("get_passenger_info/", get_passenger_info, name="get_passenger_info"),

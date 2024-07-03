@@ -56,6 +56,9 @@ from django.conf import settings
 # Listas
 from django.views import generic
 
+# Pagos
+import mercadopago
+
 
 # Control de Acceso
 def is_client(user):
@@ -199,8 +202,41 @@ def purchase_tickets(request):
                         fail_silently=False,
                     )
 
+                # Crear una instancia de Mercado Pago
+                mp = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
+
+                # Crear una preferencia de pago
+                preference_data = {
+                    "items": [
+                        {
+                            "title": "Tickets",
+                            "quantity": 1,
+                            "currency_id": "ARS",
+                            "unit_price": float(sale.price),
+                        }
+                    ],
+                    "back_urls": {
+                        "success": request.build_absolute_uri(
+                            reverse("purchase_success")
+                        ),
+                        "failure": request.build_absolute_uri(reverse("home")),
+                        "pending": request.build_absolute_uri(
+                            reverse("payment_pending")
+                        ),
+                    },
+                    "auto_return": "approved",
+                    "payment_methods": {
+                        "excluded_payment_types": [{"id": "ticket"}],
+                        "installments": 1,
+                    },
+                }
+
+                preference_response = mp.preference().create(preference_data)
+                preference = preference_response["response"]
+
+                print("Ya paso la creacion de preference")
                 return JsonResponse(
-                    {"success": True, "redirect_url": reverse("purchase_success")}
+                    {"success": True, "init_point": preference["sandbox_init_point"]}
                 )
 
             return JsonResponse(
@@ -238,6 +274,18 @@ def purchase_tickets(request):
             "empty_form": TicketFormSet(prefix="tickets").empty_form,
         }
     return render(request, "purchase_tickets.html", context)
+
+
+def payment_successful(request):
+    return render(request, "payment_successful.html")
+
+
+def payment_failed(request):
+    return render(request, "payment_failed.html")
+
+
+def payment_pending(request):
+    return render(request, "payment_pending.html")
 
 
 def get_passenger_info(request):
