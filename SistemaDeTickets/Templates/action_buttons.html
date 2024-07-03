@@ -1,21 +1,20 @@
 <section class="text-center">
     {% if user.is_authenticated %}
+    <h3>Funcionalidades</h3>
+
     <div>
-        <h3>Clientes</h3>
+        {% if user_group == 'clientes' %}
         <a href="{% url 'purchase_tickets' %}" class="btn btn-lg btn-success">Reserve su boleto</a>
         <a href="{% url 'client_purchases' %}" class="btn btn-lg btn-primary">Boletos Reservados</a>
-    </div>
-    <div class="mt-2">
-        <h3>Vendedores</h3>
+        {% elif user_group == 'vendedores' %}
         <a href="{% url 'purchase_foods' %}" class="btn btn-lg btn-success">Venta Platillos</a>
         <a href="{% url 'purchase_merchandise' %}" class="btn btn-lg btn-success">Venta Mercancia</a>
         <a href="{% url 'purchases' %}" class="btn btn-lg btn-primary">Boletos</a>
-    </div>
-    <div class="mt-2">
-        <h3>Administradores</h3>
+        {% else %}
         <a href="{% url 'receipts' %}" class="btn btn-lg btn-primary">Recibos</a>
         <a href="{% url 'journeys' %}" class="btn btn-lg btn-primary">Recorridos</a>
         <a href="{% url 'journey_schedules' %}" class="btn btn-lg btn-primary">Cronogramas de Recorridos</a>
+        {% endif %}
     </div>
     {% else %}
     <a class="btn btn-lg btn-primary" href="{% url 'login' %}">Iniciar Sesión</a>

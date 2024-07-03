@@ -5,9 +5,23 @@
     </a>
     <ul class="navbar_ps">
         <li><a href="{% url 'home' %}">Inicio</a></li>
+        {% if not user.is_authenticated or user_group == 'clientes' %}
         <li><a href="#">Recorrido</a></li>
         <li><a href="#">Beneficios</a></li>
         <li><a href="#">Contáctenos</a></li>
+
+        {% elif user_group == 'vendedores' %}
+        <li><a href="{% url 'purchase_foods' %}">Venta Platillos</a></li>
+        <li><a href="{% url 'purchase_merchandise' %}">Venta Mercancia</a></li>
+        <li><a href="{% url 'purchases' %}">Boletos</a></li>
+
+        {% else %}
+        <li><a href="{% url 'purchases' %}">Boletos</a></li>
+        <li><a href="{% url 'receipts' %}">Recibos</a></li>
+        <li><a href="{% url 'journeys' %}">Recorridos</a></li>
+        <li><a href="{% url 'journey_schedules' %}">Cronogramas</a></li>
+
+        {% endif %}
     </ul>
 
     <div class="h-right">

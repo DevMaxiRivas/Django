@@ -70,6 +70,10 @@ def is_admin(user):
     return user.groups.filter(name="administrativos").exists()
 
 
+def is_employee(user):
+    return is_admin(user) or is_salesman(user)
+
+
 class HomeView(TemplateView):
     template_name = "home.html"
 
@@ -83,7 +87,7 @@ class HomeView(TemplateView):
             if group:
                 group_name = group.name
 
-        context["group_name"] = group_name
+        context["user_group"] = group_name
         return context
 
 
@@ -112,6 +116,12 @@ class RegisterView(View):
             return redirect("home")
         data = {"form": user_creation_form}
         return render(request, "registration/register.html", data)
+
+
+# Obtener rol del usuario
+def get_user_group(user):
+    group = Group.objects.filter(user=user).first()
+    return group.name
 
 
 # Registros de Ventas
@@ -214,11 +224,19 @@ def purchase_tickets(request):
         sales_form = TicketSalesForm()
         formset = TicketFormSet(prefix="tickets")
 
-    context = {
-        "sales_form": sales_form,
-        "formset": formset,
-        "empty_form": TicketFormSet(prefix="tickets").empty_form,
-    }
+    if request.user.is_authenticated:
+        context = {
+            "user_group": get_user_group(request.user),
+            "sales_form": sales_form,
+            "formset": formset,
+            "empty_form": TicketFormSet(prefix="tickets").empty_form,
+        }
+    else:
+        context = {
+            "sales_form": sales_form,
+            "formset": formset,
+            "empty_form": TicketFormSet(prefix="tickets").empty_form,
+        }
     return render(request, "purchase_tickets.html", context)
 
 
@@ -341,6 +359,7 @@ def purchase_food(request):
         formset = DetailFoodOrderFormSet(prefix="meals")
 
     context = {
+        "user_group": get_user_group(request.user),
         "sales_form": sales_form,
         "formset": formset,
         "empty_form": DetailFoodOrderFormSet(prefix="meals").empty_form,
@@ -421,6 +440,7 @@ def purchase_merchandise(request):
         formset = DetailsMerchandiseOrderSet(prefix="merchandises")
 
     context = {
+        "user_group": get_user_group(request.user),
         "sales_form": sales_form,
         "formset": formset,
         "empty_form": DetailsMerchandiseOrderSet(prefix="merchandises").empty_form,
@@ -443,7 +463,12 @@ def client_purchases(request):
             }
         )
     return render(
-        request, "client_purchases.html", {"sales_with_urls": sales_with_urls}
+        request,
+        "client_purchases.html",
+        {
+            "user_group": get_user_group(request.user),
+            "sales_with_urls": sales_with_urls,
+        },
     )
 
 
@@ -458,7 +483,7 @@ def sale_detail(request, sale_id):
 
 
 @login_required
-@user_passes_test(is_salesman)
+@user_passes_test(is_employee)
 def purchases(request):
     sales = TicketSales.objects.all()
     sales_with_urls = []
@@ -470,7 +495,14 @@ def purchases(request):
                 "detail_url": sale_detail_url,
             }
         )
-    return render(request, "purchases.html", {"sales_with_urls": sales_with_urls})
+    return render(
+        request,
+        "purchases.html",
+        {
+            "user_group": get_user_group(request.user),
+            "sales_with_urls": sales_with_urls,
+        },
+    )
 
 
 @login_required
