@@ -31,4 +31,19 @@ urlpatterns = [
     path("receipt-details/<int:receipt_id>/", receipt_details, name="receipt_details"),
     path("journeys/", journeys, name="journeys"),
     path("journey_schedules/", journey_schedules, name="journey_schedules"),
+    path(
+        "journey_schedules/new/",
+        views.journey_schedule_new,
+        name="journey_schedule_new",
+    ),
+    path(
+        "journey_schedules/update/<pk>",
+        views.journey_schedule_update,
+        name="journey_schedule_update",
+    ),
+    path(
+        "journey_schedules/delete/<pk>",
+        views.journey_schedule_delete,
+        name="journey_schedule_delete",
+    ),
 ]

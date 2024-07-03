@@ -31,6 +31,7 @@
                             <th>Tipo de Recorrido </th>
                             <th>Hora de Salida</th>
                             <th>Hora de Llegada</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,10 +41,24 @@
                             <td>{{ journey_schedule.journey }}</td>
                             <td>{{ journey_schedule.departure_time }}</td>
                             <td>{{ journey_schedule.arrival_time }}</td>
+                            <td>
+                                <a class="btn btn-primary"
+                                    href="{% url 'journey_schedule_update' journey_schedule.id %}">
+                                    Editar
+                                </a>
+                                <a class="btn btn-danger" href="" data-toggle="modal"
+                                    data-target="#exampleModal{{journey_schedule.id}}">
+                                    Eliminar
+                                </a>
+                            </td>
+                            {% include "journey_schedule_modal.html" %}
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+                <p>
+                    <a class="btn btn-success" href="{% url 'journey_schedule_new' %}" role="button">Nuevo</a>
+                </p>
             </div>
             {% else %}
             <p>No se registraron cronogramas para recorridos.</p>

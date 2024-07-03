@@ -27,11 +27,19 @@ from .forms import (
     TicketFormSet,
     TicketSalesForm,
     PassengerForm,
+    JourneyScheduleForm,
     RegisterForm,
 )
 
 # Modelos
-from .models import Passenger, TicketSales, PurchaseReceipt, Journey, JourneySchedule
+from .models import (
+    Passenger,
+    TicketSales,
+    PurchaseReceipt,
+    Journey,
+    JourneySchedule,
+    Ticket,
+)
 
 # Base de Datos
 from django.db import transaction
@@ -442,7 +450,7 @@ def client_purchases(request):
 @login_required
 @user_passes_test(is_client)
 def sale_detail(request, sale_id):
-    sale = TicketSales.objects.all(id=sale_id)
+    sale = TicketSales.objects.get(id=sale_id)
     tickets = (
         sale.tickets.all()
     )  # Utiliza el related_name 'tickets' para obtener todos los tickets asociados a esa venta
@@ -518,3 +526,52 @@ def journey_schedules(request):
     return render(
         request, "journey_schedules.html", {"journey_schedules": journey_schedules}
     )
+
+
+@login_required
+@user_passes_test(is_admin)
+def journey_schedule_new(request):
+    if request.method == "POST":
+        formulario = JourneyScheduleForm(request.POST)
+        if formulario.is_valid():
+            journeySchedule = formulario.save(commit=False)
+            journeySchedule.journey = formulario.cleaned_data["journey"]
+            journeySchedule.departure_time = formulario.cleaned_data["departure_time"]
+            journeySchedule.arrival_time = formulario.cleaned_data["arrival_time"]
+            journeySchedule.save()
+            return redirect("journey_schedules")
+
+    else:
+        formulario = JourneyScheduleForm()
+
+    return render(request, "element_new.html", {"formulario": formulario})
+
+
+@login_required
+@user_passes_test(is_admin)
+def journey_schedule_update(request, pk):
+    journeySchedule = get_object_or_404(JourneySchedule, pk=pk)
+    if request.method == "POST":
+        formulario = JourneyScheduleForm(request.POST, instance=journeySchedule)
+        if formulario.is_valid():
+            journeySchedule.journey = formulario.cleaned_data["journey"]
+            journeySchedule.departure_time = formulario.cleaned_data["departure_time"]
+            journeySchedule.arrival_time = formulario.cleaned_data["arrival_time"]
+            journeySchedule.save()
+            return redirect("journey_schedules")
+        else:
+            # redirijo
+            return render(request, "element_new.html", {"formulario": formulario})
+    else:
+        formulario = JourneyScheduleForm(instance=journeySchedule)
+
+    return render(request, "element_new.html", {"formulario": formulario})
+
+
+@login_required
+@user_passes_test(is_admin)
+def journey_schedule_delete(request, pk):
+    journey_schedule = get_object_or_404(JourneySchedule, pk=pk)
+    journey_schedule.delete()
+
+    return redirect("journey_schedules")

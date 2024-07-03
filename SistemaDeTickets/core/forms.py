@@ -1,4 +1,5 @@
 from django import forms
+from django.forms.widgets import NumberInput
 
 # Autenticacion
 from django.contrib.auth.models import User
@@ -10,6 +11,7 @@ from crispy_forms.layout import Submit, Layout, Fieldset, ButtonHolder
 
 # Modelos
 from .models import (
+    JourneySchedule,
     Passenger,
     Ticket,
     TicketSales,
@@ -63,6 +65,9 @@ class PassengerForm(forms.ModelForm):
             "gender",
             "origin_country",
         ]
+        widgets = {
+            "date_of_birth": NumberInput(attrs={"type": "date"}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -157,3 +162,17 @@ DetailsMerchandiseOrderSet = inlineformset_factory(
     extra=1,
     can_delete=True,
 )
+
+
+class JourneyScheduleForm(forms.ModelForm):
+    class Meta:
+        model = JourneySchedule
+        fields = [
+            "journey",
+            "departure_time",
+            "arrival_time",
+        ]
+        widgets = {
+            "departure_time": NumberInput(attrs={"type": "datetime"}),
+            "arrival_time": NumberInput(attrs={"type": "datetime"}),
+        }
