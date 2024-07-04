@@ -220,14 +220,14 @@
     transform: scale(1.2);
 }
 
-.feature-content .row-title {
+.feature-content .row-title-ps {
     font-size: 17px;
     font-weight: 500;
     cursor: pointer;
     transform: all .5s ease;
 }
 
-.feature-content .row-title:hover {
+.feature-content .row-title-ps:hover {
     color: var(--main-color_ps);
 }
 

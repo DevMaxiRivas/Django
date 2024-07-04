@@ -21,6 +21,8 @@ from django.contrib.auth.models import Group
 
 # # Formularios
 from .forms import (
+    MealForm,
+    MerchandiseForm,
     DetailsMerchandiseOrderSet,
     DetailFoodOrderFormSet,
     PurchaseReceiptForm,
@@ -33,6 +35,8 @@ from .forms import (
 
 # Modelos
 from .models import (
+    Merchandise,
+    Meal,
     Passenger,
     TicketSales,
     PurchaseReceipt,
@@ -128,8 +132,6 @@ def get_user_group(user):
 
 
 # Registros de Ventas
-def purchase_success(request):
-    return render(request, "purchase_success.html")
 
 
 @require_http_methods(["GET", "POST"])
@@ -217,9 +219,11 @@ def purchase_tickets(request):
                     ],
                     "back_urls": {
                         "success": request.build_absolute_uri(
-                            reverse("purchase_success")
+                            reverse("payment_success")
                         ),
-                        "failure": request.build_absolute_uri(reverse("home")),
+                        "failure": request.build_absolute_uri(
+                            reverse("payment_pending")
+                        ),
                         "pending": request.build_absolute_uri(
                             reverse("payment_pending")
                         ),
@@ -230,7 +234,6 @@ def purchase_tickets(request):
                         "installments": 1,
                     },
                 }
-
                 preference_response = mp.preference().create(preference_data)
                 preference = preference_response["response"]
 
@@ -276,8 +279,8 @@ def purchase_tickets(request):
     return render(request, "purchase_tickets.html", context)
 
 
-def payment_successful(request):
-    return render(request, "payment_successful.html")
+def payment_success(request):
+    return render(request, "payment_success.html")
 
 
 def payment_failed(request):
@@ -554,7 +557,7 @@ def purchases(request):
 
 
 @login_required
-@user_passes_test(is_salesman)
+@user_passes_test(is_employee)
 def sale_details(request, sale_id):
     sale = TicketSales.objects.get(id=sale_id)
     tickets = (
@@ -655,3 +658,122 @@ def journey_schedule_delete(request, pk):
     journey_schedule.delete()
 
     return redirect("journey_schedules")
+
+
+# Mercaderias
+@login_required
+@user_passes_test(is_employee)
+def merchandises(request):
+    merchandises = Merchandise.objects.all()
+    return render(
+        request,
+        "merchandises.html",
+        {"user_group": get_user_group(request.user), "merchandises": merchandises},
+    )
+
+
+@login_required
+@user_passes_test(is_employee)
+def merchandise_new(request):
+    if request.method == "POST":
+        formulario = MerchandiseForm(request.POST)
+        if formulario.is_valid():
+            merchandise = formulario.save(commit=False)
+            merchandise.name = formulario.cleaned_data["name"]
+            merchandise.price = formulario.cleaned_data["price"]
+            merchandise.description = formulario.cleaned_data["description"]
+            merchandise.save()
+            return redirect("merchandises")
+
+    else:
+        formulario = MerchandiseForm()
+
+    return render(request, "element_new.html", {"formulario": formulario})
+
+
+@login_required
+@user_passes_test(is_employee)
+def merchandise_update(request, pk):
+    merchandise = get_object_or_404(Merchandise, pk=pk)
+    if request.method == "POST":
+        formulario = MerchandiseForm(request.POST, instance=merchandise)
+        if formulario.is_valid():
+            merchandise.name = formulario.cleaned_data["name"]
+            merchandise.price = formulario.cleaned_data["price"]
+            merchandise.description = formulario.cleaned_data["description"]
+            merchandise.save()
+            return redirect("merchandises")
+        else:
+            # redirijo
+            return render(request, "element_new.html", {"formulario": formulario})
+    else:
+        formulario = MerchandiseForm(instance=merchandise)
+
+    return render(request, "element_new.html", {"formulario": formulario})
+
+
+@login_required
+@user_passes_test(is_employee)
+def merchandise_delete(request, pk):
+    merchandise = get_object_or_404(Merchandise, pk=pk)
+    merchandise.delete()
+
+    return redirect("merchandises")
+
+
+@login_required
+@user_passes_test(is_employee)
+def meals(request):
+    meals = Meal.objects.all()
+    return render(
+        request,
+        "meals.html",
+        {"user_group": get_user_group(request.user), "meals": meals},
+    )
+
+
+@login_required
+@user_passes_test(is_employee)
+def meal_new(request):
+    if request.method == "POST":
+        formulario = MealForm(request.POST)
+        if formulario.is_valid():
+            meal = formulario.save(commit=False)
+            meal.name = formulario.cleaned_data["name"]
+            meal.price = formulario.cleaned_data["price"]
+            meal.save()
+            return redirect("meals")
+
+    else:
+        formulario = MealForm()
+
+    return render(request, "element_new.html", {"formulario": formulario})
+
+
+@login_required
+@user_passes_test(is_employee)
+def meal_update(request, pk):
+    meal = get_object_or_404(Merchandise, pk=pk)
+    if request.method == "POST":
+        formulario = MealForm(request.POST, instance=meal)
+        if formulario.is_valid():
+            meal.name = formulario.cleaned_data["name"]
+            meal.price = formulario.cleaned_data["price"]
+            meal.save()
+            return redirect("meals")
+        else:
+            # redirijo
+            return render(request, "element_new.html", {"formulario": formulario})
+    else:
+        formulario = MealForm(instance=meal)
+
+    return render(request, "element_new.html", {"formulario": formulario})
+
+
+@login_required
+@user_passes_test(is_employee)
+def meal_delete(request, pk):
+    meal = get_object_or_404(Merchandise, pk=pk)
+    meal.delete()
+
+    return redirect("meals")

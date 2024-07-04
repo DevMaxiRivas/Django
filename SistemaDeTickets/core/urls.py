@@ -10,9 +10,8 @@ urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
     # VENTA DE TICKETS
     path("purchase-tickets/", views.purchase_tickets, name="purchase_tickets"),
-    path("purchase-success/", views.purchase_success, name="purchase_success"),
     # Pagos
-    path("payment_successful/", views.payment_successful, name="payment_successful"),
+    path("payment_success/", views.payment_success, name="payment_success"),
     path("payment_failed/", views.payment_failed, name="payment_failed"),
     path("payment_pending/", views.payment_pending, name="payment_pending"),
     # COMPROBACIÓN DE PASAJEROS
@@ -31,9 +30,12 @@ urlpatterns = [
     # Vendedores
     path("sales/<int:sale_id>/", sale_details, name="sale_details"),
     # Administradores
+    # Vemtas de boletos
     path("purchases/", purchases, name="purchases"),
+    # Compra de productos
     path("receipts/", receipts, name="receipts"),
     path("receipt-details/<int:receipt_id>/", receipt_details, name="receipt_details"),
+    # Recorridos y Cronogramas
     path("journeys/", journeys, name="journeys"),
     path("journey_schedules/", journey_schedules, name="journey_schedules"),
     path(
@@ -50,5 +52,39 @@ urlpatterns = [
         "journey_schedules/delete/<pk>",
         views.journey_schedule_delete,
         name="journey_schedule_delete",
+    ),
+    # Merchaderias
+    path("merchandises/", merchandises, name="merchandises"),
+    path(
+        "merchandises/new/",
+        views.merchandise_new,
+        name="merchandise_new",
+    ),
+    path(
+        "merchandises/update/<pk>",
+        views.merchandise_update,
+        name="merchandise_update",
+    ),
+    path(
+        "merchandises/delete/<pk>",
+        views.merchandise_delete,
+        name="merchandise_delete",
+    ),
+    # Platillos
+    path("meals/", meals, name="meals"),
+    path(
+        "meals/new/",
+        views.meal_new,
+        name="meal_new",
+    ),
+    path(
+        "meals/update/<pk>",
+        views.meal_update,
+        name="meal_update",
+    ),
+    path(
+        "meals/delete/<pk>",
+        views.meal_delete,
+        name="meal_delete",
     ),
 ]

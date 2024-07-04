@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <title>Actualizacion de Cronograma de Recorridos</title>
+    <title>Nuevo</title>
 </head>
 
 <body>
@@ -24,7 +24,7 @@
             {%load crispy_forms_tags %}
             {% block content %}
 
-            <h3>Cronograma de Recorrido</h3>
+            <h3>Nuevo</h3>
             <form method="POST" novalidate>
                 {% csrf_token %}
                 <table>{{ formulario|crispy}}</table>

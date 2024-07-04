@@ -11,6 +11,8 @@ from crispy_forms.layout import Submit, Layout, Fieldset, ButtonHolder
 
 # Modelos
 from .models import (
+    Meal,
+    Merchandise,
     JourneySchedule,
     Passenger,
     Ticket,
@@ -176,3 +178,22 @@ class JourneyScheduleForm(forms.ModelForm):
             "departure_time": NumberInput(attrs={"type": "datetime"}),
             "arrival_time": NumberInput(attrs={"type": "datetime"}),
         }
+
+
+class MerchandiseForm(forms.ModelForm):
+    class Meta:
+        model = Merchandise
+        fields = [
+            "name",
+            "price",
+            "description",
+        ]
+
+
+class MealForm(forms.ModelForm):
+    class Meta:
+        model = Meal
+        fields = [
+            "name",
+            "price",
+        ]
