@@ -198,8 +198,8 @@ def purchase_tickets(request):
 
                 if not request.user.is_authenticated and email:
                     send_mail(
-                        "Your Tickets Purchased",
-                        f"Here is the information about your ticket purchase. {msg}",
+                        "Notificación de Compra de Boletos",
+                        f"Usted realizo una compra de boletos para los pasajeros con los siguientes dni o pasaportes: {msg}",
                         settings.DEFAULT_FROM_EMAIL,
                         [email],
                         fail_silently=False,
