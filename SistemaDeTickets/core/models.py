@@ -671,7 +671,22 @@ class DetailsMerchandiseOrder(models.Model):
         return f"{self.quantity} x {self.merchandise.name}"
 
 
-# @receiver(post_save, sender=Ventas)
-# @receiver(post_delete, sender=Ventas)
-# def update_an_sale(sender, instance, **kwargs):
-#     instance.reservarAsiento()
+class Payments(models.Model):
+    sale = models.ForeignKey(
+        TicketSales, on_delete=models.CASCADE, null=True, blank=True
+    )
+    payment_id = models.CharField(max_length=255)
+    payment_type = models.CharField(max_length=50)
+    payment_status = models.CharField(max_length=50, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if self.payment_id and self.payment_type and self.sale:
+            return f"Pago {self.payment_id} - {self.payment_type} for - {self.sale}"
+        return "Pago" + self.created_at
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name = "Pago"
+        verbose_name_plural = "Pagos"

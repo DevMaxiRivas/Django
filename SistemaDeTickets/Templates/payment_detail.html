@@ -14,29 +14,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <title>Nuevo</title>
+    <title>Pagos</title>
 </head>
 
 <body>
     {% include 'header.html' %}
-    <section class="section_ps home_register_ps form-register">
-        <div class="container mt-5 p-5 center-text card">
-            {%load crispy_forms_tags %}
-            {% block content %}
-
-            <h1 class="mb-3">Nuevo</h1>
-            <form method="POST" novalidate>
-                {% csrf_token %}
-                <table>{{ formulario|crispy}}</table>
-                <button type="submit" class="btn btn-success">Guardar</button>
-            </form>
-            {% endblock %}
-
+    <section class="section_ps home_ps form-register">
+        <div class="card container mt-5 center-text">
+            <h1 class="mb-3 mt-3">Comprobante</h1>
+            {% if payment %}
+            <h4>Pago ID: {{ payment.id }}</h4>
+            <h4>Venta ID: {{ payment.sale.id }}</h4>
+            <p>Nro. Comprobante: {{ payment.payment_id }}</p>
+            <p>Tipo de Pago: {{ payment.payment_type }}</p>
+            <p>Fecha de Creación: {{ payment.created_at }}</p>
+            {% else %}
+            <p>No hay comprobante asociados a esta venta.</p>
+            {% endif %}
         </div>
     </section>
+
     <div class="body_ps">
         {% include 'footer.html' %}
     </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

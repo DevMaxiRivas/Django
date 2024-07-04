@@ -18,6 +18,7 @@ admin.site.register(Passenger)
 admin.site.register(DetailFoodOrder)
 admin.site.register(DetailsMerchandiseOrder)
 admin.site.register(PurchaseReceipt)
+admin.site.register(Payments)
 
 
 class TicketAdmin(admin.ModelAdmin):

@@ -14,6 +14,7 @@ urlpatterns = [
     path("payment_success/", views.payment_success, name="payment_success"),
     path("payment_failed/", views.payment_failed, name="payment_failed"),
     path("payment_pending/", views.payment_pending, name="payment_pending"),
+    path("payment_detail/<int:sale_id>", views.payment_detail, name="payment_detail"),
     # COMPROBACIÓN DE PASAJEROS
     path("check_passenger/", views.check_passenger, name="check_passenger"),
     path("create_passenger/", views.create_passenger, name="create_passenger"),

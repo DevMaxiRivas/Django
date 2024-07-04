@@ -35,6 +35,7 @@ from .forms import (
 
 # Modelos
 from .models import (
+    Payments,
     Merchandise,
     Meal,
     Passenger,
@@ -233,11 +234,11 @@ def purchase_tickets(request):
                         "excluded_payment_types": [{"id": "ticket"}],
                         "installments": 1,
                     },
+                    "external_reference": str(sale.id),
                 }
                 preference_response = mp.preference().create(preference_data)
                 preference = preference_response["response"]
 
-                print("Ya paso la creacion de preference")
                 return JsonResponse(
                     {"success": True, "init_point": preference["sandbox_init_point"]}
                 )
@@ -280,6 +281,22 @@ def purchase_tickets(request):
 
 
 def payment_success(request):
+    payment_id = request.GET.get("payment_id")
+    payment_type = request.GET.get("payment_type")
+    payment_status = request.GET.get("status")
+    sale_id = request.GET.get(
+        "external_reference"
+    )  # Se aume que se envia el id de la venta por "external_reference"
+
+    if payment_id and payment_type and sale_id:
+        sale = get_object_or_404(TicketSales, id=sale_id)
+        Payments.objects.create(
+            sale=sale,
+            payment_id=payment_id,
+            payment_type=payment_type,
+            payment_status=payment_status,
+        )
+
     return render(request, "payment_success.html")
 
 
@@ -289,6 +306,15 @@ def payment_failed(request):
 
 def payment_pending(request):
     return render(request, "payment_pending.html")
+
+
+@login_required
+@user_passes_test(is_employee)
+def payment_detail(request, sale_id):
+    if Payments.objects.filter(sale_id=sale_id).first():
+        payment = Payments.objects.get(sale_id=sale_id)
+        return render(request, "payment_detail.html", {"payment": payment})
+    return render(request, "payment_detail.html", {})
 
 
 def get_passenger_info(request):
@@ -540,10 +566,12 @@ def purchases(request):
     sales_with_urls = []
     for sale in sales:
         sale_detail_url = reverse("sale_details", args=[sale.id])
+        payment_detail_url = reverse("payment_detail", args=[sale.id])
         sales_with_urls.append(
             {
                 "sale": sale,
                 "detail_url": sale_detail_url,
+                "payment_url": payment_detail_url,
             }
         )
     return render(

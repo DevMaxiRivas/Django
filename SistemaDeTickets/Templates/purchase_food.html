@@ -16,14 +16,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <title>Venta de Boletos</title>
+    <title>Venta de Platillos</title>
 </head>
 
 <body>
     {% include 'header.html' %}
     <section class="section_ps home_register_ps form-register">
         <div class="container mt-5 center-text card">
-            <h1 class="m-3">Purchase Food</h1>
+            <h1 class="m-3">Venta de Platillos</h1>
             <form id="food-form" method="post">
                 {% csrf_token %}
                 {{ sales_form|crispy }}
