@@ -1,224 +1,200 @@
 {% load crispy_forms_tags %}
+{% include 'base.html' %}
 
-<!doctype html>
-<html lang="es">
-
-<head>
-    {% load static %}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <title>Venta de Boletos</title>
-</head>
-
-<body>
-    {% include 'header.html' %}
-    <section class="section_ps home_register_ps form-register">
-        <div class="container mt-5 center-text card">
-            <h1 class="m-3">Purchase Tickets</h1>
-            <form id="ticket-form" method="post">
-                {% csrf_token %}
-                {{ sales_form|crispy }}
-                {{ formset.management_form }}
-                <div id="ticket-forms">
-                    {% for form in formset %}
-                    <div class="ticket-form card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Ticket {{ forloop.counter }}</h5>
-                            {% for field in form.visible_fields %}
-                            {% if field.name != 'delete_ticket' %}
-                            <div class="form-group">
-                                {{ field.label_tag }}
-                                {{ field }}
-                                {% if field.errors %}
-                                <div class="invalid-feedback">
-                                    {{ field.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% else %}
-                            <div class="form-check">
-                                {{ field }}
-                                <label class="form-check-label" for="{{ field.id_for_label }}">Eliminar</label>
+{% block content %}
+<section class="section_ps home_register_ps form-register font-black">
+    <div class="container mt-5 center-text card">
+        <h1 class="m-3">Purchase Tickets</h1>
+        <form id="ticket-form" method="post">
+            {% csrf_token %}
+            {{ sales_form|crispy }}
+            {{ formset.management_form }}
+            <div id="ticket-forms">
+                {% for form in formset %}
+                <div class="ticket-form card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Ticket {{ forloop.counter }}</h5>
+                        {% for field in form.visible_fields %}
+                        {% if field.name != 'delete_ticket' %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="invalid-feedback">
+                                {{ field.errors }}
                             </div>
                             {% endif %}
-                            {% endfor %}
-                            {% for hidden in form.hidden_fields %}
-                            {{ hidden }}
-                            {% endfor %}
                         </div>
+                        {% else %}
+                        <div class="form-check">
+                            {{ field }}
+                            <label class="form-check-label" for="{{ field.id_for_label }}">Eliminar</label>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
-                <button type="button" id="add-ticket" class="btn btn-secondary mt-2 mb-2">Add Another Ticket</button>
-                <button type="submit" class="btn btn-primary">Purchase Tickets</button>
-            </form>
-        </div>
-
-        <div id="empty-form" style="display:none">
-            <div class="ticket-form card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">New Ticket</h5>
-                    {{ empty_form|crispy }}
-                </div>
+                {% endfor %}
             </div>
-        </div>
-    </section>
+            <button type="button" id="add-ticket" class="btn btn-secondary mt-2 mb-2">Add Another Ticket</button>
+            <button type="submit" class="btn btn-primary">Purchase Tickets</button>
+        </form>
+    </div>
 
-    <!-- Modal para visualizar información del pasajero -->
-    <div id="view-passenger-modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Passenger Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Name: <span id="passenger-name"></span></p>
-                    <p>DNI/Passport: <span id="passenger-dni_or_passport"></span></p>
-                    <p>Emergency Telephone: <span id="passenger-emergency_telephone"></span></p>
-                    <p>Date of Birth: <span id="passenger-date_of_birth"></span></p>
-                    <p>Gender: <span id="passenger-gender"></span></p>
-                    <p>Origin Country: <span id="passenger-origin_country"></span></p>
-                </div>
+    <div id="empty-form" style="display:none">
+        <div class="ticket-form card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">New Ticket</h5>
+                {{ empty_form|crispy }}
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Modal para crear un nuevo pasajero -->
-    <div id="passenger-modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Create New Passenger</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="new-passenger-form-container"></div>
-                </div>
+<!-- Modal para visualizar información del pasajero -->
+<div id="view-passenger-modal" class="modal fade font-black" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Passenger Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Name: <span id="passenger-name"></span></p>
+                <p>DNI/Passport: <span id="passenger-dni_or_passport"></span></p>
+                <p>Emergency Telephone: <span id="passenger-emergency_telephone"></span></p>
+                <p>Date of Birth: <span id="passenger-date_of_birth"></span></p>
+                <p>Gender: <span id="passenger-gender"></span></p>
+                <p>Origin Country: <span id="passenger-origin_country"></span></p>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="body_ps">
-        {% include 'footer.html' %}
+<!-- Modal para crear un nuevo pasajero -->
+<div id="passenger-modal" class="modal fade font-black" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Passenger</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="new-passenger-form-container"></div>
+            </div>
+        </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#ticket-form').submit(function (e) {
-                e.preventDefault();
+</div>
 
-                // Validacion de campos de formulario
-                var formValid = true;
-                $('#ticket-forms .ticket-form').each(function () {
-                    $(this).find('.form-control').each(function () {
-                        if ($.trim($(this).val()) === '') {
-                            $(this).addClass('is-invalid');
-                            formValid = false;
-                        } else {
-                            $(this).removeClass('is-invalid');
-                        }
-                    });
-                });
+{% include 'footer.html' %}
 
-                if (!formValid) {
-                    alert("Please fill out all fields in each ticket form.");
-                    return;
-                }
+<script>
+    $(document).ready(function () {
+        $('#ticket-form').submit(function (e) {
+            e.preventDefault();
 
-                // Si los formularios estan completos
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.success) {
-                            window.location.href = response.init_point;
-                        } else {
-                            for (var key in response.errors) {
-                                var field = $('#' + key);
-                                field.addClass('is-invalid');
-                                field.siblings('.invalid-feedback').text(response.errors[key]);
-                            }
-                        }
-                    },
-                    error: function (xhr) {
-                        var response = xhr.responseJSON;
-                        if (response && response.error && response.missing_passengers) {
-                            openCreatePassengerModal(response.missing_passengers);
-                        } else {
-                            if (response && response.empty_form) {
-                                alert('All tickets are marked for deletion');
-                            } else {
-                                alert('An unexpected error occurred. Please try again.');
-                            }
-                        }
+            // Validacion de campos de formulario
+            var formValid = true;
+            $('#ticket-forms .ticket-form').each(function () {
+                $(this).find('.form-control').each(function () {
+                    if ($.trim($(this).val()) === '') {
+                        $(this).addClass('is-invalid');
+                        formValid = false;
+                    } else {
+                        $(this).removeClass('is-invalid');
                     }
                 });
             });
 
-            function openCreatePassengerModal(dni_or_passport) {
-                $.get('{% url "create_passenger" %}', {
-                    dni_or_passport: dni_or_passport
-                }, function (data) {
-                    $('#new-passenger-form-container').html(data);
-                    $('#passenger-modal').modal('show');
-                }).fail(function () {
-                    alert('Failed to load modal content. Please try again.');
-                });
+            if (!formValid) {
+                alert("Please fill out all fields in each ticket form.");
+                return;
             }
 
-            $('#add-ticket').click(function () {
-                var form_idx = $('#id_tickets-TOTAL_FORMS').val();
-                var empty_form_html = $('#empty-form').html().replace(/__prefix__/g, form_idx);
-                $('#ticket-forms').append(empty_form_html);
-                $('#id_tickets-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-            });
-
-            $(document).on('blur', '.dni_or_passport', function () {
-                var dni_or_passport = $(this).val();
-                var inputField = $(this); // Referencia al campo de entrada
-                console.log(dni_or_passport);
-                if (dni_or_passport) {
-                    $.ajax({
-                        url: '{% url "get_passenger_info" %}',
-                        data: {
-                            'dni_or_passport': dni_or_passport
-                        },
-                        dataType: 'json',
-                        success: function (data) {
-                            if (data.success) {
-                                $('#passenger-name').text(data.passenger.name);
-                                $('#passenger-dni_or_passport').text(data.passenger.dni_or_passport);
-                                $('#passenger-date_of_birth').text(data.passenger.date_of_birth);
-                                $('#passenger-emergency_telephone').text(data.passenger.emergency_telephone);
-                                $('#passenger-gender').text(data.passenger.gender);
-                                $('#passenger-origin_country').text(data.passenger.origin_country);
-                                $('#view-passenger-modal').modal('show');
-                            }
+            // Si los formularios estan completos
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = response.init_point;
+                    } else {
+                        for (var key in response.errors) {
+                            var field = $('#' + key);
+                            field.addClass('is-invalid');
+                            field.siblings('.invalid-feedback').text(response.errors[key]);
                         }
-                    });
+                    }
+                },
+                error: function (xhr) {
+                    var response = xhr.responseJSON;
+                    if (response && response.error && response.missing_passengers) {
+                        openCreatePassengerModal(response.missing_passengers);
+                    } else {
+                        if (response && response.empty_form) {
+                            alert('All tickets are marked for deletion');
+                        } else {
+                            alert('An unexpected error occurred. Please try again.');
+                        }
+                    }
                 }
             });
-
         });
-    </script>
-</body>
 
-</html>
+        function openCreatePassengerModal(dni_or_passport) {
+            $.get('{% url "create_passenger" %}', {
+                dni_or_passport: dni_or_passport
+            }, function (data) {
+                $('#new-passenger-form-container').html(data);
+                $('#passenger-modal').modal('show');
+            }).fail(function () {
+                alert('Failed to load modal content. Please try again.');
+            });
+        }
+
+        $('#add-ticket').click(function () {
+            var form_idx = $('#id_tickets-TOTAL_FORMS').val();
+            var empty_form_html = $('#empty-form').html().replace(/__prefix__/g, form_idx);
+            $('#ticket-forms').append(empty_form_html);
+            $('#id_tickets-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+        });
+
+        $(document).on('blur', '.dni_or_passport', function () {
+            var dni_or_passport = $(this).val();
+            var inputField = $(this); // Referencia al campo de entrada
+            console.log(dni_or_passport);
+            if (dni_or_passport) {
+                $.ajax({
+                    url: '{% url "get_passenger_info" %}',
+                    data: {
+                        'dni_or_passport': dni_or_passport
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.success) {
+                            $('#passenger-name').text(data.passenger.name);
+                            $('#passenger-dni_or_passport').text(data.passenger.dni_or_passport);
+                            $('#passenger-date_of_birth').text(data.passenger.date_of_birth);
+                            $('#passenger-emergency_telephone').text(data.passenger.emergency_telephone);
+                            $('#passenger-gender').text(data.passenger.gender);
+                            $('#passenger-origin_country').text(data.passenger.origin_country);
+                            $('#view-passenger-modal').modal('show');
+                        }
+                    }
+                });
+            }
+        });
+
+    });
+</script>
+
+{% endblock %}

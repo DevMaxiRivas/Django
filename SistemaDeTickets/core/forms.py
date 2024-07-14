@@ -26,6 +26,9 @@ from .models import (
 from django.forms import modelformset_factory
 from django.forms import inlineformset_factory
 
+# Traducciones
+from django.utils.translation import gettext as _
+
 
 class LoginForm(AuthenticationForm):
     pass
@@ -46,6 +49,14 @@ class RegisterForm(UserCreationForm):
             "password1",
             "password2",
         ]
+        labels = {
+            "username": _("username"),
+            "email": _("email"),
+            "first_name": _("first name"),
+            "last_name": _("last name"),
+            "password1": _("password"),
+            "password2": _("confirm password"),
+        }
 
     def clean_email(self):
         email_field = self.cleaned_data["email"]
@@ -67,6 +78,14 @@ class PassengerForm(forms.ModelForm):
             "gender",
             "origin_country",
         ]
+        labels = {
+            "name": _("Name"),
+            "dni_or_passport": _("DNI/Passport"),
+            "emergency_telephone": _("Emergency Telephone"),
+            "date_of_birth": _("Date of Birth"),
+            "gender": _("Gender"),
+            "origin_country": _("Origin Country"),
+        }
         widgets = {
             "date_of_birth": NumberInput(attrs={"type": "date"}),
         }
@@ -79,25 +98,33 @@ class PassengerForm(forms.ModelForm):
 
 
 class TicketSalesForm(forms.ModelForm):
-    email = forms.EmailField(required=False, label="Email (if not logged in)")
+    email = forms.EmailField(required=False, label=_("Email (if not logged in)"))
 
     class Meta:
         model = TicketSales
         fields = [
             "email",
         ]
+        labels = {
+            "email": _("Email"),
+        }
 
 
 class TicketForm(forms.ModelForm):
     dni_or_passport = forms.CharField(
         max_length=50,
-        label="DNI/Passport",
+        label=_("DNI/Passport"),
         widget=forms.TextInput(attrs={"class": "dni_or_passport"}),
     )
 
     class Meta:
         model = Ticket
         fields = ["dni_or_passport", "schedule", "seat"]
+        labels = {
+            "dni_or_passport": _("DNI/Passport"),
+            "schedule": _("Schedule"),
+            "seat": _("Seat"),
+        }
 
 
 TicketFormSet = inlineformset_factory(
@@ -132,12 +159,19 @@ class PurchaseReceiptForm(forms.ModelForm):
         fields = [
             "dni_or_passport",
         ]
+        labels = {
+            "dni_or_passport": _("DNI/Passport"),
+        }
 
 
 class DetailFoodOrderForm(forms.ModelForm):
     class Meta:
         model = DetailFoodOrder
         fields = ["meal", "quantity"]
+        labels = {
+            "meal": _("Meal"),
+            "quantity": _("Quantity"),
+        }
 
 
 DetailFoodOrderFormSet = inlineformset_factory(
@@ -154,6 +188,10 @@ class DetailsMerchandiseOrderForm(forms.ModelForm):
     class Meta:
         model = DetailsMerchandiseOrder
         fields = ["merchandise", "quantity"]
+        labels = {
+            "merchandise": _("Merchandise"),
+            "quantity": _("Quantity"),
+        }
 
 
 DetailsMerchandiseOrderSet = inlineformset_factory(
@@ -174,6 +212,11 @@ class JourneyScheduleForm(forms.ModelForm):
             "departure_time",
             "arrival_time",
         ]
+        labels = {
+            "journey": _("Journey"),
+            "departure_time": _("Departure Time"),
+            "arrival_time": _("Arrival Time"),
+        }
         widgets = {
             "departure_time": NumberInput(attrs={"type": "datetime"}),
             "arrival_time": NumberInput(attrs={"type": "datetime"}),
@@ -188,6 +231,11 @@ class MerchandiseForm(forms.ModelForm):
             "price",
             "description",
         ]
+        labels = {
+            "name": _("Name"),
+            "price": _("Price"),
+            "description": _("Description"),
+        }
 
 
 class MealForm(forms.ModelForm):
@@ -197,3 +245,7 @@ class MealForm(forms.ModelForm):
             "name",
             "price",
         ]
+        labels = {
+            "name": _("Name"),
+            "price": _("Price"),
+        }

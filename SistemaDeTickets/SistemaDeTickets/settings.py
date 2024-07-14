@@ -14,6 +14,9 @@ from decouple import config
 import os
 from pathlib import Path
 
+# Traducciones
+from django.utils.translation import gettext_lazy as _
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -51,6 +54,8 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    # Configuracion de Idioma
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -112,14 +117,20 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "es-ar"
-
 TIME_ZONE = "America/Buenos_Aires"
 
+# Configuracion de Lenguaje
+LANGUAGE_CODE = "es"  # Idioma predeterminado (cámbialo según tus necesidades)
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
 
+LANGUAGES = [
+    ("en", _("English")),
+    ("es", _("Español")),
+    # Agrega otros idiomas que necesites
+]
+LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

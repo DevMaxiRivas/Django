@@ -613,3 +613,7 @@
     margin-bottom: 1rem;
     /* optional: adds space between elements */
 }
+
+.font-black {
+    color: #000;
+}

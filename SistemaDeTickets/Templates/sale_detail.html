@@ -1,67 +1,40 @@
-<!doctype html>
-<html lang="es">
+{% include 'base.html' %}
 
-<head>
-    {% load static %}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <title>Detalles de Venta</title>
-</head>
+{% block content %}
+<section class="section_ps home_ps form-register font-black">
+    <div class="card container mt-5 center-text">
+        <h1 class="mb-3 mt-3">Detalles de Venta</h1>
+        <h4>Venta ID: {{ sale.id }}</h4>
+        <p>Total: {{ sale.price }}</p>
+        <p>Fecha: {{ sale.purchase_date }}</p>
 
-<body>
-    {% include 'header.html' %}
-    <section class="section_ps home_ps form-register">
-        <div class="card container mt-5 center-text">
-            <h1 class="mb-3 mt-3">Detalles de Venta</h1>
-            <h4>Venta ID: {{ sale.id }}</h4>
-            <p>Total: {{ sale.price }}</p>
-            <p>Fecha: {{ sale.purchase_date }}</p>
-
-            {% if tickets %}
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>ID Ticket</th>
-                        <th>DNI/Pasaporte</th>
-                        <th>Asiento</th>
-                        <th>Clase</th>
-                        <th>Recorrido</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for ticket in tickets %}
-                    <tr>
-                        <td>{{ ticket.id }}</td>
-                        <td>{{ ticket.passenger.dni_or_passport }}</td>
-                        <td>{{ ticket.seat.seat_number }}</td>
-                        <td>{{ ticket.seat.category }}</td>
-                        <td>{{ ticket.schedule }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>No hay tickets asociados a esta venta.</p>
-            {% endif %}
-        </div>
-    </section>
-
-    <div class="body_ps">
-        {% include 'footer.html' %}
+        {% if tickets %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID Ticket</th>
+                    <th>DNI/Pasaporte</th>
+                    <th>Asiento</th>
+                    <th>Clase</th>
+                    <th>Recorrido</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.id }}</td>
+                    <td>{{ ticket.passenger.dni_or_passport }}</td>
+                    <td>{{ ticket.seat.seat_number }}</td>
+                    <td>{{ ticket.seat.category }}</td>
+                    <td>{{ ticket.schedule }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No hay tickets asociados a esta venta.</p>
+        {% endif %}
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-
-</html>
+</section>
+{% include 'footer.html' %}
+{% endblock %}

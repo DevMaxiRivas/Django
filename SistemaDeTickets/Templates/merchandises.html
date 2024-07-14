@@ -1,77 +1,51 @@
-<!doctype html>
-<html lang="es">
+{% include 'base.html' %}
 
-<head>
-    {% load static %}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <title>Mercancias</title>
-</head>
-
-<body>
-    {% include 'header.html' %}
-    <section class="section_ps home_ps form-register">
-        <div class="card container mt-5 center-text">
-            <h1 class="mb-3 mt-3">Mercancias</h1>
-            {% if merchandises %}
-            <div class="list-group">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Precio</th>
-                            <th>Descripción</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for merchandise in merchandises %}
-                        <tr>
-                            <td>{{ merchandise.id }}</td>
-                            <td>{{ merchandise.name }}</td>
-                            <td>{{ merchandise.price }}</td>
-                            <td>{{ merchandise.description }}</td>
-                            <td>
-                                <a class="btn btn-primary" href="{% url 'merchandise_update' merchandise.id %}">
-                                    Editar
-                                </a>
-                                <a class="btn btn-danger" href="" data-toggle="modal"
-                                    data-target="#exampleModal{{merchandise.id}}">
-                                    Eliminar
-                                </a>
-                            </td>
-                            {% include "merchandise_delete_modal.html" %}
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <p>
-                    <a class="btn btn-success" href="{% url 'merchandise_new' %}" role="button">Nuevo</a>
-                </p>
-            </div>
-            {% else %}
-            <p>No se registraron mercancias disponibles.</p>
-            {% endif %}
+{% block content %}
+<section class="section_ps home_ps form-register">
+    <div class="card container mt-5 center-text">
+        <h1 class="mb-3 mt-3">Mercancias</h1>
+        {% if merchandises %}
+        <div class="list-group">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Descripción</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for merchandise in merchandises %}
+                    <tr>
+                        <td>{{ merchandise.id }}</td>
+                        <td>{{ merchandise.name }}</td>
+                        <td>{{ merchandise.price }}</td>
+                        <td>{{ merchandise.description }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="{% url 'merchandise_update' merchandise.id %}">
+                                Editar
+                            </a>
+                            <a class="btn btn-danger" href="" data-toggle="modal"
+                                data-target="#exampleModal{{merchandise.id}}">
+                                Eliminar
+                            </a>
+                        </td>
+                        {% include "merchandise_delete_modal.html" %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p>
+                <a class="btn btn-success" href="{% url 'merchandise_new' %}" role="button">Nuevo</a>
+            </p>
         </div>
-    </section>
-
-    <div class="body_ps">
-        {% include 'footer.html' %}
+        {% else %}
+        <p>No se registraron mercancias disponibles.</p>
+        {% endif %}
     </div>
+</section>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-
-</html>
+{% include 'footer.html' %}
+{% endblock %}

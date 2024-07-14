@@ -5,26 +5,29 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 import uuid  # Requerida para las instancias de tuplas únicas
 
+# Traducciones
+from django.utils.translation import gettext as _
+
 from django.conf import settings
 
 
 STATES1 = (
-    ("h", "Habilitado"),
-    ("d", "Desahabilitado"),
+    ("h", _("Habilitado")),
+    ("d", _("Deshabilitado")),
 )
 
 STATES2 = (
-    ("h", "Habilitado"),
-    ("d", "Desahabilitado"),
-    ("s", "Suspendido"),
-    ("f", "Finalizado"),
+    ("h", _("Habilitado")),
+    ("d", _("Deshabilitado")),
+    ("s", _("Suspendido")),
+    ("f", _("Finalizado")),
 )
 
 STATES3 = (
-    ("h", "Habilitado"),
-    ("d", "Desahabilitado"),
-    ("v", "Vendido"),
-    ("r", "Devuelto"),
+    ("h", _("Habilitado")),
+    ("d", _("Deshabilitado")),
+    ("v", _("Vendido")),
+    ("r", _("Devuelto")),
 )
 
 
@@ -44,8 +47,8 @@ class Station(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Estacion"
-        verbose_name_plural = "Estaciones"
+        verbose_name = _("Estacion")
+        verbose_name_plural = _("Estaciones")
 
     def status_sample(self):
         if self.enabled:
@@ -68,8 +71,8 @@ class BusStop(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Parada de colectivo"
-        verbose_name_plural = "Paradas de colectivo"
+        verbose_name = _("Parada de colectivo")
+        verbose_name_plural = _("Paradas de colectivo")
 
     def __str__(self):
         return self.name
@@ -95,8 +98,8 @@ class Train(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Tren"
-        verbose_name_plural = "Trenes"
+        verbose_name = _("Tren")
+        verbose_name_plural = _("Trenes")
 
     def __str__(self):
         return self.name
@@ -122,8 +125,8 @@ class Bus(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Colectivo"
-        verbose_name_plural = "Colectivos"
+        verbose_name = _("Colectivo")
+        verbose_name_plural = _("Colectivos")
 
     def __str__(self):
         return self.name
@@ -150,8 +153,8 @@ class SeatCategory(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Categoria de Asiento"
-        verbose_name_plural = "Categorias de Asiento"
+        verbose_name = _("Categoria de Asiento")
+        verbose_name_plural = _("Categorias de Asiento")
 
     def __str__(self):
         return self.name
@@ -191,8 +194,8 @@ class Seat(models.Model):
 
     class Meta:
         ordering = ["seat_number"]
-        verbose_name = "Asiento"
-        verbose_name_plural = "Asientos"
+        verbose_name = _("Asiento")
+        verbose_name_plural = _("Asientos")
 
     def __str__(self):
         return f"{self.seat_number} ({self.category.name})"
@@ -211,8 +214,8 @@ class Meal(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Plato"
-        verbose_name_plural = "Platos"
+        verbose_name = _("Plato")
+        verbose_name_plural = _("Platos")
 
     def __str__(self):
         return self.name
@@ -239,8 +242,8 @@ class Merchandise(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Mercaderia"
-        verbose_name_plural = "Mercaderias"
+        verbose_name = _("Mercaderia")
+        verbose_name_plural = _("Mercaderias")
 
     def __str__(self):
         return self.name
@@ -278,8 +281,8 @@ class Journey(models.Model):
 
     class Meta:
         ordering = ["type"]
-        verbose_name = "Recorrido"
-        verbose_name_plural = "Recorridos"
+        verbose_name = _("Recorrido")
+        verbose_name_plural = _("Recorridos")
 
     def __str__(self):
         return f"{self.get_type_display()} - {self.description}"
@@ -338,8 +341,8 @@ class JourneyStage(models.Model):
 
     class Meta:
         ordering = ["order"]
-        verbose_name = "Etapa de Recorrido"
-        verbose_name_plural = "Etapas de Recorrido"
+        verbose_name = _("Etapa de Recorrido")
+        verbose_name_plural = _("Etapas de Recorrido")
 
     def __str__(self):
         return f"{self.journey} - Stage {self.order}"
@@ -366,8 +369,8 @@ class JourneySchedule(models.Model):
 
     class Meta:
         ordering = ["journey"]
-        verbose_name = "Cronograma de Recorrido"
-        verbose_name_plural = "Cronogramas de Recorrido"
+        verbose_name = _("Cronograma de Recorrido")
+        verbose_name_plural = _("Cronogramas de Recorrido")
 
     def __str__(self):
         return f"{self.journey} on {self.departure_time}"
@@ -410,8 +413,8 @@ class Passenger(models.Model):
 
     class Meta:
         ordering = ["dni_or_passport"]
-        verbose_name = "Pasajero"
-        verbose_name_plural = "Pasajeros"
+        verbose_name = _("Pasajero")
+        verbose_name_plural = _("Pasajeros")
 
     def __str__(self):
         return self.name
@@ -446,8 +449,8 @@ class TicketSales(models.Model):
 
     class Meta:
         ordering = ["user"]
-        verbose_name = "Venta de Boletos"
-        verbose_name_plural = "Ventas de Boletos"
+        verbose_name = _("Venta de Boletos")
+        verbose_name_plural = _("Ventas de Boletos")
 
 
 class Ticket(models.Model):
@@ -500,8 +503,8 @@ class Ticket(models.Model):
         return f"Ticket for {self.passenger.name}"
 
     class Meta:
-        verbose_name = "Boleto"
-        verbose_name_plural = "Boletos"
+        verbose_name = _("Boleto")
+        verbose_name_plural = _("Boletos")
 
 
 class PurchaseReceipt(models.Model):
@@ -542,8 +545,8 @@ class PurchaseReceipt(models.Model):
 
     class Meta:
         ordering = ["purchase_date"]
-        verbose_name = "Factura de Venta"
-        verbose_name_plural = "Facturas de Ventas"
+        verbose_name = _("Factura de Venta")
+        verbose_name_plural = _("Facturas de Ventas")
 
 
 class DetailFoodOrder(models.Model):
@@ -604,8 +607,8 @@ class DetailFoodOrder(models.Model):
 
     class Meta:
         ordering = ["receipt"]
-        verbose_name = "Detalle de la Orden de platos"
-        verbose_name_plural = "Detalles de la Orden de platos"
+        verbose_name = _("Detalle de la Orden de platos")
+        verbose_name_plural = _("Detalles de la Orden de platos")
 
 
 class DetailsMerchandiseOrder(models.Model):
@@ -664,8 +667,8 @@ class DetailsMerchandiseOrder(models.Model):
 
     class Meta:
         ordering = ["receipt"]
-        verbose_name = "Detalle de la Orden de mercadería"
-        verbose_name_plural = "Detalles de la Orden de mercadería"
+        verbose_name = _("Detalle de la Orden de mercadería")
+        verbose_name_plural = _("Detalles de la Orden de mercadería")
 
     def __str__(self):
         return f"{self.quantity} x {self.merchandise.name}"
@@ -688,5 +691,5 @@ class Payments(models.Model):
 
     class Meta:
         ordering = ["created_at"]
-        verbose_name = "Pago"
-        verbose_name_plural = "Pagos"
+        verbose_name = _("Pago")
+        verbose_name_plural = _("Pagos")
