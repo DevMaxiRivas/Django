@@ -1,18 +1,19 @@
+{% load i18n %}
 {% include 'base.html' %}
 
 {% block content %}
 <section class="section_ps home_ps form-register">
     <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">Platillos</h1>
+        <h1 class="mb-3 mt-3">{% translate "Platillos" %}</h1>
         {% if meals %}
         <div class="list-group">
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Precio</th>
-                        <th>Acción</th>
+                        <th>{% translate "Nombre" %}</th>
+                        <th>{% translate "Precio" %}</th>
+                        <th>{% translate "Acción" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,11 +24,11 @@
                         <td>{{ meal.price }}</td>
                         <td>
                             <a class="btn btn-primary" href="{% url 'meal_update' meal.id %}">
-                                Editar
+                                {% translate "Editar" %}
                             </a>
                             <a class="btn btn-danger" href="" data-toggle="modal"
                                 data-target="#exampleModal{{meal.id}}">
-                                Eliminar
+                                {% translate "Eliminar" %}
                             </a>
                         </td>
                         {% include "meal_delete_modal.html" %}
@@ -36,11 +37,11 @@
                 </tbody>
             </table>
             <p>
-                <a class="btn btn-success" href="{% url 'meal_new' %}" role="button">Nuevo</a>
+                <a class="btn btn-success" href="{% url 'meal_new' %}" role="button">{% translate "Nuevo" %}</a>
             </p>
         </div>
         {% else %}
-        <p>No se registraron platillos.</p>
+        <p>{% translate "No se registraron platillos" %}.</p>
         {% endif %}
     </div>
 </section>

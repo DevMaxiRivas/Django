@@ -1,11 +1,12 @@
+{% load i18n %}
 {% include 'base.html' %}
 
 <section class="section_ps home_ps form-register">
     <div class="container mt-5 center-text">
         {% block content %}
-        <h2>¡Compra Fallida!</h2>
-        <p>Lo sentimos, ha ocurrido un error con su pago. Por favor, intente nuevamente.</p>
-        <a href="{% url 'purchase_tickets' %}" class="btn btn-primary">Volver al inicio</a>
+        <h2>{% translate "¡Compra Fallida!" %}</h2>
+        <p>{% translate "Lo sentimos, ha ocurrido un error con su pago. Por favor, intente nuevamente" %}.</p>
+        <a href="{% url 'purchase_tickets' %}" class="btn btn-primary">{% translate "Reservar nuevamente" %}</a>
         {% endblock %}
     </div>
 </section>

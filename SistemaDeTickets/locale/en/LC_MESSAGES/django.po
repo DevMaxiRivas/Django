@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-13 22:02-0300\n"
+"POT-Creation-Date: 2024-07-14 21:26-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,105 @@ msgstr "English"
 #: .\SistemaDeTickets\settings.py:130
 msgid "Español"
 msgstr "Spanish"
+
+#: .\Templates\action_buttons.html:4
+msgid "Funcionalidades"
+msgstr "Functionalities"
+
+#: .\Templates\action_buttons.html:8 .\Templates\home.html:26
+msgid "Reserve su boleto"
+msgstr "Reserve your ticket"
+
+#: .\Templates\action_buttons.html:9
+msgid "Boletos Reservados"
+msgstr "Reserved Tickets"
+
+#: .\Templates\action_buttons.html:11 .\Templates\header.html:16
+msgid "Venta Platillos"
+msgstr "Meal Sale"
+
+#: .\Templates\action_buttons.html:12 .\Templates\header.html:17
+msgid "Venta Mercancia"
+msgstr "Merchandise Sales"
+
+#: .\Templates\action_buttons.html:13 .\Templates\action_buttons.html:17
+#: .\Templates\header.html:18 .\Templates\header.html:21 .\core\models.py:507
+msgid "Boletos"
+msgstr "Tickets"
+
+#: .\Templates\action_buttons.html:14 .\Templates\action_buttons.html:23
+#: .\Templates\meals.html:7
+msgid "Platillos"
+msgstr "Meals"
+
+#: .\Templates\action_buttons.html:15 .\Templates\action_buttons.html:24
+#: .\Templates\merchandises.html:7
+msgid "Mercancias"
+msgstr "Merchandises"
+
+#: .\Templates\action_buttons.html:18 .\Templates\header.html:22
+msgid "Recibos"
+msgstr "Receipts"
+
+#: .\Templates\action_buttons.html:19 .\Templates\header.html:23
+#: .\Templates\journeys.html:7 .\core\models.py:285
+msgid "Recorridos"
+msgstr "Journeys"
+
+#: .\Templates\action_buttons.html:21
+msgid "Cronogramas de Recorridos"
+msgstr "Journey Schedules"
+
+#: .\Templates\action_buttons.html:28 .\Templates\header.html:42
+msgid "Iniciar Sesión"
+msgstr "Login"
+
+#: .\Templates\action_buttons.html:29 .\Templates\header.html:43
+#: .\Templates\registration\login.html:20
+#: .\Templates\registration\register.html:19
+msgid "Registrarse"
+msgstr "Register"
+
+#: .\Templates\base.html:21
+msgid "Sistema de Reserva de Boletos"
+msgstr "Ticket Sales"
+
+#: .\Templates\client_purchases.html:7
+msgid "Mis Compras"
+msgstr "My Purchases"
+
+#: .\Templates\client_purchases.html:15 .\Templates\purchases.html:16
+#: .\Templates\receipt_detail.html:11 .\Templates\receipts.html:16
+#: .\Templates\sale_detail.html:10
+msgid "Fecha"
+msgstr "Date"
+
+#: .\Templates\client_purchases.html:16 .\Templates\journey_schedules.html:17
+#: .\Templates\meals.html:16 .\Templates\merchandises.html:17
+#: .\Templates\purchases.html:17 .\Templates\receipts.html:17
+msgid "Acción"
+msgstr "Action"
+
+#: .\Templates\client_purchases.html:26
+msgid "Ver Tickets"
+msgstr "See Tickets"
+
+#: .\Templates\client_purchases.html:34
+msgid "No has realizado ninguna compra"
+msgstr "You have not made a purchase"
+
+#: .\Templates\create_passenger.html:6
+msgid "Registrar Pasajero"
+msgstr "Register Passenger"
+
+#: .\Templates\element_new.html:8 .\Templates\journey_schedules.html:43
+#: .\Templates\meals.html:40
+msgid "Nuevo"
+msgstr "New"
+
+#: .\Templates\element_new.html:12
+msgid "Guardar"
+msgstr "Save"
 
 #: .\Templates\footer.html:4
 msgid "Información"
@@ -70,11 +169,13 @@ msgstr "Contact us"
 msgid "Redes Sociales"
 msgstr "Social Networks"
 
-#: .\Templates\header.html:9
+#: .\Templates\header.html:9 .\Templates\registration\login.html:19
+#: .\Templates\registration\register.html:18
 msgid "Inicio"
 msgstr "Home"
 
-#: .\Templates\header.html:11 .\core\models.py:284
+#: .\Templates\header.html:11 .\Templates\sale_detail.html:20
+#: .\core\models.py:284
 msgid "Recorrido"
 msgstr "Journey"
 
@@ -82,35 +183,11 @@ msgstr "Journey"
 msgid "Beneficios"
 msgstr "Benefits"
 
-#: .\Templates\header.html:16
-#, fuzzy
-#| msgid "Venta de Boletos"
-msgid "Venta Platillos"
-msgstr "Ticket Sale"
-
-#: .\Templates\header.html:17
-msgid "Venta Mercancia"
-msgstr "Merchandise Sales"
-
-#: .\Templates\header.html:18 .\Templates\header.html:21 .\core\models.py:507
-msgid "Boletos"
-msgstr "Tickets"
-
-#: .\Templates\header.html:22
-msgid "Recibos"
-msgstr "Receipts"
-
-#: .\Templates\header.html:23 .\core\models.py:285
-msgid "Recorridos"
-msgstr "Journeys"
-
 #: .\Templates\header.html:24
-#, fuzzy
-#| msgid "Cronogramas de Recorrido"
 msgid "Cronogramas"
-msgstr "Journey Schedules"
+msgstr "Schedules"
 
-#: .\Templates\header.html:33
+#: .\Templates\header.html:33 .\Templates\purchases.html:14
 msgid "Usuario"
 msgstr "User"
 
@@ -118,19 +195,9 @@ msgstr "User"
 msgid "Cerrar Sesión"
 msgstr "Logout"
 
-#: .\Templates\header.html:42
-msgid "Iniciar Sesión"
-msgstr "Login"
-
-#: .\Templates\header.html:43
-msgid "Registrarse"
-msgstr "Register"
-
 #: .\Templates\home.html:8
-#, fuzzy
-#| msgid "Bienvenido"
 msgid "Bienvenido al Inicio"
-msgstr "Bienvenido"
+msgstr "Welcome to the Home"
 
 #: .\Templates\home.html:15
 msgid ""
@@ -160,10 +227,6 @@ msgstr ""
 "communities of the area is planned.\n"
 "    </p>\n"
 "    "
-
-#: .\Templates\home.html:26
-msgid "Reserve su boleto"
-msgstr "Reserve your ticket"
 
 #: .\Templates\home.html:31
 msgid ""
@@ -324,8 +387,407 @@ msgstr "Promotions?"
 msgid "Suscribase a nuestro boletín de noticias"
 msgstr "Subscribe to our newsletter"
 
+#: .\Templates\home.html:152
+msgid "Ingrese su correo electronico"
+msgstr "Enter your email address"
+
+#: .\Templates\home.html:153
+msgid "Enviar"
+msgstr "Send"
+
+#: .\Templates\journey_schedule_modal.html:8
+#: .\Templates\meal_delete_modal.html:8
+#: .\Templates\merchandise_delete_modal.html:8
+msgid "Atención"
+msgstr "Attention"
+
+#: .\Templates\journey_schedule_modal.html:14
+msgid "Desea eliminar recorrido"
+msgstr "Do you want to delete journey"
+
+#: .\Templates\journey_schedule_modal.html:16
+msgid "que parte el"
+msgstr "that departs on"
+
+#: .\Templates\journey_schedule_modal.html:20
+#: .\Templates\meal_delete_modal.html:17
+#: .\Templates\merchandise_delete_modal.html:17
+msgid "Cancelar"
+msgstr "Cancel"
+
+#: .\Templates\journey_schedule_modal.html:22
+#: .\Templates\journey_schedules.html:33 .\Templates\meal_delete_modal.html:18
+#: .\Templates\meals.html:31 .\Templates\merchandise_delete_modal.html:19
+#: .\Templates\merchandises.html:33 .\Templates\purchase_food.html:33
+#: .\Templates\purchase_tickets.html:33
+msgid "Eliminar"
+msgstr "Delete"
+
+#: .\Templates\journey_schedules.html:7
+msgid "Cronograma de Recorridos"
+msgstr "Journey Schedules"
+
+#: .\Templates\journey_schedules.html:14
+msgid "Tipo de Recorrido"
+msgstr "Journey Type"
+
+#: .\Templates\journey_schedules.html:15
+msgid "Hora de Salida"
+msgstr "Departure Time"
+
+#: .\Templates\journey_schedules.html:16
+msgid "Hora de Llegada"
+msgstr "Arrival Time"
+
+#: .\Templates\journey_schedules.html:29 .\Templates\meals.html:27
+#: .\Templates\merchandises.html:29
+msgid "Editar"
+msgstr "Edit"
+
+#: .\Templates\journey_schedules.html:48
+msgid "No se registraron cronogramas para recorridos"
+msgstr "No schedules were recorded for tours"
+
+#: .\Templates\journeys.html:14
+msgid "Tipo"
+msgstr "Type"
+
+#: .\Templates\journeys.html:15
+msgid "Descripcion"
+msgstr "Description"
+
+#: .\Templates\journeys.html:30
+msgid "No se registraron recorridos"
+msgstr "No tours were recorded"
+
+#: .\Templates\meal_delete_modal.html:14
+#: .\Templates\merchandise_delete_modal.html:14
+msgid "Desea eliminar"
+msgstr "Do you want to delete"
+
+#: .\Templates\meals.html:14 .\Templates\merchandises.html:14
+#: .\Templates\purchase_tickets.html:73 .\core\forms.py:39
+msgid "Nombre"
+msgstr "Name"
+
+#: .\Templates\meals.html:15 .\Templates\merchandises.html:15
+msgid "Precio"
+msgstr "Price"
+
+#: .\Templates\meals.html:44
+msgid "No se registraron platillos"
+msgstr "No meals were recorded"
+
+#: .\Templates\merchandises.html:16
+#, fuzzy
+#| msgid "Description"
+msgid "Descripción"
+msgstr "Description"
+
+#: .\Templates\merchandises.html:46
+msgid "No se registraron mercancias disponibles"
+msgstr "No merchandises were registred"
+
+#: .\Templates\payment_detail.html:7
+msgid "Comprobante"
+msgstr "Receipt"
+
+#: .\Templates\payment_detail.html:9
+#, python-format
+msgid ""
+"\n"
+"        <h4>Pago ID: %(payment.id)s</h4>\n"
+"        <h4>Venta ID: %(payment.sale.id)s</h4>\n"
+"        <p>Nro. Comprobante: %(payment.payment_id)s</p>\n"
+"        <p>Tipo de Pago: %(payment.payment_type)s</p>\n"
+"        <p>Fecha de Creación: %(payment.created_at)s</p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h4>Payment ID: %(payment.id)s</h4>\n"
+"        <h4>Sale ID: %(payment.sale.id)s</h4>\n"
+"        <p>Num. Receipt: %(payment.payment_id)s</p>\n"
+"        <p>Payment Type: %(payment.payment_type)s</p>\n"
+"        <p>Date of Creation: %(payment.created_at)s</p>\n"
+"        "
+
+#: .\Templates\payment_detail.html:17
+msgid "No hay comprobante asociados a esta venta"
+msgstr "There is no voucher associated with this sale."
+
+#: .\Templates\payment_failed.html:7
+msgid "¡Compra Fallida!"
+msgstr "Purchase Failed!"
+
+#: .\Templates\payment_failed.html:8
+msgid ""
+"Lo sentimos, ha ocurrido un error con su pago. Por favor, intente nuevamente"
+msgstr "We're sorry, an error has occurred with your payment. Please try again"
+
+#: .\Templates\payment_failed.html:9
+msgid "Reservar nuevamente"
+msgstr "Re-book"
+
+#: .\Templates\payment_pending.html:7
+msgid "¡Compra Pendiente!"
+msgstr "Purchase Pending!"
+
+#: .\Templates\payment_pending.html:8
+msgid ""
+"Su pago está pendiente de confirmación. Le notificaremos una vez que sea "
+"procesado."
+msgstr ""
+"Your payment is pending confirmation. We will notify you once it is "
+"processed."
+
+#: .\Templates\payment_pending.html:9 .\Templates\payment_success.html:9
+msgid "Volver al inicio"
+msgstr "Back to home"
+
+#: .\Templates\payment_success.html:7
+msgid "¡Compra exitosa!"
+msgstr "Successful purchase!"
+
+#: .\Templates\payment_success.html:8
+msgid "Gracias por su compra. La operación se realizó correctamente."
+msgstr "Thank you for your purchase. The transaction was successful."
+
+#: .\Templates\purchase_food.html:8
+msgid "Venta de Platillos"
+msgstr "Meal Sale"
+
+#: .\Templates\purchase_food.html:17
+msgid "Platillo"
+msgstr "Meals"
+
+#: .\Templates\purchase_food.html:46
+msgid "Agregar otro platillo"
+msgstr "Add another meal"
+
+#: .\Templates\purchase_food.html:48
+msgid "Registrar Venta"
+msgstr "Register Sale"
+
+#: .\Templates\purchase_food.html:55
+msgid "Nuevo Platillo"
+msgstr "New Meal"
+
+#: .\Templates\purchase_food.html:81
+msgid "Los campos del formulario no se llenaron correctamente."
+msgstr "The form fields were not filled out correctly."
+
+#: .\Templates\purchase_food.html:105
+msgid "Pasajero no existe. Por favor, contacte a soporte"
+msgstr "Passenger does not exist. Please contact support"
+
+#: .\Templates\purchase_food.html:108
+msgid "Todos los platillos tiene marca para eliminar"
+msgstr "All dishes are marked for elimination."
+
+#: .\Templates\purchase_food.html:110
+#: .\Templates\purchase_merchandise.html:111
+msgid "Ocurrio un error inesperado intente nuevamente"
+msgstr "An unexpected error occurred try again"
+
+#: .\Templates\purchase_merchandise.html:8
+msgid "Venta de Mercaderia"
+msgstr "Merchandise Sale"
+
+#: .\Templates\purchase_merchandise.html:17 .\core\forms.py:192
+msgid "Merchandise"
+msgstr "Merchandise"
+
+#: .\Templates\purchase_merchandise.html:45
+msgid "Agregar otro producto"
+msgstr "Add another product"
+
+#: .\Templates\purchase_merchandise.html:47
+msgid "Comprar Mercaderias"
+msgstr "Buy Merchandise"
+
+#: .\Templates\purchase_merchandise.html:54
+msgid "Nueva Mercancia"
+msgstr "New Merchandise"
+
+#: .\Templates\purchase_merchandise.html:82
+#, fuzzy
+#| msgid "Los campos del formulario no se llenaron correctamente."
+msgid "Los campos de los formularios no se llenaron correctamente"
+msgstr "The form fields were not filled out correctly."
+
+#: .\Templates\purchase_merchandise.html:106
+#, fuzzy
+#| msgid "Pasajero no existe. Por favor, contacte a soporte"
+msgid "El pasajero no existe. Por favor, contacte a soporte"
+msgstr "Passenger does not exist. Please contact support"
+
+#: .\Templates\purchase_merchandise.html:109
+msgid "Toda la mercaderia tiene marca para eliminar"
+msgstr "All merchandise are marked for elimination."
+
+#: .\Templates\purchase_tickets.html:8
+msgid "Reservaciones de Boletos"
+msgstr "Ticket Reservations"
+
+#: .\Templates\purchase_tickets.html:17 .\Templates\sale_detail.html:16
+#: .\core\models.py:506
+msgid "Boleto"
+msgstr "Ticket"
+
+#: .\Templates\purchase_tickets.html:46
+msgid "Agregar otro boleto"
+msgstr "Add another ticket"
+
+#: .\Templates\purchase_tickets.html:48
+msgid "Reservar Boletos"
+msgstr "Reserve tickets"
+
+#: .\Templates\purchase_tickets.html:55
+msgid "Nuevo Boleto"
+msgstr "New Ticket"
+
+#: .\Templates\purchase_tickets.html:67
+msgid "Informacion del Pasajero"
+msgstr "Passenger Information"
+
+#: .\Templates\purchase_tickets.html:74 .\Templates\sale_detail.html:17
+msgid "DNI/Pasaporte"
+msgstr "DNI/Passport"
+
+#: .\Templates\purchase_tickets.html:75
+msgid "Teléfono de Emergencia"
+msgstr "Emergency Telephone"
+
+#: .\Templates\purchase_tickets.html:76
+msgid "Fecha de Nacimiento"
+msgstr "Date of Birth"
+
+#: .\Templates\purchase_tickets.html:77
+msgid "Genero"
+msgstr "Gender"
+
+#: .\Templates\purchase_tickets.html:78
+msgid "País de Origen"
+msgstr "Country of Origin"
+
+#: .\Templates\purchase_tickets.html:89
+msgid "Registrar nuevo pasajero"
+msgstr "Register new passenger"
+
+#: .\Templates\purchase_tickets.html:165
+msgid "Fallo al cargar el modal. Por favor, intenta de nuevo."
+msgstr "Failed to load modal. Please try again."
+
+#: .\Templates\purchases.html:7 .\core\models.py:452
+msgid "Venta de Boletos"
+msgstr "Ticket Sale"
+
+#: .\Templates\purchases.html:27
+msgid "Usuario no registrado"
+msgstr "Unregistered user"
+
+#: .\Templates\purchases.html:32
+msgid "Ver Boletos"
+msgstr "See Tickets"
+
+#: .\Templates\purchases.html:34
+msgid "Ver Comprobante"
+msgstr "See Receipt"
+
+#: .\Templates\purchases.html:44
+msgid "No se ha realizado ninguna compra de boletos"
+msgstr "No ticket purchase has been made"
+
+#: .\Templates\receipt_detail.html:7 .\Templates\sale_detail.html:7
+msgid "Detalles de Venta"
+msgstr "Sale Details"
+
+#: .\Templates\receipt_detail.html:8 .\Templates\sale_detail.html:8
+msgid "Venta"
+msgstr "Sale"
+
+#: .\Templates\receipt_detail.html:9 .\Templates\receipts.html:14
+#: .\core\models.py:416
+msgid "Pasajero"
+msgstr "Passenger"
+
+#: .\Templates\receipt_detail.html:17
+msgid "Detalle"
+msgstr "Detail"
+
+#: .\Templates\receipt_detail.html:18
+msgid "Producto"
+msgstr "Product"
+
+#: .\Templates\receipt_detail.html:19
+msgid "Cantidad"
+msgstr "Quantity"
+
+#: .\Templates\receipt_detail.html:20
+msgid "Precio Unitario"
+msgstr "Unit Price"
+
+#: .\Templates\receipt_detail.html:39
+msgid "No hay detalles asociados a este recibo"
+msgstr "There are no details associated with this receipt"
+
+#: .\Templates\receipts.html:7
+msgid "Ventas"
+msgstr "Sales"
+
+#: .\Templates\receipts.html:28
+msgid "Ver Detalles"
+msgstr "See Details"
+
+#: .\Templates\receipts.html:36
+msgid "No se ha realizado ninguna venta"
+msgstr "No sale has been made."
+
+#: .\Templates\registration\login.html:8
+msgid "INICIO DE SESION"
+msgstr "LOG IN"
+
+#: .\Templates\registration\login.html:14
+msgid "Ingrese sus credenciales"
+msgstr "Enter your credentials"
+
+#: .\Templates\registration\login.html:24
+#: .\Templates\registration\register.html:23
+msgid "Iniciar sesión"
+msgstr "Login"
+
+#: .\Templates\registration\register.html:7
+msgid "REGISTRO DE USUARIO"
+msgstr "USER REGISTRATION"
+
+#: .\Templates\registration\register.html:13
+msgid "Complete todos los datos"
+msgstr "Complete all data"
+
+#: .\Templates\sale_detail.html:18 .\core\models.py:197
+msgid "Asiento"
+msgstr "Seat"
+
+#: .\Templates\sale_detail.html:19
+msgid "Clase"
+msgstr "Type"
+
+#: .\Templates\sale_detail.html:36
+msgid "No hay boletos asociados a esta venta"
+msgstr "There is no tickets associated with this sale."
+
+#: .\core\forms.py:38
+msgid "Correo electrónico"
+msgstr "Email"
+
+#: .\core\forms.py:40
+msgid "Apellido"
+msgstr "Last Name"
+
 #: .\core\forms.py:53
-msgid "username"
+#, fuzzy
+#| msgid "username"
+msgid "Username"
 msgstr "username"
 
 #: .\core\forms.py:54
@@ -396,10 +858,6 @@ msgstr "Meal"
 #: .\core\forms.py:173 .\core\forms.py:193
 msgid "Quantity"
 msgstr "Quantity"
-
-#: .\core\forms.py:192
-msgid "Merchandise"
-msgstr "Merchandise"
 
 #: .\core\forms.py:216
 msgid "Journey"
@@ -485,10 +943,6 @@ msgstr "Seat Category"
 msgid "Categorias de Asiento"
 msgstr "Seat Categories"
 
-#: .\core\models.py:197
-msgid "Asiento"
-msgstr "Seat"
-
 #: .\core\models.py:198
 msgid "Asientos"
 msgstr "Seats"
@@ -525,25 +979,13 @@ msgstr "Journey Schedule"
 msgid "Cronogramas de Recorrido"
 msgstr "Journey Schedules"
 
-#: .\core\models.py:416
-msgid "Pasajero"
-msgstr "Passenger"
-
 #: .\core\models.py:417
 msgid "Pasajeros"
 msgstr "Passengers"
 
-#: .\core\models.py:452
-msgid "Venta de Boletos"
-msgstr "Ticket Sale"
-
 #: .\core\models.py:453
 msgid "Ventas de Boletos"
 msgstr "Ticket Sales"
-
-#: .\core\models.py:506
-msgid "Boleto"
-msgstr "Ticket"
 
 #: .\core\models.py:548
 msgid "Factura de Venta"
@@ -577,7 +1019,31 @@ msgstr "Payment"
 msgid "Pagos"
 msgstr "Payments"
 
-#, fuzzy
-#~| msgid "Estaciones"
-#~ msgid "Atracciones"
-#~ msgstr "Stations"
+#~ msgid ""
+#~ "\n"
+#~ "                Desea eliminar recorrido %(journey_schedule.journey)s que "
+#~ "parte el %(journey_schedule.departure_time)s ?\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "               Do you want to delete the journey %(journey_schedule."
+#~ "journey)s that departs on %(journey_schedule.departure_time)s ?\n"
+#~ "                "
+
+#~ msgid ""
+#~ "\n"
+#~ "                Desea eliminar %(meal.name)s ?\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "                Do you want to delete %(meal.name)s ?\n"
+#~ "                "
+
+#~ msgid ""
+#~ "\n"
+#~ "                Desea eliminar %(merchandise.name)s ?\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "                Do you want to delete %(merchandise.name)s ?\n"
+#~ "                "

@@ -1,19 +1,20 @@
+{% load i18n %}
 {% include 'base.html' %}
 
 {% block content %}
 <section class="section_ps home_ps form-register">
     <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">Mercancias</h1>
+        <h1 class="mb-3 mt-3">{% translate "Mercancias" %}</h1>
         {% if merchandises %}
         <div class="list-group">
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Precio</th>
-                        <th>Descripción</th>
-                        <th>Acción</th>
+                        <th>{% translate "Nombre" %}</th>
+                        <th>{% translate "Precio" %}</th>
+                        <th>{% translate "Descripción" %}</th>
+                        <th>{% translate "Acción" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,11 +26,11 @@
                         <td>{{ merchandise.description }}</td>
                         <td>
                             <a class="btn btn-primary" href="{% url 'merchandise_update' merchandise.id %}">
-                                Editar
+                                {% translate "Editar" %}
                             </a>
                             <a class="btn btn-danger" href="" data-toggle="modal"
                                 data-target="#exampleModal{{merchandise.id}}">
-                                Eliminar
+                                {% translate "Eliminar" %}
                             </a>
                         </td>
                         {% include "merchandise_delete_modal.html" %}
@@ -42,7 +43,7 @@
             </p>
         </div>
         {% else %}
-        <p>No se registraron mercancias disponibles.</p>
+        <p>{% translate "No se registraron mercancias disponibles" %}.</p>
         {% endif %}
     </div>
 </section>

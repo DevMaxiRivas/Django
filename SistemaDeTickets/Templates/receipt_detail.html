@@ -1,22 +1,23 @@
+{% load i18n %}
 {% include 'base.html' %}
 
 {% block content %}
 <section class="section_ps home_ps form-register font-black">
     <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">Detalles de Venta</h1>
-        <h4>Venta ID: {{ receipt.id }}</h4>
-        <h4>Pasajero: {{ receipt.passenger.dni_or_passport }}</h4>
+        <h1 class="mb-3 mt-3">{% translate "Detalles de Venta" %}</h1>
+        <h4>{% translate "Venta" %} ID: {{ receipt.id }}</h4>
+        <h4>{% translate "Pasajero" %}: {{ receipt.passenger.dni_or_passport }}</h4>
         <p>Total: {{ receipt.price }}</p>
-        <p>Fecha: {{ receipt.purchase_date }}</p>
+        <p>{% translate "Fecha" %}: {{ receipt.purchase_date }}</p>
 
         {% if details %}
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>ID Detalle</th>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio Unitario</th>
+                    <th>ID {% translate "Detalle" %}</th>
+                    <th>{% translate "Producto" %}</th>
+                    <th>{% translate "Cantidad" %}</th>
+                    <th>{% translate "Precio Unitario" %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +36,7 @@
             </tbody>
         </table>
         {% else %}
-        <p>No hay detalles asociados a este recibo.</p>
+        <p>{% translate "No hay detalles asociados a este recibo" %}.</p>
         {% endif %}
     </div>
 </section>

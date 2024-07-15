@@ -1,22 +1,23 @@
+{% load i18n %}
 {% include 'base.html' %}
 
 {% block content %}
 <section class="section_ps home_ps form-register font-black">
     <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">Detalles de Venta</h1>
-        <h4>Venta ID: {{ sale.id }}</h4>
+        <h1 class="mb-3 mt-3">{% translate "Detalles de Venta" %}</h1>
+        <h4>{% translate "Venta" %} ID: {{ sale.id }}</h4>
         <p>Total: {{ sale.price }}</p>
-        <p>Fecha: {{ sale.purchase_date }}</p>
+        <p>{% translate "Fecha" %}: {{ sale.purchase_date }}</p>
 
         {% if tickets %}
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>ID Ticket</th>
-                    <th>DNI/Pasaporte</th>
-                    <th>Asiento</th>
-                    <th>Clase</th>
-                    <th>Recorrido</th>
+                    <th>ID {% translate "Boleto" %}</th>
+                    <th>{% translate "DNI/Pasaporte" %}</th>
+                    <th>{% translate "Asiento" %}</th>
+                    <th>{% translate "Clase" %}</th>
+                    <th>{% translate "Recorrido" %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,7 +33,7 @@
             </tbody>
         </table>
         {% else %}
-        <p>No hay tickets asociados a esta venta.</p>
+        <p>{% translate "No hay boletos asociados a esta venta" %}.</p>
         {% endif %}
     </div>
 </section>

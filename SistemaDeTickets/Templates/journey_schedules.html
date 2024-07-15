@@ -1,19 +1,20 @@
+{% load i18n %}
 {% include 'base.html' %}
 
 {% block content %}
 <section class="section_ps home_ps form-register font-black">
     <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">Cronograma de Recorridos</h1>
+        <h1 class="mb-3 mt-3">{% translate "Cronograma de Recorridos" %}</h1>
         {% if journey_schedules %}
         <div class="list-group">
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Tipo de Recorrido </th>
-                        <th>Hora de Salida</th>
-                        <th>Hora de Llegada</th>
-                        <th>Acción</th>
+                        <th>{% translate "Tipo de Recorrido" %}</th>
+                        <th>{% translate "Hora de Salida" %}</th>
+                        <th>{% translate "Hora de Llegada" %}</th>
+                        <th>{% translate "Acción" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,11 +26,11 @@
                         <td>{{ journey_schedule.arrival_time }}</td>
                         <td>
                             <a class="btn btn-primary" href="{% url 'journey_schedule_update' journey_schedule.id %}">
-                                Editar
+                                {% translate "Editar" %}
                             </a>
                             <a class="btn btn-danger" href="" data-toggle="modal"
                                 data-target="#exampleModal{{journey_schedule.id}}">
-                                Eliminar
+                                {% translate "Eliminar" %}
                             </a>
                         </td>
                         {% include "journey_schedule_modal.html" %}
@@ -38,11 +39,13 @@
                 </tbody>
             </table>
             <p>
-                <a class="btn btn-success" href="{% url 'journey_schedule_new' %}" role="button">Nuevo</a>
+                <a class="btn btn-success" href="{% url 'journey_schedule_new' %}" role="button">
+                    {% translate "Nuevo" %}
+                </a>
             </p>
         </div>
         {% else %}
-        <p>No se registraron cronogramas para recorridos.</p>
+        <p>{% translate "No se registraron cronogramas para recorridos" %}.</p>
         {% endif %}
     </div>
 </section>

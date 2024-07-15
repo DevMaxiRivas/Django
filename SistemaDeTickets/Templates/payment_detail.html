@@ -1,17 +1,20 @@
+{% load i18n %}
 {% include 'base.html' %}
 
 {% block content %}
 <section class="section_ps home_ps form-register font-black">
     <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">Comprobante</h1>
+        <h1 class="mb-3 mt-3">{% translate "Comprobante" %}</h1>
         {% if payment %}
+        {% blocktrans %}
         <h4>Pago ID: {{ payment.id }}</h4>
         <h4>Venta ID: {{ payment.sale.id }}</h4>
         <p>Nro. Comprobante: {{ payment.payment_id }}</p>
         <p>Tipo de Pago: {{ payment.payment_type }}</p>
         <p>Fecha de Creación: {{ payment.created_at }}</p>
+        {% endblocktrans %}
         {% else %}
-        <p>No hay comprobante asociados a esta venta.</p>
+        <p>{% translate "No hay comprobante asociados a esta venta" %}.</p>
         {% endif %}
     </div>
 </section>

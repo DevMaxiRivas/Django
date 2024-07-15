@@ -35,9 +35,9 @@ class LoginForm(AuthenticationForm):
 
 
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField(label="Correo electrónico")
-    first_name = forms.CharField(label="Nombre")
-    last_name = forms.CharField(label="Apellido")
+    email = forms.EmailField(label=_("Correo electrónico"))
+    first_name = forms.CharField(label=_("Nombre"))
+    last_name = forms.CharField(label=_("Apellido"))
 
     class Meta:
         model = User
@@ -50,7 +50,7 @@ class RegisterForm(UserCreationForm):
             "password2",
         ]
         labels = {
-            "username": _("username"),
+            "username": _("Username"),
             "email": _("email"),
             "first_name": _("first name"),
             "last_name": _("last name"),

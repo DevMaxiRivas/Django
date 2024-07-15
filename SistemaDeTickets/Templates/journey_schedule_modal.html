@@ -1,20 +1,26 @@
+{% load i18n %}
 <!-- Modal -->
 <div class="modal fade" id="exampleModal{{journey_schedule.id}}" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Atención</h5>
+                <h5 class="modal-title" id="exampleModalLabel">{% translate "Atención" %}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Desea eliminar recorrido {{journey_schedule.journey}} que parte el {{journey_schedule.departure_time}} ?
+                {% translate "Desea eliminar recorrido" %}
+                {{journey_schedule.journey}}
+                {% translate "que parte el" %}
+                {{journey_schedule.departure_time}} ?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <a class="btn btn-danger" href="{% url 'journey_schedule_delete' journey_schedule.id %}">Eliminar</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% translate "Cancelar" %}</button>
+                <a class="btn btn-danger" href="{% url 'journey_schedule_delete' journey_schedule.id %}">
+                    {% translate "Eliminar" %}
+                </a>
             </div>
         </div>
     </div>

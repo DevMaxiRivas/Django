@@ -1,17 +1,18 @@
+{% load i18n %}
 {% include 'base.html' %}
 
 {% block content %}
 <section class="section_ps home_ps form-register">
     <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">Recorridos</h1>
+        <h1 class="mb-3 mt-3">{% translate "Recorridos" %}</h1>
         {% if journeys %}
         <div class="list-group">
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Tipo</th>
-                        <th>Descripcion</th>
+                        <th>{% translate "Tipo" %}</th>
+                        <th>{% translate "Descripcion" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,7 +27,7 @@
             </table>
         </div>
         {% else %}
-        <p>No se registraron recorridos.</p>
+        <p>{% translate "No se registraron recorridos" %}.</p>
         {% endif %}
     </div>
 </section>

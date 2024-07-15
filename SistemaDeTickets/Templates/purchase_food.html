@@ -1,10 +1,11 @@
+{% load i18n %}
 {% load crispy_forms_tags %}
 {% include 'base.html' %}
 
 {% block content %}
 <section class="section_ps home_register_ps form-register font-black">
     <div class="container mt-5 center-text card">
-        <h1 class="m-3">Venta de Platillos</h1>
+        <h1 class="m-3">{% translate "Venta de Platillos" %}</h1>
         <form id="food-form" method="post">
             {% csrf_token %}
             {{ sales_form|crispy }}
@@ -13,7 +14,7 @@
                 {% for form in formset %}
                 <div class="food-form card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Food {{ forloop.counter }}</h5>
+                        <h5 class="card-title">{% translate "Platillo" %} {{ forloop.counter }}</h5>
                         {% for field in form.visible_fields %}
                         {% if field.name != 'delete_food' %}
                         <div class="form-group">
@@ -28,7 +29,9 @@
                         {% else %}
                         <div class="form-check">
                             {{ field }}
-                            <label class="form-check-label" for="{{ field.id_for_label }}">Eliminar</label>
+                            <label class="form-check-label" for="{{ field.id_for_label }}">
+                                {% translate "Eliminar"%}
+                            </label>
                         </div>
                         {% endif %}
                         {% endfor %}
@@ -39,15 +42,17 @@
                 </div>
                 {% endfor %}
             </div>
-            <button type="button" id="add-food" class="btn btn-secondary mt-2 mb-2">Add Another Food</button>
-            <button type="submit" class="btn btn-primary">Purchase Foods</button>
+            <button type="button" id="add-food" class="btn btn-secondary mt-2 mb-2">
+                {% translate "Agregar otro platillo"%}
+            </button>
+            <button type="submit" class="btn btn-primary">{% translate "Registrar Venta" %}</button>
         </form>
     </div>
 
     <div id="empty-form" style="display:none">
         <div class="food-form card mb-3">
             <div class="card-body">
-                <h5 class="card-title">New Food</h5>
+                <h5 class="card-title">{% translate "Nuevo Platillo" %}</h5>
                 {{ empty_form|crispy }}
             </div>
         </div>
@@ -72,7 +77,8 @@
             });
 
             if (!formValid) {
-                alert("The forms were not filled out correctly");
+
+                alert('{% translate "Los campos del formulario no se llenaron correctamente." %}');
                 return;
             }
 
@@ -96,12 +102,12 @@
                 error: function (xhr) {
                     var response = xhr.responseJSON;
                     if (response && response.error && response.no_exist_passenger) {
-                        alert('Passenger does not exist. Please contact support.');
+                        alert('{% translate "Pasajero no existe. Por favor, contacte a soporte" %}');
                     } else {
                         if (response && response.empty_form) {
-                            alert('All foods are marked for deletion');
+                            alert('{% translate "Todos los platillos tiene marca para eliminar" %}');
                         } else {
-                            alert('An unexpected error occurred. Please try again.');
+                            alert('{% translate "Ocurrio un error inesperado intente nuevamente" %}');
                         }
                     }
                 }

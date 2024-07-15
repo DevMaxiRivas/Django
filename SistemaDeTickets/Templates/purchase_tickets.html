@@ -1,10 +1,11 @@
+{% load i18n %}
 {% load crispy_forms_tags %}
 {% include 'base.html' %}
 
 {% block content %}
 <section class="section_ps home_register_ps form-register font-black">
     <div class="container mt-5 center-text card">
-        <h1 class="m-3">Purchase Tickets</h1>
+        <h1 class="m-3">{% translate "Reservaciones de Boletos" %}</h1>
         <form id="ticket-form" method="post">
             {% csrf_token %}
             {{ sales_form|crispy }}
@@ -13,7 +14,7 @@
                 {% for form in formset %}
                 <div class="ticket-form card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Ticket {{ forloop.counter }}</h5>
+                        <h5 class="card-title">{% translate "Boleto" %} {{ forloop.counter }}</h5>
                         {% for field in form.visible_fields %}
                         {% if field.name != 'delete_ticket' %}
                         <div class="form-group">
@@ -28,7 +29,9 @@
                         {% else %}
                         <div class="form-check">
                             {{ field }}
-                            <label class="form-check-label" for="{{ field.id_for_label }}">Eliminar</label>
+                            <label class="form-check-label" for="{{ field.id_for_label }}">
+                                {% translate "Eliminar"%}
+                            </label>
                         </div>
                         {% endif %}
                         {% endfor %}
@@ -39,15 +42,17 @@
                 </div>
                 {% endfor %}
             </div>
-            <button type="button" id="add-ticket" class="btn btn-secondary mt-2 mb-2">Add Another Ticket</button>
-            <button type="submit" class="btn btn-primary">Purchase Tickets</button>
+            <button type="button" id="add-ticket" class="btn btn-secondary mt-2 mb-2">
+                {% translate "Agregar otro boleto"%}
+            </button>
+            <button type="submit" class="btn btn-primary">{% translate "Reservar Boletos" %}</button>
         </form>
     </div>
 
     <div id="empty-form" style="display:none">
         <div class="ticket-form card mb-3">
             <div class="card-body">
-                <h5 class="card-title">New Ticket</h5>
+                <h5 class="card-title">{% translate "Nuevo Boleto" %}</h5>
                 {{ empty_form|crispy }}
             </div>
         </div>
@@ -59,18 +64,18 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Passenger Information</h5>
+                <h5 class="modal-title">{% translate "Informacion del Pasajero" %}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Name: <span id="passenger-name"></span></p>
-                <p>DNI/Passport: <span id="passenger-dni_or_passport"></span></p>
-                <p>Emergency Telephone: <span id="passenger-emergency_telephone"></span></p>
-                <p>Date of Birth: <span id="passenger-date_of_birth"></span></p>
-                <p>Gender: <span id="passenger-gender"></span></p>
-                <p>Origin Country: <span id="passenger-origin_country"></span></p>
+                <p>{% translate "Nombre" %}: <span id="passenger-name"></span></p>
+                <p>{% translate "DNI/Pasaporte" %}: <span id="passenger-dni_or_passport"></span></p>
+                <p>{% translate "Teléfono de Emergencia" %}: <span id="passenger-emergency_telephone"></span></p>
+                <p>{% translate "Fecha de Nacimiento" %}: <span id="passenger-date_of_birth"></span></p>
+                <p>{% translate "Genero" %}: <span id="passenger-gender"></span></p>
+                <p>{% translate "País de Origen" %}: <span id="passenger-origin_country"></span></p>
             </div>
         </div>
     </div>
@@ -81,7 +86,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Create New Passenger</h5>
+                <h5 class="modal-title">{% translate "Registrar nuevo pasajero" %}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -157,7 +162,7 @@
                 $('#new-passenger-form-container').html(data);
                 $('#passenger-modal').modal('show');
             }).fail(function () {
-                alert('Failed to load modal content. Please try again.');
+                alert('{% translate "Fallo al cargar el modal. Por favor, intenta de nuevo." %}');
             });
         }
 

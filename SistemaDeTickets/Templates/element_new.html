@@ -1,14 +1,15 @@
+{% load i18n %}
 {% include 'base.html' %}
 
 <section class="section_ps home_register_ps form-register font-black">
     <div class="container mt-5 p-5 center-text card">
         {%load crispy_forms_tags %}
         {% block content %}
-        <h1 class="mb-3">Nuevo</h1>
+        <h1 class="mb-3">{% translate "Nuevo" %}</h1>
         <form method="POST" novalidate>
             {% csrf_token %}
             <table>{{ formulario|crispy}}</table>
-            <button type="submit" class="btn btn-success">Guardar</button>
+            <button type="submit" class="btn btn-success">{% translate "Guardar" %}</button>
         </form>
         {% endblock %}
     </div>
