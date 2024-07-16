@@ -3,8 +3,8 @@ from django.contrib import admin
 from .models import *
 
 
-admin.site.register(Station)
-admin.site.register(BusStop)
+admin.site.register(Stops)
+admin.site.register(Transport)
 admin.site.register(Bus)
 admin.site.register(Train)
 admin.site.register(SeatCategory)

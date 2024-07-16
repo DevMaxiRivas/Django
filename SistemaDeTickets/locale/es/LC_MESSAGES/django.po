@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-14 21:26-0300\n"
+"POT-Creation-Date: 2024-07-15 21:31-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,7 +50,7 @@ msgid "Venta Mercancia"
 msgstr "Venta Mercancia"
 
 #: .\Templates\action_buttons.html:13 .\Templates\action_buttons.html:17
-#: .\Templates\header.html:18 .\Templates\header.html:21 .\core\models.py:507
+#: .\Templates\header.html:18 .\Templates\header.html:21 .\core\models.py:588
 msgid "Boletos"
 msgstr "Boletos"
 
@@ -69,7 +69,7 @@ msgid "Recibos"
 msgstr "Recibos"
 
 #: .\Templates\action_buttons.html:19 .\Templates\header.html:23
-#: .\Templates\journeys.html:7 .\core\models.py:285
+#: .\Templates\journeys.html:7 .\core\models.py:343
 msgid "Recorridos"
 msgstr "Recorridos"
 
@@ -118,8 +118,8 @@ msgid "No has realizado ninguna compra"
 msgstr "No has realizado ninguna compra"
 
 #: .\Templates\create_passenger.html:6
-msgid "Registrar Pasajero"
-msgstr "Registrar Pasajero"
+msgid "Confirmar Datos"
+msgstr "Confirmar Datos"
 
 #: .\Templates\element_new.html:8 .\Templates\journey_schedules.html:43
 #: .\Templates\meals.html:40
@@ -180,7 +180,7 @@ msgid "Inicio"
 msgstr "Inicio"
 
 #: .\Templates\header.html:11 .\Templates\sale_detail.html:20
-#: .\core\models.py:284
+#: .\core\models.py:342
 msgid "Recorrido"
 msgstr "Recorrido"
 
@@ -483,7 +483,7 @@ msgid "Desea eliminar"
 msgstr "Desea eliminar"
 
 #: .\Templates\meals.html:14 .\Templates\merchandises.html:14
-#: .\Templates\purchase_tickets.html:73 .\core\forms.py:39
+#: .\core\forms.py:39
 msgid "Nombre"
 msgstr "Nombre"
 
@@ -642,7 +642,7 @@ msgid "Reservaciones de Boletos"
 msgstr "Reservaciones de Boletos"
 
 #: .\Templates\purchase_tickets.html:17 .\Templates\sale_detail.html:16
-#: .\core\models.py:506
+#: .\core\models.py:587
 msgid "Boleto"
 msgstr "Boleto"
 
@@ -659,38 +659,14 @@ msgid "Nuevo Boleto"
 msgstr "Nuevo Boleto"
 
 #: .\Templates\purchase_tickets.html:67
-msgid "Informacion del Pasajero"
-msgstr "Informacion del Pasajero"
+msgid "Información del Pasajero"
+msgstr "Información del Pasajero"
 
-#: .\Templates\purchase_tickets.html:74 .\Templates\sale_detail.html:17
-msgid "DNI/Pasaporte"
-msgstr "DNI/Pasaporte"
-
-#: .\Templates\purchase_tickets.html:75
-msgid "Teléfono de Emergencia"
-msgstr "Teléfono de Emergencia"
-
-#: .\Templates\purchase_tickets.html:76
-msgid "Fecha de Nacimiento"
-msgstr "Fecha de Nacimiento"
-
-#: .\Templates\purchase_tickets.html:77
-msgid "Genero"
-msgstr "Genero"
-
-#: .\Templates\purchase_tickets.html:78
-msgid "País de Origen"
-msgstr "País de Origen"
-
-#: .\Templates\purchase_tickets.html:89
-msgid "Registrar nuevo pasajero"
-msgstr "Registrar nuevo pasajero"
-
-#: .\Templates\purchase_tickets.html:165
+#: .\Templates\purchase_tickets.html:143
 msgid "Fallo al cargar el modal. Por favor, intenta de nuevo."
 msgstr "Fallo al cargar el modal. Por favor, intenta de nuevo."
 
-#: .\Templates\purchases.html:7 .\core\models.py:452
+#: .\Templates\purchases.html:7 .\core\models.py:524
 msgid "Venta de Boletos"
 msgstr "Venta de Boletos"
 
@@ -719,7 +695,7 @@ msgid "Venta"
 msgstr "Venta"
 
 #: .\Templates\receipt_detail.html:9 .\Templates\receipts.html:14
-#: .\core\models.py:416
+#: .\core\models.py:480
 msgid "Pasajero"
 msgstr "Pasajero"
 
@@ -776,7 +752,11 @@ msgstr "REGISTRO DE USUARIO"
 msgid "Complete todos los datos"
 msgstr "Complete todos los datos"
 
-#: .\Templates\sale_detail.html:18 .\core\models.py:197
+#: .\Templates\sale_detail.html:17
+msgid "DNI/Pasaporte"
+msgstr "DNI/Pasaporte"
+
+#: .\Templates\sale_detail.html:18 .\core\models.py:246
 msgid "Asiento"
 msgstr "Asiento"
 
@@ -787,6 +767,14 @@ msgstr "Clase"
 #: .\Templates\sale_detail.html:36
 msgid "No hay boletos asociados a esta venta"
 msgstr "No hay boletos asociados a esta venta"
+
+#: .\accounts\models.py:30
+msgid "perfil"
+msgstr "perfil"
+
+#: .\accounts\models.py:31
+msgid "perfiles"
+msgstr "perfiles"
 
 #: .\core\forms.py:38
 msgid "Correo electrónico"
@@ -800,7 +788,7 @@ msgstr "Apellido"
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: .\core\forms.py:54
+#: .\core\forms.py:54 .\core\models.py:488
 msgid "email"
 msgstr "correo electronico"
 
@@ -913,153 +901,290 @@ msgstr "Vendido"
 msgid "Devuelto"
 msgstr "Devuelto"
 
-#: .\core\models.py:50
-msgid "Estacion"
-msgstr "Estacion"
+#: .\core\models.py:35 .\core\models.py:94 .\core\models.py:136
+#: .\core\models.py:254 .\core\models.py:284 .\core\models.py:438
+#, fuzzy
+#| msgid "Username"
+msgid "name"
+msgstr "Nombre de usuario"
 
-#: .\core\models.py:51
-msgid "Estaciones"
-msgstr "Estaciones"
+#: .\core\models.py:36
+msgid "location"
+msgstr "ubicacion"
 
-#: .\core\models.py:74
-msgid "Parada de colectivo"
-msgstr "Parada de colectivo"
+#: .\core\models.py:38 .\core\models.py:171 .\core\models.py:321
+msgid "type"
+msgstr "tipo"
 
-#: .\core\models.py:75
-msgid "Paradas de colectivo"
-msgstr "Paradas de colectivo"
+#: .\core\models.py:41
+msgid "Bus"
+msgstr "Colectivo"
 
-#: .\core\models.py:101
+#: .\core\models.py:42
+msgid "Train"
+msgstr "Train"
+
+#: .\core\models.py:48 .\core\models.py:73 .\core\models.py:100
+#: .\core\models.py:141 .\core\models.py:178 .\core\models.py:220
+#: .\core\models.py:260 .\core\models.py:291 .\core\models.py:326
+#: .\core\models.py:383 .\core\models.py:414 .\core\models.py:464
+#: .\core\models.py:499 .\core\models.py:606 .\core\models.py:655
+#: .\core\models.py:726
+msgid "enabled"
+msgstr "habilitado"
+
+#: .\core\models.py:60
+msgid "Parada"
+msgstr "Parada"
+
+#: .\core\models.py:61
+msgid "Paradas"
+msgstr "Paradas"
+
+#: .\core\models.py:89 .\core\models.py:131 .\core\models.py:205
+#: .\core\models.py:375
+msgid "transport"
+msgstr "tranporte"
+
+#: .\core\models.py:96 .\core\models.py:138
+msgid "capacity"
+msgstr "capacidad"
+
+#: .\core\models.py:121
 msgid "Tren"
 msgstr "Tren"
 
-#: .\core\models.py:102
+#: .\core\models.py:122
 msgid "Trenes"
 msgstr "Trenes"
 
-#: .\core\models.py:128
+#: .\core\models.py:157
 msgid "Colectivo"
 msgstr "Colectivo"
 
-#: .\core\models.py:129
+#: .\core\models.py:158
 msgid "Colectivos"
 msgstr "Colectivos"
 
-#: .\core\models.py:156
+#: .\core\models.py:174 .\core\models.py:256 .\core\models.py:286
+#: .\core\models.py:493 .\core\models.py:543 .\core\models.py:600
+msgid "price"
+msgstr "precio"
+
+#: .\core\models.py:195
 msgid "Categoria de Asiento"
 msgstr "Categoria de Asiento"
 
-#: .\core\models.py:157
+#: .\core\models.py:196
 msgid "Categorias de Asiento"
 msgstr "Categorias de Asiento"
 
-#: .\core\models.py:198
+#: .\core\models.py:211
+msgid "seat_number"
+msgstr "numero_asiento"
+
+#: .\core\models.py:214
+msgid "category"
+msgstr "categoria"
+
+#: .\core\models.py:247
 msgid "Asientos"
 msgstr "Asientos"
 
-#: .\core\models.py:217
+#: .\core\models.py:269
 msgid "Plato"
 msgstr "Plato"
 
-#: .\core\models.py:218
+#: .\core\models.py:270
 msgid "Platos"
 msgstr "Platos"
 
-#: .\core\models.py:245
+#: .\core\models.py:288 .\core\models.py:323
+msgid "description"
+msgstr "descripcion"
+
+#: .\core\models.py:300
 msgid "Mercaderia"
 msgstr "Mercaderia"
 
-#: .\core\models.py:246
+#: .\core\models.py:301
 msgid "Mercaderias"
 msgstr "Mercaderias"
 
-#: .\core\models.py:344
+#: .\core\models.py:352 .\core\models.py:408
+msgid "journey"
+msgstr "recorrido"
+
+#: .\core\models.py:359
+msgid "departure_stop"
+msgstr "parada_salida"
+
+#: .\core\models.py:367
+msgid "arrival_stop"
+msgstr "parada_llegada"
+
+#: .\core\models.py:380
+msgid "duration"
+msgstr "duracion"
+
+#: .\core\models.py:399
 msgid "Etapa de Recorrido"
 msgstr "Etapa de Recorrido"
 
-#: .\core\models.py:345
+#: .\core\models.py:400
 msgid "Etapas de Recorrido"
 msgstr "Etapas de Recorrido"
 
-#: .\core\models.py:372
+#: .\core\models.py:410
+msgid "departure_time"
+msgstr "hora_salida"
+
+#: .\core\models.py:411
+msgid "arrival_time"
+msgstr "hora_llegada"
+
+#: .\core\models.py:430
 msgid "Cronograma de Recorrido"
 msgstr "Cronograma de Recorrido"
 
-#: .\core\models.py:373
+#: .\core\models.py:431
 msgid "Cronogramas de Recorrido"
 msgstr "Cronogramas de Recorrido"
 
-#: .\core\models.py:417
+#: .\core\models.py:439
+msgid "dni_or_passport"
+msgstr "dni_o_pasaporte"
+
+#: .\core\models.py:440
+msgid "origin_country"
+msgstr "pais_origen"
+
+#: .\core\models.py:442
+msgid "emergency_telephone"
+msgstr "telefono_emergencia"
+
+#: .\core\models.py:445
+msgid "date_of_birth"
+msgstr "fecha_de_nacimiento"
+
+#: .\core\models.py:455
+msgid "gender"
+msgstr "género"
+
+#: .\core\models.py:481
 msgid "Pasajeros"
 msgstr "Pasajeros"
 
-#: .\core\models.py:453
+#: .\core\models.py:490
+msgid "user"
+msgstr "usuario"
+
+#: .\core\models.py:496 .\core\models.py:603
+msgid "purchase_date"
+msgstr "fecha_compra"
+
+#: .\core\models.py:525
 msgid "Ventas de Boletos"
 msgstr "Ventas de Boletos"
 
-#: .\core\models.py:548
+#: .\core\models.py:531 .\core\models.py:784
+msgid "sale"
+msgstr "venta"
+
+#: .\core\models.py:536 .\core\models.py:594
+msgid "passenger"
+msgstr "pasajero"
+
+#: .\core\models.py:539
+msgid "schedule"
+msgstr "horario"
+
+#: .\core\models.py:541
+msgid "seat"
+msgstr "asiento"
+
+#: .\core\models.py:638
 msgid "Factura de Venta"
 msgstr "Factura de Venta"
 
-#: .\core\models.py:549
+#: .\core\models.py:639
 msgid "Facturas de Ventas"
 msgstr "Facturas de Ventas"
 
-#: .\core\models.py:610
+#: .\core\models.py:645 .\core\models.py:713
+msgid "receipt"
+msgstr "recibo"
+
+#: .\core\models.py:649
+msgid "meal"
+msgstr "plato"
+
+#: .\core\models.py:650 .\core\models.py:720
+msgid "quantity"
+msgstr "cantidad"
+
+#: .\core\models.py:652 .\core\models.py:722
+msgid "unit_price"
+msgstr "precio_unitario"
+
+#: .\core\models.py:706
 msgid "Detalle de la Orden de platos"
 msgstr "Detalle de la Orden de platos"
 
-#: .\core\models.py:611
+#: .\core\models.py:707
 msgid "Detalles de la Orden de platos"
 msgstr "Detalles de la Orden de platos"
 
-#: .\core\models.py:670
+#: .\core\models.py:718
+msgid "merchandise"
+msgstr "Mercaderia"
+
+#: .\core\models.py:774
 msgid "Detalle de la Orden de mercadería"
 msgstr "Detalle de la Orden de mercadería"
 
-#: .\core\models.py:671
+#: .\core\models.py:775
 msgid "Detalles de la Orden de mercadería"
 msgstr "Detalles de la Orden de mercadería"
 
-#: .\core\models.py:694
+#: .\core\models.py:789
+msgid "payment_id"
+msgstr "id_pago"
+
+#: .\core\models.py:790
+msgid "payment_type"
+msgstr "tipo_pago"
+
+#: .\core\models.py:792
+msgid "payment_status"
+msgstr "estado_pago"
+
+#: .\core\models.py:795
+msgid "created_at"
+msgstr "creado_en"
+
+#: .\core\models.py:804
 msgid "Pago"
 msgstr "Pago"
 
-#: .\core\models.py:695
+#: .\core\models.py:805
 msgid "Pagos"
 msgstr "Pagos"
 
-#~ msgid ""
-#~ "\n"
-#~ "                Desea eliminar %(meal.name)s ?\n"
-#~ "                "
-#~ msgstr ""
-#~ "\n"
-#~ "                Desea eliminar %(meal.name)s ?\n"
-#~ "                "
+#~ msgid "Registrar Pasajero"
+#~ msgstr "Registrar Pasajero"
 
-#~ msgid ""
-#~ "\n"
-#~ "                Desea eliminar %(merchandise.name)s ?\n"
-#~ "                "
-#~ msgstr ""
-#~ "\n"
-#~ "                Desea eliminar %(merchandise.name)s ?\n"
-#~ "                "
+#~ msgid "Teléfono de Emergencia"
+#~ msgstr "Teléfono de Emergencia"
 
-#~ msgid ""
-#~ "\n"
-#~ "                Desea eliminar recorrido %(journey_schedule.journey)s que "
-#~ "parte el %(journey_schedule.departure_time)s ?\n"
-#~ "                "
-#~ msgstr ""
-#~ "\n"
-#~ "                Desea eliminar recorrido %(journey_schedule.journey)s que "
-#~ "parte el %(journey_schedule.departure_time)s ?\n"
-#~ "                "
+#~ msgid "Fecha de Nacimiento"
+#~ msgstr "Fecha de Nacimiento"
 
-#~ msgid "Hola, mundo!"
-#~ msgstr "Hello, world!"
+#~ msgid "Genero"
+#~ msgstr "Genero"
 
-#~ msgid "Este es un ejemplo de internacionalización."
-#~ msgstr "This is an example of internationalization."
+#~ msgid "País de Origen"
+#~ msgstr "País de Origen"
+
+#~ msgid "Registrar nuevo pasajero"
+#~ msgstr "Registrar nuevo pasajero"

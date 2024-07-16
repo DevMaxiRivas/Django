@@ -172,7 +172,6 @@ def purchase_tickets(request):
 
             if all_passengers_exist:
                 sale = sales_form.save(commit=False)
-                email = sales_form.cleaned_data.get("email")
 
                 if request.user.is_authenticated:
                     sale.user = request.user
@@ -195,15 +194,6 @@ def purchase_tickets(request):
                         ticket.save()
 
                 sale.update_total_price()
-
-                if not request.user.is_authenticated and email:
-                    send_mail(
-                        "Notificación de Compra de Boletos",
-                        f"Usted realizo una compra de boletos para los pasajeros con los siguientes dni o pasaportes: {msg}",
-                        settings.DEFAULT_FROM_EMAIL,
-                        [email],
-                        fail_silently=False,
-                    )
 
                 # Crear una instancia de Mercado Pago
                 mp = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
@@ -287,6 +277,20 @@ def payment_success(request):
     sale_id = request.GET.get(
         "external_reference"
     )  # Se aume que se envia el id de la venta por "external_reference"
+    if request.user.is_authenticated:
+        email = TicketSales.objects.get(id=sale_id).user.email
+    else:
+        email = TicketSales.objects.get(id=sale_id).email
+    msg = ""
+    for ticket in TicketSales.objects.get(id=sale_id).tickets.all():
+        msg += "\n" + ticket.passenger.dni_or_passport + " " + ticket.passenger.name
+    send_mail(
+        "Notificación de Compra de Boletos",
+        f"Usted realizo una compra de boletos para los pasajeros con los siguientes dni o pasaportes: {msg}",
+        settings.DEFAULT_FROM_EMAIL,
+        [email],
+        fail_silently=False,
+    )
 
     if payment_id and payment_type and sale_id:
         sale = get_object_or_404(TicketSales, id=sale_id)
@@ -342,13 +346,34 @@ def create_passenger(request):
     if request.method == "POST":
         form = PassengerForm(request.POST)
         if form.is_valid():
-            passenger = form.save()
-            return JsonResponse({"success": True, "name": passenger.name})
+            if not Passenger.objects.filter(
+                dni_or_passport=form.cleaned_data["dni_or_passport"]
+            ).exists():
+                form.save()
+            else:
+                Passenger.objects.filter(
+                    dni_or_passport=form.cleaned_data["dni_or_passport"]
+                ).update(**form.cleaned_data)
+            name = form.cleaned_data["name"]
+            return JsonResponse({"success": True, "name": name})
         else:
             return JsonResponse({"errors": form.errors}, status=400)
     else:
         dni_or_passport = request.GET.get("dni_or_passport", "")
-        form = PassengerForm(initial={"dni_or_passport": dni_or_passport})
+        if Passenger.objects.filter(dni_or_passport=dni_or_passport).exists():
+            passenger = Passenger.objects.get(dni_or_passport=dni_or_passport)
+            form = PassengerForm(
+                initial={
+                    "name": passenger.name,
+                    "dni_or_passport": dni_or_passport,
+                    "origin_country": passenger.origin_country,
+                    "emergency_telephone": passenger.emergency_telephone,
+                    "date_of_birth": passenger.date_of_birth,
+                    "gender": passenger.gender,
+                }
+            )
+        else:
+            form = PassengerForm(initial={"dni_or_passport": dni_or_passport})
     return render(request, "create_passenger.html", {"form": form})
 
 

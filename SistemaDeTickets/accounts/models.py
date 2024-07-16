@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
+# Traducciones
+from django.utils.translation import gettext as _
+
 
 # PERFIL DE USUARIO
 class Profile(models.Model):
@@ -24,8 +27,8 @@ class Profile(models.Model):
     )
 
     class Meta:
-        verbose_name = "perfil"
-        verbose_name_plural = "perfiles"
+        verbose_name = _("perfil")
+        verbose_name_plural = _("perfiles")
         ordering = ["-id"]
 
     def __str__(self):

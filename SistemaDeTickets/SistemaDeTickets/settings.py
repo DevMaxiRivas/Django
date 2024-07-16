@@ -120,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 TIME_ZONE = "America/Buenos_Aires"
 
 # Configuracion de Lenguaje
-LANGUAGE_CODE = "es"  # Idioma predeterminado (cámbialo según tus necesidades)
+LANGUAGE_CODE = "en"  # Idioma predeterminado (cámbialo según tus necesidades)
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

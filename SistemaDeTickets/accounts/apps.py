@@ -4,7 +4,7 @@ from django.apps import AppConfig
 class AccountsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "accounts"
-    verbose_name = "perfiles"
+    verbose_name = "accounts"
 
     # La funcion se llama cuando se carga la aplicacion y se utiliza
     # para realizar cualquier inicializacion o configuracion que deba

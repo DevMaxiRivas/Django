@@ -28,10 +28,10 @@
                         </div>
                         {% else %}
                         <div class="form-check">
-                            {{ field }}
                             <label class="form-check-label" for="{{ field.id_for_label }}">
                                 {% translate "Eliminar"%}
                             </label>
+                            {{ field }}
                         </div>
                         {% endif %}
                         {% endfor %}
@@ -59,34 +59,12 @@
     </div>
 </section>
 
-<!-- Modal para visualizar información del pasajero -->
-<div id="view-passenger-modal" class="modal fade font-black" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{% translate "Informacion del Pasajero" %}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>{% translate "Nombre" %}: <span id="passenger-name"></span></p>
-                <p>{% translate "DNI/Pasaporte" %}: <span id="passenger-dni_or_passport"></span></p>
-                <p>{% translate "Teléfono de Emergencia" %}: <span id="passenger-emergency_telephone"></span></p>
-                <p>{% translate "Fecha de Nacimiento" %}: <span id="passenger-date_of_birth"></span></p>
-                <p>{% translate "Genero" %}: <span id="passenger-gender"></span></p>
-                <p>{% translate "País de Origen" %}: <span id="passenger-origin_country"></span></p>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Modal para crear un nuevo pasajero -->
 <div id="passenger-modal" class="modal fade font-black" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{% translate "Registrar nuevo pasajero" %}</h5>
+                <h5 class="modal-title">{% translate "Información del Pasajero" %}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -176,26 +154,8 @@
         $(document).on('blur', '.dni_or_passport', function () {
             var dni_or_passport = $(this).val();
             var inputField = $(this); // Referencia al campo de entrada
-            console.log(dni_or_passport);
             if (dni_or_passport) {
-                $.ajax({
-                    url: '{% url "get_passenger_info" %}',
-                    data: {
-                        'dni_or_passport': dni_or_passport
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.success) {
-                            $('#passenger-name').text(data.passenger.name);
-                            $('#passenger-dni_or_passport').text(data.passenger.dni_or_passport);
-                            $('#passenger-date_of_birth').text(data.passenger.date_of_birth);
-                            $('#passenger-emergency_telephone').text(data.passenger.emergency_telephone);
-                            $('#passenger-gender').text(data.passenger.gender);
-                            $('#passenger-origin_country').text(data.passenger.origin_country);
-                            $('#view-passenger-modal').modal('show');
-                        }
-                    }
-                });
+                openCreatePassengerModal(dni_or_passport);
             }
         });
 

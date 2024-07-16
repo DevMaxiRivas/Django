@@ -31,11 +31,21 @@ STATES3 = (
 )
 
 
-class Station(models.Model):
-    name = models.CharField(max_length=100)
-    location = models.CharField(max_length=255)
-
+class Stops(models.Model):
+    name = models.CharField(verbose_name=_("name"), max_length=100)
+    location = models.CharField(verbose_name=_("location"), max_length=255)
+    type = models.CharField(
+        verbose_name=_("type"),
+        max_length=1,
+        choices=(
+            ("b", _("Bus")),
+            ("t", _("Train")),
+        ),
+        blank=True,
+        default="t",
+    )
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -47,8 +57,8 @@ class Station(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = _("Estacion")
-        verbose_name_plural = _("Estaciones")
+        verbose_name = _("Parada")
+        verbose_name_plural = _("Paradas")
 
     def status_sample(self):
         if self.enabled:
@@ -58,31 +68,36 @@ class Station(models.Model):
         return None
 
 
-class BusStop(models.Model):
-    name = models.CharField(max_length=100)
-    location = models.CharField(max_length=255)
-
+class Transport(models.Model):
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
         default="h",
     )
 
-    class Meta:
-        ordering = ["name"]
-        verbose_name = _("Parada de colectivo")
-        verbose_name_plural = _("Paradas de colectivo")
-
     def __str__(self):
-        return self.name
+        if Train.objects.filter(transport=self).exists():
+            return f"ID Transport {self.id} - Train {Train.objects.get(transport=self).name}"
+        return f"ID Transport {self.id} - Bus {Bus.objects.get(transport=self).name}"
 
 
 class Train(models.Model):
-    name = models.CharField(max_length=100)
-    total_seats = models.PositiveIntegerField()
+    transport = models.ForeignKey(
+        Transport,
+        verbose_name=_("transport"),
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    name = models.CharField(verbose_name=_("name"), max_length=100)
+    capacity = models.PositiveIntegerField(
+        verbose_name=_("capacity"), blank=True, null=True
+    )
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -96,6 +111,11 @@ class Train(models.Model):
             return STATES.get(self.enabled)
         return None
 
+    def save(self, *args, **kwargs):
+        if not self.transport:
+            self.transport = Transport.objects.create()
+        super().save(*args, **kwargs)
+
     class Meta:
         ordering = ["name"]
         verbose_name = _("Tren")
@@ -106,10 +126,19 @@ class Train(models.Model):
 
 
 class Bus(models.Model):
-    name = models.CharField(max_length=100)
-    capacity = models.PositiveIntegerField()
-
+    transport = models.ForeignKey(
+        Transport,
+        verbose_name=_("transport"),
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    name = models.CharField(verbose_name=_("name"), max_length=100)
+    capacity = models.PositiveIntegerField(
+        verbose_name=_("capacity"), blank=True, null=True
+    )
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -131,12 +160,22 @@ class Bus(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.transport:
+            self.transport = Transport.objects.create()
+        super().save(*args, **kwargs)
+
 
 class SeatCategory(models.Model):
-    name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    type = models.CharField(
+        verbose_name=_("type"), max_length=100, null=True, blank=True
+    )
+    price = models.DecimalField(
+        verbose_name=_("price"), max_digits=10, decimal_places=2
+    )
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -152,25 +191,35 @@ class SeatCategory(models.Model):
         return None
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["type"]
         verbose_name = _("Categoria de Asiento")
         verbose_name_plural = _("Categorias de Asiento")
 
     def __str__(self):
-        return self.name
+        return self.type
 
 
 class Seat(models.Model):
-    train = models.ForeignKey(Train, related_name="seats", on_delete=models.CASCADE)
-    seat_number = models.CharField(max_length=10)
-    category = models.ForeignKey(
-        SeatCategory, related_name="seats", on_delete=models.CASCADE
+    transport = models.ForeignKey(
+        Transport,
+        verbose_name=_("transport"),
+        related_name="seats",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
-    is_reserved = models.BooleanField(default=False)
+    seat_number = models.CharField(verbose_name=_("seat_number"), max_length=10)
+    category = models.ForeignKey(
+        SeatCategory,
+        verbose_name=_("category"),
+        related_name="seats",
+        on_delete=models.CASCADE,
+    )
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
-        choices=STATES3,
+        choices=STATES1,
         blank=True,
         default="h",
     )
@@ -198,16 +247,19 @@ class Seat(models.Model):
         verbose_name_plural = _("Asientos")
 
     def __str__(self):
-        return f"{self.seat_number} ({self.category.name})"
+        return f"{self.seat_number} ({self.category.type})"
 
 
 class Meal(models.Model):
-    name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    name = models.CharField(verbose_name=_("name"), max_length=100)
+    price = models.DecimalField(
+        verbose_name=_("price"), max_digits=10, decimal_places=2
+    )
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
-        choices=STATES2,
+        choices=STATES1,
         blank=True,
         default="h",
     )
@@ -229,11 +281,14 @@ class Meal(models.Model):
 
 
 class Merchandise(models.Model):
-    name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    description = models.TextField()
+    name = models.CharField(verbose_name=_("name"), max_length=100)
+    price = models.DecimalField(
+        verbose_name=_("price"), max_digits=10, decimal_places=2
+    )
+    description = models.TextField(verbose_name=_("description"))
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -262,10 +317,13 @@ class Journey(models.Model):
         ("BUS_AND_TRAIN", "Bus and Train"),
     ]
 
-    type = models.CharField(max_length=20, choices=JOURNEY_TYPE_CHOICES)
-    description = models.TextField()
+    type = models.CharField(
+        verbose_name=_("type"), max_length=20, choices=JOURNEY_TYPE_CHOICES
+    )
+    description = models.TextField(verbose_name=_("description"))
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -290,42 +348,39 @@ class Journey(models.Model):
 
 class JourneyStage(models.Model):
     journey = models.ForeignKey(
-        Journey, related_name="stages", on_delete=models.CASCADE
+        Journey,
+        verbose_name=_("journey"),
+        related_name="stages",
+        on_delete=models.CASCADE,
     )
     order = models.PositiveIntegerField()
-    start_station = models.ForeignKey(
-        Station,
+    departure_stop = models.ForeignKey(
+        Stops,
+        verbose_name=_("departure_stop"),
         related_name="start_stages",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    end_station = models.ForeignKey(
-        Station,
+    arrival_stop = models.ForeignKey(
+        Stops,
+        verbose_name=_("arrival_stop"),
         related_name="end_stages",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    start_bus_stop = models.ForeignKey(
-        BusStop,
-        related_name="start_stages",
+    transport = models.ForeignKey(
+        Transport,
+        verbose_name=_("transport"),
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    end_bus_stop = models.ForeignKey(
-        BusStop,
-        related_name="end_stages",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    train = models.ForeignKey(Train, on_delete=models.CASCADE, null=True, blank=True)
-    bus = models.ForeignKey(Bus, on_delete=models.CASCADE, null=True, blank=True)
-    duration = models.DurationField()
+    duration = models.DurationField(verbose_name=_("duration"))
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -349,11 +404,14 @@ class JourneyStage(models.Model):
 
 
 class JourneySchedule(models.Model):
-    journey = models.ForeignKey(Journey, on_delete=models.CASCADE)
-    departure_time = models.DateTimeField()
-    arrival_time = models.DateTimeField()
+    journey = models.ForeignKey(
+        Journey, verbose_name=_("journey"), on_delete=models.CASCADE
+    )
+    departure_time = models.DateTimeField(verbose_name=_("departure_time"))
+    arrival_time = models.DateTimeField(verbose_name=_("arrival_time"))
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -377,11 +435,15 @@ class JourneySchedule(models.Model):
 
 
 class Passenger(models.Model):
-    name = models.CharField(max_length=100)
-    dni_or_passport = models.CharField(max_length=50)
-    origin_country = models.CharField(max_length=100)
-    emergency_telephone = models.CharField(max_length=50, null=True, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
+    name = models.CharField(verbose_name=_("name"), max_length=100)
+    dni_or_passport = models.CharField(verbose_name=_("dni_or_passport"), max_length=50)
+    origin_country = models.CharField(verbose_name=_("origin_country"), max_length=100)
+    emergency_telephone = models.CharField(
+        verbose_name=_("emergency_telephone"), max_length=50, null=True, blank=True
+    )
+    date_of_birth = models.DateField(
+        verbose_name=_("date_of_birth"), null=True, blank=True
+    )
     # Telefono (Emergencia)
     # Fecha de Nacimiento
     GENDER = (
@@ -390,6 +452,7 @@ class Passenger(models.Model):
     )
 
     gender = models.CharField(
+        verbose_name=_("gender"),
         max_length=1,
         choices=GENDER,
         blank=True,
@@ -398,6 +461,7 @@ class Passenger(models.Model):
     )
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -421,10 +485,18 @@ class Passenger(models.Model):
 
 
 class TicketSales(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    purchase_date = models.DateTimeField(default=timezone.now)
+    email = models.EmailField(verbose_name=_("email"), null=True, blank=True)
+    user = models.ForeignKey(
+        User, verbose_name=_("user"), on_delete=models.SET_NULL, null=True, blank=True
+    )
+    price = models.DecimalField(
+        verbose_name=_("price"), max_digits=10, decimal_places=2, default=0
+    )
+    purchase_date = models.DateTimeField(
+        verbose_name=_("purchase_date"), default=timezone.now
+    )
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -455,12 +527,21 @@ class TicketSales(models.Model):
 
 class Ticket(models.Model):
     sale = models.ForeignKey(
-        TicketSales, related_name="tickets", on_delete=models.CASCADE
+        TicketSales,
+        verbose_name=_("sale"),
+        related_name="tickets",
+        on_delete=models.CASCADE,
     )
-    passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE)
-    schedule = models.ForeignKey(JourneySchedule, on_delete=models.CASCADE)
-    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    passenger = models.ForeignKey(
+        Passenger, verbose_name=_("passenger"), on_delete=models.CASCADE
+    )
+    schedule = models.ForeignKey(
+        JourneySchedule, verbose_name=_("schedule"), on_delete=models.CASCADE
+    )
+    seat = models.ForeignKey(Seat, verbose_name=_("seat"), on_delete=models.CASCADE)
+    price = models.DecimalField(
+        verbose_name=_("price"), max_digits=10, decimal_places=2
+    )
 
     def __str__(self):
         return f"Ticket for {self.passenger.name} purchased by {self.user.username}"
@@ -509,11 +590,20 @@ class Ticket(models.Model):
 
 class PurchaseReceipt(models.Model):
     passenger = models.ForeignKey(
-        Passenger, on_delete=models.CASCADE, null=True, blank=True
+        Passenger,
+        verbose_name=_("passenger"),
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    purchase_date = models.DateTimeField(default=timezone.now)
+    price = models.DecimalField(
+        verbose_name=_("price"), max_digits=10, decimal_places=2, default=0
+    )
+    purchase_date = models.DateTimeField(
+        verbose_name=_("purchase_date"), default=timezone.now
+    )
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -551,12 +641,18 @@ class PurchaseReceipt(models.Model):
 
 class DetailFoodOrder(models.Model):
     receipt = models.ForeignKey(
-        PurchaseReceipt, related_name="meals", on_delete=models.CASCADE
+        PurchaseReceipt,
+        verbose_name=_("receipt"),
+        related_name="meals",
+        on_delete=models.CASCADE,
     )
-    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    meal = models.ForeignKey(Meal, verbose_name=_("meal"), on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(verbose_name=_("quantity"), default=1)
+    unit_price = models.DecimalField(
+        verbose_name=_("unit_price"), max_digits=10, decimal_places=2, default=0
+    )
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -613,13 +709,21 @@ class DetailFoodOrder(models.Model):
 
 class DetailsMerchandiseOrder(models.Model):
     receipt = models.ForeignKey(
-        PurchaseReceipt, related_name="merchandises", on_delete=models.CASCADE
+        PurchaseReceipt,
+        verbose_name=_("receipt"),
+        related_name="merchandises",
+        on_delete=models.CASCADE,
     )
-    merchandise = models.ForeignKey(Merchandise, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    merchandise = models.ForeignKey(
+        Merchandise, verbose_name=_("merchandise"), on_delete=models.CASCADE
+    )
+    quantity = models.PositiveIntegerField(verbose_name=_("quantity"), default=1)
+    unit_price = models.DecimalField(
+        verbose_name=_("unit_price"), max_digits=10, decimal_places=2, default=0
+    )
 
     enabled = models.CharField(
+        verbose_name=_("enabled"),
         max_length=1,
         choices=STATES1,
         blank=True,
@@ -676,13 +780,19 @@ class DetailsMerchandiseOrder(models.Model):
 
 class Payments(models.Model):
     sale = models.ForeignKey(
-        TicketSales, on_delete=models.CASCADE, null=True, blank=True
+        TicketSales,
+        verbose_name=_("sale"),
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
-    payment_id = models.CharField(max_length=255)
-    payment_type = models.CharField(max_length=50)
-    payment_status = models.CharField(max_length=50, null=True, blank=True)
+    payment_id = models.CharField(verbose_name=_("payment_id"), max_length=255)
+    payment_type = models.CharField(verbose_name=_("payment_type"), max_length=50)
+    payment_status = models.CharField(
+        verbose_name=_("payment_status"), max_length=50, null=True, blank=True
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(verbose_name=_("created_at"), auto_now_add=True)
 
     def __str__(self):
         if self.payment_id and self.payment_type and self.sale:
