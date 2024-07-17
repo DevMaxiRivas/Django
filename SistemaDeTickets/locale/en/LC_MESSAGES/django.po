@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-15 21:31-0300\n"
+"POT-Creation-Date: 2024-07-16 21:17-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -419,7 +419,7 @@ msgstr "Cancel"
 #: .\Templates\journey_schedules.html:33 .\Templates\meal_delete_modal.html:18
 #: .\Templates\meals.html:31 .\Templates\merchandise_delete_modal.html:19
 #: .\Templates\merchandises.html:33 .\Templates\purchase_food.html:33
-#: .\Templates\purchase_tickets.html:33
+#: .\Templates\purchase_tickets.html:32
 msgid "Eliminar"
 msgstr "Delete"
 
@@ -492,26 +492,30 @@ msgstr "No merchandises were registred"
 msgid "Comprobante"
 msgstr "Receipt"
 
-#: .\Templates\payment_detail.html:9
-#, python-format
-msgid ""
-"\n"
-"        <h4>Pago ID: %(payment.id)s</h4>\n"
-"        <h4>Venta ID: %(payment.sale.id)s</h4>\n"
-"        <p>Nro. Comprobante: %(payment.payment_id)s</p>\n"
-"        <p>Tipo de Pago: %(payment.payment_type)s</p>\n"
-"        <p>Fecha de Creación: %(payment.created_at)s</p>\n"
-"        "
-msgstr ""
-"\n"
-"        <h4>Payment ID: %(payment.id)s</h4>\n"
-"        <h4>Sale ID: %(payment.sale.id)s</h4>\n"
-"        <p>Num. Receipt: %(payment.payment_id)s</p>\n"
-"        <p>Payment Type: %(payment.payment_type)s</p>\n"
-"        <p>Date of Creation: %(payment.created_at)s</p>\n"
-"        "
+#: .\Templates\payment_detail.html:9 .\core\models.py:804
+msgid "Pago"
+msgstr "Payment"
 
-#: .\Templates\payment_detail.html:17
+#: .\Templates\payment_detail.html:10 .\Templates\receipt_detail.html:8
+#: .\Templates\sale_detail.html:8
+msgid "Venta"
+msgstr "Sale"
+
+#: .\Templates\payment_detail.html:11
+msgid "Nro. Comprobante"
+msgstr "No. Receipt"
+
+#: .\Templates\payment_detail.html:12
+#, fuzzy
+#| msgid "Tipo de Recorrido"
+msgid "Tipo de Pago"
+msgstr "Journey Type"
+
+#: .\Templates\payment_detail.html:13
+msgid "Fecha de Creación"
+msgstr "Date of Creation"
+
+#: .\Templates\payment_detail.html:15
 msgid "No hay comprobante asociados a esta venta"
 msgstr "There is no voucher associated with this sale."
 
@@ -680,10 +684,6 @@ msgstr "No ticket purchase has been made"
 msgid "Detalles de Venta"
 msgstr "Sale Details"
 
-#: .\Templates\receipt_detail.html:8 .\Templates\sale_detail.html:8
-msgid "Venta"
-msgstr "Sale"
-
 #: .\Templates\receipt_detail.html:9 .\Templates\receipts.html:14
 #: .\core\models.py:480
 msgid "Pasajero"
@@ -775,10 +775,8 @@ msgid "Apellido"
 msgstr "Last Name"
 
 #: .\core\forms.py:53
-#, fuzzy
-#| msgid "username"
 msgid "Username"
-msgstr "username"
+msgstr "Username"
 
 #: .\core\forms.py:54 .\core\models.py:488
 msgid "email"
@@ -801,11 +799,12 @@ msgid "confirm password"
 msgstr "confirm password"
 
 #: .\core\forms.py:82 .\core\forms.py:235 .\core\forms.py:249
+#: .\core\views.py:317
 msgid "Name"
 msgstr "Name"
 
 #: .\core\forms.py:83 .\core\forms.py:116 .\core\forms.py:124
-#: .\core\forms.py:163
+#: .\core\forms.py:163 .\core\views.py:316
 msgid "DNI/Passport"
 msgstr "DNI/Passport"
 
@@ -833,7 +832,7 @@ msgstr "Email (if not logged in)"
 msgid "Email"
 msgstr "Email"
 
-#: .\core\forms.py:125
+#: .\core\forms.py:125 .\core\views.py:318
 msgid "Schedule"
 msgstr "Schedule"
 
@@ -861,7 +860,7 @@ msgstr "Departure Time"
 msgid "Arrival Time"
 msgstr "Arrival Time"
 
-#: .\core\forms.py:236 .\core\forms.py:250
+#: .\core\forms.py:236 .\core\forms.py:250 .\core\views.py:320
 msgid "Price"
 msgstr "Price"
 
@@ -895,10 +894,8 @@ msgstr "Returned"
 
 #: .\core\models.py:35 .\core\models.py:94 .\core\models.py:136
 #: .\core\models.py:254 .\core\models.py:284 .\core\models.py:438
-#, fuzzy
-#| msgid "username"
 msgid "name"
-msgstr "username"
+msgstr "name"
 
 #: .\core\models.py:36
 msgid "location"
@@ -960,10 +957,8 @@ msgstr "Buses"
 
 #: .\core\models.py:174 .\core\models.py:256 .\core\models.py:286
 #: .\core\models.py:493 .\core\models.py:543 .\core\models.py:600
-#, fuzzy
-#| msgid "Price"
 msgid "price"
-msgstr "Price"
+msgstr "price"
 
 #: .\core\models.py:195
 msgid "Categoria de Asiento"
@@ -994,10 +989,8 @@ msgid "Platos"
 msgstr "Meals"
 
 #: .\core\models.py:288 .\core\models.py:323
-#, fuzzy
-#| msgid "Description"
 msgid "description"
-msgstr "Description"
+msgstr "description"
 
 #: .\core\models.py:300
 msgid "Mercaderia"
@@ -1159,28 +1152,41 @@ msgstr "payment_status"
 msgid "created_at"
 msgstr "created_at"
 
-#: .\core\models.py:804
-msgid "Pago"
-msgstr "Payment"
-
 #: .\core\models.py:805
 msgid "Pagos"
 msgstr "Payments"
 
-#~ msgid "Registrar Pasajero"
-#~ msgstr "Register Passenger"
+#: .\core\views.py:319
+msgid "Train Seat"
+msgstr "Train Seat"
 
-#~ msgid "Teléfono de Emergencia"
-#~ msgstr "Emergency Telephone"
+#: .\core\views.py:374
+msgid "Notification of Ticket Purchase"
+msgstr "Notification of Ticket Purchase"
 
-#~ msgid "Fecha de Nacimiento"
-#~ msgstr "Date of Birth"
+#: .\core\views.py:376
+msgid ""
+"You have made a ticket purchase. Please find attached the purchase receipt"
+msgstr ""
+"You have made a ticket purchase. Please find attached the purchase receipt"
 
-#~ msgid "Genero"
-#~ msgstr "Gender"
+#: .\core\views.py:383
+msgid "Receipt"
+msgstr "Receipt"
 
-#~ msgid "País de Origen"
-#~ msgstr "Country of Origin"
-
-#~ msgid "Registrar nuevo pasajero"
-#~ msgstr "Register new passenger"
+#~ msgid ""
+#~ "\n"
+#~ "        <h4>Pago ID: %(payment.id)s</h4>\n"
+#~ "        <h4>Venta ID: %(payment.sale.id)s</h4>\n"
+#~ "        <p>Nro. Comprobante: %(payment.payment_id)s</p>\n"
+#~ "        <p>Tipo de Pago: %(payment.payment_type)s</p>\n"
+#~ "        <p>Fecha de Creación: %(payment.created_at)s</p>\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        <h4>Payment ID: %(payment.id)s</h4>\n"
+#~ "        <h4>Sale ID: %(payment.sale.id)s</h4>\n"
+#~ "        <p>Num. Receipt: %(payment.payment_id)s</p>\n"
+#~ "        <p>Payment Type: %(payment.payment_type)s</p>\n"
+#~ "        <p>Date of Creation: %(payment.created_at)s</p>\n"
+#~ "        "

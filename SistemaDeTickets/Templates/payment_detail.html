@@ -6,13 +6,11 @@
     <div class="card container mt-5 center-text">
         <h1 class="mb-3 mt-3">{% translate "Comprobante" %}</h1>
         {% if payment %}
-        {% blocktrans %}
-        <h4>Pago ID: {{ payment.id }}</h4>
-        <h4>Venta ID: {{ payment.sale.id }}</h4>
-        <p>Nro. Comprobante: {{ payment.payment_id }}</p>
-        <p>Tipo de Pago: {{ payment.payment_type }}</p>
-        <p>Fecha de Creación: {{ payment.created_at }}</p>
-        {% endblocktrans %}
+        <h4>{% translate "Pago" %} ID: {{ payment.id }}</h4>
+        <h4>{% translate "Venta" %} ID: {{ payment.sale.id }}</h4>
+        <p>{% translate "Nro. Comprobante" %}: {{ payment.payment_id }}</p>
+        <p>{% translate "Tipo de Pago" %}: {{ payment.payment_type }}</p>
+        <p>{% translate "Fecha de Creación" %}: {{ payment.created_at }}</p>
         {% else %}
         <p>{% translate "No hay comprobante asociados a esta venta" %}.</p>
         {% endif %}

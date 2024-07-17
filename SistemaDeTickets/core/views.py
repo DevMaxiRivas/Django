@@ -53,7 +53,20 @@ from django.db import transaction
 from django.http import JsonResponse
 
 # Mails
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+
+# Generación de PDF's
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image
+from io import BytesIO
+
+# Ruta static
+from django.templatetags.static import static
+
+# Acciones del sistema
+import os
 
 # Configuraciones para Mails
 from django.conf import settings
@@ -63,6 +76,9 @@ from django.views import generic
 
 # Pagos
 import mercadopago
+
+# Traducciones
+from django.utils.translation import gettext as _
 
 
 # Control de Acceso
@@ -270,6 +286,97 @@ def purchase_tickets(request):
     return render(request, "purchase_tickets.html", context)
 
 
+def generate_pdf_receipt(sale):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+
+    # Estilo de título
+    styles = getSampleStyleSheet()
+    title_style = styles["Heading1"]
+    title_style.alignment = 1  # Centrar
+    # Agregar imagen
+    # Ruta de la imagen
+    image_path = os.path.join(
+        settings.BASE_DIR, "static", "img", "TrenALasNubesLogo.png"
+    )
+    elements.append(Image(image_path, width=130, height=58))
+
+    # Título del documento
+    elements.append(Paragraph("Comprobante", title_style))
+
+    # Número de comprobante
+    elements.append(
+        Paragraph(
+            f"Nro. Comprobante: {Payments.objects.get(sale=sale).payment_id}",
+            title_style,
+        )
+    )
+
+    # Obtenemos todos los tickets de la venta
+    tickets = TicketSales.objects.get(id=sale.id).tickets.all()
+
+    # Datos del ticket en formato de tabla
+    data = [
+        [
+            _("DNI/Passport"),
+            _("Name"),
+            _("Schedule"),
+            _("Train Seat"),
+            _("Price"),
+        ],
+    ]
+
+    for ticket in tickets:
+        data.append(
+            [
+                ticket.passenger.dni_or_passport,
+                ticket.passenger.name,
+                ticket.schedule,
+                ticket.seat,
+                "${:.2f}".format(ticket.price),
+            ]
+        )
+    data.append(["", "", "", "Total", "${:.2f}".format(sale.price)])
+    # Tabla de detalles
+    table = Table(data)
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.lightblue),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+                ("GRID", (0, 0), (-1, -1), 1, colors.black),
+            ]
+        )
+    )
+
+    elements.append(table)
+
+    doc.build(elements)
+
+    buffer.seek(0)
+    return buffer
+
+
+def send_email(sale, email):
+
+    subject = _("Notification of Ticket Purchase")
+    message = _(
+        "You have made a ticket purchase. Please find attached the purchase receipt"
+    )
+    email_from = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [email]
+    pdf_buffer = generate_pdf_receipt(sale)
+
+    email_ = EmailMessage(subject, message, email_from, recipient_list)
+    email_.attach(_("Receipt") + "pdf", pdf_buffer.getvalue(), "application/pdf")
+    email_.send()
+
+
 def payment_success(request):
     payment_id = request.GET.get("payment_id")
     payment_type = request.GET.get("payment_type")
@@ -277,20 +384,12 @@ def payment_success(request):
     sale_id = request.GET.get(
         "external_reference"
     )  # Se aume que se envia el id de la venta por "external_reference"
+    sale = TicketSales.objects.get(id=sale_id)
+
     if request.user.is_authenticated:
-        email = TicketSales.objects.get(id=sale_id).user.email
+        email = sale.user.email
     else:
-        email = TicketSales.objects.get(id=sale_id).email
-    msg = ""
-    for ticket in TicketSales.objects.get(id=sale_id).tickets.all():
-        msg += "\n" + ticket.passenger.dni_or_passport + " " + ticket.passenger.name
-    send_mail(
-        "Notificación de Compra de Boletos",
-        f"Usted realizo una compra de boletos para los pasajeros con los siguientes dni o pasaportes: {msg}",
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False,
-    )
+        email = sale.email
 
     if payment_id and payment_type and sale_id:
         sale = get_object_or_404(TicketSales, id=sale_id)
@@ -300,8 +399,44 @@ def payment_success(request):
             payment_type=payment_type,
             payment_status=payment_status,
         )
+    if email:
+        send_email(sale, email)
 
     return render(request, "payment_success.html")
+
+
+# def payment_success(request):
+#     payment_id = request.GET.get("payment_id")
+#     payment_type = request.GET.get("payment_type")
+#     payment_status = request.GET.get("status")
+#     sale_id = request.GET.get(
+#         "external_reference"
+#     )  # Se aume que se envia el id de la venta por "external_reference"
+#     if request.user.is_authenticated:
+#         email = TicketSales.objects.get(id=sale_id).user.email
+#     else:
+#         email = TicketSales.objects.get(id=sale_id).email
+#     msg = ""
+#     for ticket in TicketSales.objects.get(id=sale_id).tickets.all():
+#         msg += "\n" + ticket.passenger.dni_or_passport + " " + ticket.passenger.name
+#     send_mail(
+#         "Notificación de Compra de Boletos",
+#         f"Usted realizo una compra de boletos para los pasajeros con los siguientes dni o pasaportes: {msg}",
+#         settings.DEFAULT_FROM_EMAIL,
+#         [email],
+#         fail_silently=False,
+#     )
+
+#     if payment_id and payment_type and sale_id:
+#         sale = get_object_or_404(TicketSales, id=sale_id)
+#         Payments.objects.create(
+#             sale=sale,
+#             payment_id=payment_id,
+#             payment_type=payment_type,
+#             payment_status=payment_status,
+#         )
+
+#     return render(request, "payment_success.html")
 
 
 def payment_failed(request):
