@@ -5,28 +5,32 @@
 
     <div>
         {% if user_group == 'clientes' %}
-        <a href="{% url 'purchase_tickets' %}" class="btn btn-lg btn-success">{% translate "Reserve su boleto" %}</a>
-        <a href="{% url 'client_purchases' %}" class="btn btn-lg btn-primary">{% translate "Boletos Reservados" %}</a>
+        <a href="{% url 'purchase_tickets' %}" class="mb-2 btn btn-lg btn-success">{% translate "Reserve su boleto"
+            %}</a>
+        <a href="{% url 'client_purchases' %}" class="mb-2 btn btn-lg btn-primary">{% translate "Boletos Reservados"
+            %}</a>
         {% elif user_group == 'vendedores' %}
-        <a href="{% url 'purchase_foods' %}" class="btn btn-lg btn-success">{% translate "Venta Platillos" %}</a>
-        <a href="{% url 'purchase_merchandise' %}" class="btn btn-lg btn-success">{% translate "Venta Mercancia" %}</a>
-        <a href="{% url 'purchases' %}" class="btn btn-lg btn-primary">{% translate "Boletos" %}</a>
-        <a href="{% url 'meals' %}" class="btn btn-lg btn-primary">{% translate "Platillos" %}</a>
-        <a href="{% url 'merchandises' %}" class="btn btn-lg btn-primary">{% translate "Mercancias" %}</a>
+        <a href="{% url 'purchase_foods' %}" class="mb-2 btn btn-lg btn-success">{% translate "Venta Platillos" %}</a>
+        <a href="{% url 'purchase_merchandise' %}" class="mb-2 btn btn-lg btn-success">
+            {% translate "Venta Mercancia"%}
+        </a>
+        <a href="{% url 'purchases' %}" class="mb-2 btn btn-lg btn-primary">{% translate "Boletos" %}</a>
+        <a href="{% url 'meals' %}" class="mb-2 btn btn-lg btn-primary">{% translate "Platillos" %}</a>
+        <a href="{% url 'merchandises' %}" class="mb-2 btn btn-lg btn-primary">{% translate "Mercancias" %}</a>
         {% else %}
-        <a href="{% url 'purchases' %}" class="btn btn-lg btn-primary">{% translate "Boletos" %}</a>
-        <a href="{% url 'receipts' %}" class="btn btn-lg btn-primary">{% translate "Recibos" %}</a>
-        <a href="{% url 'journeys' %}" class="btn btn-lg btn-primary">{% translate "Recorridos" %}</a>
-        <a href="{% url 'journey_schedules' %}" class="btn btn-lg btn-primary">
+        <a href="{% url 'purchases' %}" class="mb-2 btn btn-lg btn-primary">{% translate "Boletos" %}</a>
+        <a href="{% url 'receipts' %}" class="mb-2 btn btn-lg btn-primary">{% translate "Recibos" %}</a>
+        <a href="{% url 'journeys' %}" class="mb-2 btn btn-lg btn-primary">{% translate "Recorridos" %}</a>
+        <a href="{% url 'journey_schedules' %}" class="mb-2 btn btn-lg btn-primary">
             {% translate "Cronogramas de Recorridos"%}
         </a>
-        <a href="{% url 'meals' %}" class="btn btn-lg btn-primary">{% translate "Platillos" %}</a>
-        <a href="{% url 'merchandises' %}" class="btn btn-lg btn-primary">{% translate "Mercancias" %}</a>
+        <a href="{% url 'meals' %}" class="mb-2 btn btn-lg btn-primary">{% translate "Platillos" %}</a>
+        <a href="{% url 'merchandises' %}" class="mb-2 btn btn-lg btn-primary">{% translate "Mercancias" %}</a>
         {% endif %}
     </div>
     {% else %}
-    <a class="btn btn-lg btn-primary" href="{% url 'login' %}">{% translate "Iniciar Sesión" %}</a>
-    <a class="btn btn-lg btn-success" href="{% url 'register' %}">{% translate "Registrarse" %}</a>
+    <a class="mb-2 btn btn-lg btn-primary" href="{% url 'login' %}">{% translate "Iniciar Sesión" %}</a>
+    <a class="mb-2 btn btn-lg btn-success" href="{% url 'register' %}">{% translate "Registrarse" %}</a>
     {% endif %}
 
 </section>

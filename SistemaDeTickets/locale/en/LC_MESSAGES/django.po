@@ -719,7 +719,7 @@ msgstr "See Details"
 
 #: .\Templates\receipts.html:36
 msgid "No se ha realizado ninguna venta"
-msgstr "No sale has been made."
+msgstr "No sale has been made"
 
 #: .\Templates\registration\login.html:8
 msgid "INICIO DE SESION"

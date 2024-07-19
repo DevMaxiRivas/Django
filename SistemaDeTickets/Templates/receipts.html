@@ -2,39 +2,51 @@
 {% include 'base.html' %}
 
 {% block content %}
-<section class="section_ps home_ps form-register font-black">
-    <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">{% translate "Ventas" %}</h1>
-        {% if sales_with_urls %}
-        <div class="list-group">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>{% translate "Pasajero" %}</th>
-                        <th>Total</th>
-                        <th>{% translate "Fecha" %}</th>
-                        <th>{% translate "Acción" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in sales_with_urls %}
-                    <tr>
-                        <td>{{ item.receipt.id }}</td>
-                        <td>{{ item.receipt.passenger.dni_or_passport }}</td>
-                        <td>{{ item.receipt.price }}</td>
-                        <td>{{ item.receipt.purchase_date }}</td>
-                        <td>
-                            <a href="{{ item.detail_url }}" class="btn btn-primary">{% translate "Ver Detalles" %}</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<section class="text-center cover-container d-flex w-100 h-100  mx-auto flex-column">
+    <div class="px-3 my-auto section_ps home_ps form-register font-black">
+        <div class="
+                        card
+                        top-50 start-50
+                        translate-middle 
+                        h-auto d-inline-block
+                        w-auto p-3 mt-5
+                        shadow p-3 mb-5 bg-white rounded
+                        ">
+            <div class="card-body">
+                <h1 class="title_ps">{% translate "Ventas" %}</h1>
+                {% if sales_with_urls %}
+                <div class="scroll-table-ps row">
+                    <table class="table table-sm table-bordered table-striped table-hover">
+                        <thead style="position: sticky; top: 0;" class="thead-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>{% translate "Pasajero" %}</th>
+                                <th>Total</th>
+                                <th>{% translate "Fecha" %}</th>
+                                <th>{% translate "Acción" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in sales_with_urls %}
+                            <tr>
+                                <td>{{ item.receipt.id }}</td>
+                                <td>{{ item.receipt.passenger.dni_or_passport }}</td>
+                                <td>{{ item.receipt.price }}</td>
+                                <td>{{ item.receipt.purchase_date }}</td>
+                                <td>
+                                    <a href="{{ item.detail_url }}" class="btn btn-primary">{% translate "Ver Detalles"
+                                        %}</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>{% translate "No se ha realizado ninguna venta" %}.</p>
+                {% endif %}
+            </div>
         </div>
-        {% else %}
-        <p>{% translate "No se ha realizado ninguna venta" %}.</p>
-        {% endif %}
     </div>
 </section>
 {% include 'footer.html' %}

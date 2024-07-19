@@ -1,52 +1,63 @@
 {% load i18n %}
-{% include 'base.html' %}
+{% load static %}
 
-{% block content %}
-<section class="section_ps home_ps form-register font-black">
-    <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">{% translate "Mercancias" %}</h1>
-        {% if merchandises %}
-        <div class="list-group">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>{% translate "Nombre" %}</th>
-                        <th>{% translate "Precio" %}</th>
-                        <th>{% translate "Descripción" %}</th>
-                        <th>{% translate "Acción" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for merchandise in merchandises %}
-                    <tr>
-                        <td>{{ merchandise.id }}</td>
-                        <td>{{ merchandise.name }}</td>
-                        <td>{{ merchandise.price }}</td>
-                        <td>{{ merchandise.description }}</td>
-                        <td>
-                            <a class="btn btn-primary" href="{% url 'merchandise_update' merchandise.id %}">
-                                {% translate "Editar" %}
-                            </a>
-                            <a class="btn btn-danger" href="" data-toggle="modal"
-                                data-target="#exampleModal{{merchandise.id}}">
-                                {% translate "Eliminar" %}
-                            </a>
-                        </td>
-                        {% include "merchandise_delete_modal.html" %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+{% include "base.html" %}
+
+<section class="text-center cover-container d-flex w-100 h-100  mx-auto flex-column">
+    <div class="px-3 my-auto section_ps home_ps form-register font-black">
+        <div class="
+                        card
+                        top-50 start-50
+                        translate-middle 
+                        h-auto d-inline-block
+                        w-auto p-3 mt-5
+                        shadow p-3 mb-5 bg-white rounded
+                        ">
+            <div class="card-body">
+                <h1 class="title_ps">{% translate "Mercancias" %}</h1>
+                {% if merchandises %}
+                <div class="scroll-table-ps row">
+                    <table class="table table-sm table-bordered table-striped table-hover">
+                        <thead style="position: sticky; top: 0;" class="thead-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>{% translate "Nombre" %}</th>
+                                <th>{% translate "Precio" %}</th>
+                                <th>{% translate "Descripción" %}</th>
+                                <th>{% translate "Acción" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for merchandise in merchandises %}
+                            <tr>
+                                <td>{{ merchandise.id }}</td>
+                                <td>{{ merchandise.name }}</td>
+                                <td>{{ merchandise.price }}</td>
+                                <td>{{ merchandise.description }}</td>
+                                <td>
+                                    <a class="btn btn-primary mb-1"
+                                        href="{% url 'merchandise_update' merchandise.id %}">
+                                        {% translate "Editar" %}
+                                    </a>
+                                    <a class="btn btn-danger mb-1" href="" data-toggle="modal"
+                                        data-target="#exampleModal{{merchandise.id}}">
+                                        {% translate "Eliminar" %}
+                                    </a>
+                                </td>
+                                {% include "merchandise_delete_modal.html" %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>{% translate "No se registraron mercancias disponibles" %}.</p>
+                {% endif %}
+            </div>
             <p>
-                <a class="btn btn-success" href="{% url 'merchandise_new' %}" role="button">Nuevo</a>
+                <a class="btn btn-success" href="{% url 'merchandise_new' %}" role="button">{% translate "Nuevo" %}</a>
             </p>
         </div>
-        {% else %}
-        <p>{% translate "No se registraron mercancias disponibles" %}.</p>
-        {% endif %}
     </div>
 </section>
-
 {% include 'footer.html' %}
-{% endblock %}

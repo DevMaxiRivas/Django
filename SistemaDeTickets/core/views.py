@@ -373,7 +373,7 @@ def send_email(sale, email):
     pdf_buffer = generate_pdf_receipt(sale)
 
     email_ = EmailMessage(subject, message, email_from, recipient_list)
-    email_.attach(_("Receipt") + "pdf", pdf_buffer.getvalue(), "application/pdf")
+    email_.attach(_("Receipt") + ".pdf", pdf_buffer.getvalue(), "application/pdf")
     email_.send()
 
 

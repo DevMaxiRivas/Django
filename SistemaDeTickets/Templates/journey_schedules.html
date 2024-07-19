@@ -2,51 +2,61 @@
 {% include 'base.html' %}
 
 {% block content %}
-<section class="section_ps home_ps form-register font-black">
-    <div class="card container mt-5 center-text">
-        <h1 class="mb-3 mt-3">{% translate "Cronograma de Recorridos" %}</h1>
-        {% if journey_schedules %}
-        <div class="list-group">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>{% translate "Tipo de Recorrido" %}</th>
-                        <th>{% translate "Hora de Salida" %}</th>
-                        <th>{% translate "Hora de Llegada" %}</th>
-                        <th>{% translate "Acción" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for journey_schedule in journey_schedules %}
-                    <tr>
-                        <td>{{ journey_schedule.id }}</td>
-                        <td>{{ journey_schedule.journey }}</td>
-                        <td>{{ journey_schedule.departure_time }}</td>
-                        <td>{{ journey_schedule.arrival_time }}</td>
-                        <td>
-                            <a class="btn btn-primary" href="{% url 'journey_schedule_update' journey_schedule.id %}">
-                                {% translate "Editar" %}
-                            </a>
-                            <a class="btn btn-danger" href="" data-toggle="modal"
-                                data-target="#exampleModal{{journey_schedule.id}}">
-                                {% translate "Eliminar" %}
-                            </a>
-                        </td>
-                        {% include "journey_schedule_modal.html" %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <p>
+<section class="text-center cover-container d-flex w-100 h-100  mx-auto flex-column">
+    <div class="px-3 my-auto section_ps home_ps form-register font-black">
+        <div class="
+                        card
+                        top-50 start-50
+                        translate-middle 
+                        h-auto d-inline-block
+                        w-auto p-3 mt-5
+                        shadow p-3 mb-5 bg-white rounded
+                        ">
+            <div class="card-body">
+                <h1 class="title_ps">{% translate "Cronograma de Recorridos" %}</h1>
+                {% if journey_schedules %}
+                <div class="scroll-table-ps row">
+                    <table class="table table-sm table-bordered table-striped table-hover">
+                        <thead style="position: sticky; top: 0;">
+                            <tr>
+                                <th>ID</th>
+                                <th>{% translate "Tipo de Recorrido" %}</th>
+                                <th>{% translate "Hora de Salida" %}</th>
+                                <th>{% translate "Hora de Llegada" %}</th>
+                                <th>{% translate "Acción" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for journey_schedule in journey_schedules %}
+                            <tr>
+                                <td>{{ journey_schedule.id }}</td>
+                                <td>{{ journey_schedule.journey }}</td>
+                                <td>{{ journey_schedule.departure_time }}</td>
+                                <td>{{ journey_schedule.arrival_time }}</td>
+                                <td>
+                                    <a class="btn btn-primary mb-2"
+                                        href="{% url 'journey_schedule_update' journey_schedule.id %}">
+                                        {% translate "Editar" %}
+                                    </a>
+                                    <a class="btn btn-danger mb-2" href="" data-toggle="modal"
+                                        data-target="#exampleModal{{journey_schedule.id}}">
+                                        {% translate "Eliminar" %}
+                                    </a>
+                                </td>
+                                {% include "journey_schedule_modal.html" %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>{% translate "No se registraron cronogramas para recorridos" %}.</p>
+                {% endif %}
                 <a class="btn btn-success" href="{% url 'journey_schedule_new' %}" role="button">
                     {% translate "Nuevo" %}
                 </a>
-            </p>
+            </div>
         </div>
-        {% else %}
-        <p>{% translate "No se registraron cronogramas para recorridos" %}.</p>
-        {% endif %}
     </div>
 </section>
 {% include 'footer.html' %}
