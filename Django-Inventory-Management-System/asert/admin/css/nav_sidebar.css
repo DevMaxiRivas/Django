@@ -58,12 +58,12 @@
     content: '\00AB';
 }
 
-.main.shifted > #nav-sidebar {
+.main.shifted>#nav-sidebar {
     left: 24px;
     margin-left: 0;
 }
 
-[dir="rtl"] .main.shifted > #nav-sidebar {
+[dir="rtl"] .main.shifted>#nav-sidebar {
     left: 0;
     right: 24px;
     margin-right: 0;
@@ -99,21 +99,23 @@
     background: #ffc;
 }
 
-.main > #nav-sidebar + .content {
+.main>#nav-sidebar+.content {
     max-width: calc(100% - 23px);
 }
 
-.main.shifted > #nav-sidebar + .content {
+.main.shifted>#nav-sidebar+.content {
     max-width: calc(100% - 299px);
 }
 
 @media (max-width: 767px) {
-    #nav-sidebar, #toggle-nav-sidebar {
+
+    #nav-sidebar,
+    #toggle-nav-sidebar {
         display: none;
     }
 
-    .main > #nav-sidebar + .content,
-    .main.shifted > #nav-sidebar + .content {
+    .main>#nav-sidebar+.content,
+    .main.shifted>#nav-sidebar+.content {
         max-width: 100%;
     }
 }

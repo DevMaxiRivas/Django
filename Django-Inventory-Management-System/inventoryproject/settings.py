@@ -12,6 +12,15 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+# Decodificacion de archivo .env
+from decouple import config
+
+# Acciones de SO
+import os
+
+# Traducciones
+from django.utils.translation import gettext_lazy as _
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,11 +49,17 @@ INSTALLED_APPS = [
     "dashboard.apps.DashboardConfig",
     "user.apps.UserConfig",
     "crispy_forms",
+    "crispy_bootstrap4",
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    # Configuracion de Idioma
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -104,27 +119,36 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.1/topics/i18n/
+# https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+TIME_ZONE = "America/Buenos_Aires"
 
-TIME_ZONE = "UTC"
-
+# Configuracion de Lenguaje
+LANGUAGE_CODE = "en"  # Idioma predeterminado (cámbialo según tus necesidades)
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
+LANGUAGES = [
+    ("en", _("English")),
+    ("es", _("Español")),
+    # Agrega otros idiomas que necesites
+]
+LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
 
+# Manejo de Multimedia
 MEDIA_ROOT = BASE_DIR / "media/"
-
 MEDIA_URL = "/media/"
 
 STATICFILES_DIRS = [
@@ -133,6 +157,24 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "asert/"
 
+# Redirects de login
 LOGIN_REDIRECT_URL = "dashboard-index"
-
 LOGIN_URL = "user-login"
+
+
+# Configuraciones de email
+EMAIL_BACKEND = config("EMAIL_BACKEND")
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_PORT = config("EMAIL_PORT", cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+
+
+# Venta por mercado pago
+MERCADO_PAGO_ACCESS_TOKEN = config("MERCADO_PAGO_ACCESS_TOKEN")
+MERCADO_PAGO_PUBLIC_KEY = config("MERCADO_PAGO_PUBLIC_KEY")
+
+# Entorno de Prueba para Mercado Pago
+MERCADO_PAGO_SANDBOX = True
