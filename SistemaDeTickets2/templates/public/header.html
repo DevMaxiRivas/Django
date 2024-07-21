@@ -1,0 +1,36 @@
+{% load static %}
+{% load i18n %}
+
+<header class="header_ps">
+    <a href="{% url 'home' %}" class="logo">
+        <img src="{% static 'img/TrenALasNubesLogo.png' %}" alt="Logo">
+    </a>
+    <ul class="navbar_ps">
+        <li><a href="{% url 'home' %}">{% translate "Inicio" %}</a></li>
+        {% if not user.is_authenticated or user_group == 'clientes' %}
+        <li><a href="#">{% translate "Recorrido" %}</a></li>
+        <li><a href="#">{% translate "Beneficios" %}</a></li>
+        <li><a href="#">{% translate "Contáctenos" %}</a></li>
+
+
+        {% endif %}
+    </ul>
+
+    <div class="h-right">
+        {% if user.is_authenticated %}
+        <li>
+            <a class="nav-link px-2 text-white" href="#">
+                {% translate "Usuario" %}: {{ user.username }}</a>
+        </li>
+        <li>
+            <form method="post" action="{% url 'user-logout' %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-light me-2" type="submit">{% translate "Cerrar Sesión" %}</button>
+            </form>
+        </li>
+        {% else %}
+        <a class="btn btn-outline-light me-2" href="{% url 'user-login' %}">{% translate "Iniciar Sesión" %}</a>
+        <a class="btn btn-outline-light btn-success" href="{% url 'user-register' %}">{% translate "Registrarse" %}</a>
+        {% endif %}
+    </div>
+</header>

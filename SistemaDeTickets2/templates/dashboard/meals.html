@@ -1,0 +1,63 @@
+{% extends 'partials/base.html' %}
+{% block title %}Meals Page{% endblock %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block content %}
+{% include 'partials/topside.html' %}
+<div class="row my-4">
+    <div class="col-md-4">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="card card-body">
+            <h5>Add New Meals</h5>
+            <hr>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input class="btn btn-success btn-block" type="submit" value="Add">
+            </form>
+        </div>
+    </div>
+    <div class="col-md-8 text-center">
+        {% if meals %}
+        <table class="table bg-white">
+            <thead class="bg-info text-white">
+                <tr>
+                    <th scope="col">{% translate "Nombre" %}</th>
+                    <th scope="col">{% translate "Categoria" %}</th>
+                    <th scope="col">{% translate "Precio" %}</th>
+                    <th scope="col">{% translate "Acción" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for meal in meals %}
+                <tr>
+                    <td>{{ meal.name }}</td>
+                    <td>{{ meal.category }}</td>
+                    <td>${{ meal.price }}</td>
+                    <td>
+                        <a class="btn btn-info btn-sm mr-2" href="{% url 'dashboard-meal-edit' meal.id %}">
+                            {% translate "Editar" %}
+                        </a>
+                        <a class="btn btn-danger btn-sm ml-2" href="{% url 'dashboard-meal-delete' meal.id %}">
+                            {% translate "Borrar" %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="card shadow p-3 mb-5 bg-white rounded text-center">
+            <p>{% translate "No se registraron platillos" %}.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

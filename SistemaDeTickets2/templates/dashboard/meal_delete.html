@@ -1,0 +1,24 @@
+{% extends 'partials/base.html' %}
+{% block title %}Meal Delete Page{% endblock %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="row my-4">
+    <div class="col-md-6 offset-md-3">
+        <div class="border p-3 bg-white">
+            <h3>{% translate "Eliminar Item" %}</h3>
+            <hr>
+            <form method="POST">
+                <div class="alert alert-danger">
+                    <h4>{%translate "Seguro que quieres borrar " %}{{ item }}?</h4>
+                </div>
+                {% csrf_token %}
+                {{ form }}
+                <a class="btn btn-secondary btn-sm" href="{% url 'dashboard-meals' %}">Cancel</a>
+                <input class="btn btn-danger btn-sm" type="submit" value="{% translate 'Confirm' %}">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

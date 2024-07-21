@@ -1,0 +1,13 @@
+{% load i18n %}
+{% include 'public/base.html' %}
+
+<section class="section_ps home_ps form-register">
+    <div class="container mt-5 center-text">
+        {% block content %}
+        <h2>{% translate "¡Compra exitosa!" %}</h2>
+        <p>{% translate "Gracias por su compra. La operación se realizó correctamente." %}</p>
+        <a href="{% url 'home' %}" class="btn btn-primary">{% translate "Volver al inicio" %}</a>
+        {% endblock %}
+    </div>
+</section>
+{% include 'public/footer.html' %}
