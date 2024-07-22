@@ -60,10 +60,29 @@ import mercadopago
 from django.utils.translation import gettext as _
 
 
+# Control de Acceso
+def is_client(user):
+    return user.groups.filter(name="Customers").exists()
+
+
+def is_salesman(user):
+    return user.groups.filter(name="Employees").exists()
+
+
+def is_admin(user):
+    return user.groups.filter(name="Admin").exists()
+
+
+def is_employee(user):
+    return is_admin(user) or is_salesman(user)
+
+
 # Obtener rol del usuario
 def get_user_group(user):
-    group = Group.objects.filter(user=user).first()
-    return group.name
+    if user.is_authenticated:
+        group = Group.objects.filter(user=user).first()
+        return group.name
+    return None
 
 
 def getStatistics():
@@ -78,17 +97,7 @@ def getStatistics():
 
 
 @login_required(login_url="user-login")
-def index(request):
-    [
-        product_count,
-        meals_count,
-        sales_count,
-        receipts_count,
-        payments_count,
-        customer_count,
-    ] = getStatistics()
-
-    product = Product.objects.all()
+def index_customer(request):
 
     if request.method == "POST":
         form = OrderForm(request.POST)
@@ -96,19 +105,61 @@ def index(request):
             obj = form.save(commit=False)
             obj.customer = request.user
             obj.save()
-            return redirect("dashboard-index")
+            return redirect("home")
     else:
         form = OrderForm()
     context = {
         "form": form,
+    }
+    return render(request, "dashboard/customer_index.html", context)
+
+
+@login_required
+@user_passes_test(is_client)
+def customer_tickets(request):
+    sales = TicketSales.objects.filter(user=request.user)
+    sales_with_urls = []
+    for sale in sales:
+        sale_detail_url = reverse("sale_detail", args=[sale.id])
+        sales_with_urls.append(
+            {
+                "sale": sale,
+                "detail_url": sale_detail_url,
+            }
+        )
+    return render(
+        request,
+        "public/client_purchases.html",
+        {
+            "user_group": get_user_group(request.user),
+            "sales_with_urls": sales_with_urls,
+        },
+    )
+
+
+def index(request):
+    if not request.user.is_authenticated or is_client(request.user):
+        return render(
+            request,
+            "public/home.html",
+            {
+                "user_group": get_user_group(request.user),
+            },
+        )
+
+    if is_employee(request.user):
+        return redirect("dashboard-employee-index")
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def index_employee(request):
+    order = Order.objects.all()
+    product = Product.objects.all()
+
+    context = {
         "order": order,
         "product": product,
-        "product_count": product_count,
-        "meals_count": meals_count,
-        "customer_count": customer_count,
-        "sales_count": sales_count,
-        "payments_count": payments_count,
-        "receipts_count": receipts_count,
     }
     return render(request, "dashboard/index.html", context)
 
@@ -214,7 +265,7 @@ def meal_categories(request):
         "payments_count": payments_count,
         "receipts_count": receipts_count,
     }
-    return render(request, "dashboard/categories.html", context)
+    return render(request, "dashboard/meal_categories.html", context)
 
 
 @login_required(login_url="user-login")
@@ -311,27 +362,37 @@ def meal_delete(request, pk):
 @login_required(login_url="user-login")
 @allowed_users(allowed_roles=["Admin"])
 def customers(request):
-    [
-        product_count,
-        meals_count,
-        sales_count,
-        receipts_count,
-        payments_count,
-        customer_count,
-    ] = getStatistics()
 
-    customer = User.objects.filter(groups=Group.objects.get(name="Customers"))
+    users = User.objects.filter(groups=Group.objects.get(name="Customers"))
     context = {
-        "customer": customer,
-        "product_count": product_count,
-        "meals_count": meals_count,
-        "customer_count": customer_count,
-        "sales_count": sales_count,
-        "payments_count": payments_count,
-        "receipts_count": receipts_count,
+        "users": users,
     }
 
     return render(request, "dashboard/customers.html", context)
+
+
+@login_required(login_url="user-login")
+@allowed_users(allowed_roles=["Admin"])
+def employees(request):
+
+    users = User.objects.filter(groups=Group.objects.get(name="Employees"))
+    context = {
+        "users": users,
+    }
+
+    return render(request, "dashboard/employees.html", context)
+
+
+@login_required(login_url="user-login")
+@allowed_users(allowed_roles=["Admin"])
+def admins(request):
+
+    users = User.objects.filter(groups=Group.objects.get(name="Admin"))
+    context = {
+        "users": users,
+    }
+
+    return render(request, "dashboard/employees.html", context)
 
 
 @login_required(login_url="user-login")
@@ -347,7 +408,7 @@ def purchases(request):
     ] = getStatistics()
 
     customer = User.objects.filter(groups=Group.objects.get(name="Customers"))
-    sales = TicketSales.objects.filter(user=request.user)
+    sales = TicketSales.objects.all()
     sales_with_urls = []
     for sale in sales:
         sale_detail_url = reverse("dashboard-sale_detail", args=[sale.id])
@@ -383,29 +444,15 @@ def sale_detail(request, sale_id):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
-def customer_detail(request, pk):
-    [
-        product_count,
-        meals_count,
-        sales_count,
-        receipts_count,
-        payments_count,
-        customer_count,
-    ] = getStatistics()
+@user_passes_test(is_employee)
+def user_detail(request, pk):
 
-    customer = User.objects.get(id=pk)
+    user = User.objects.get(id=pk)
 
     context = {
-        "customers": customer,
-        "product_count": product_count,
-        "meals_count": meals_count,
-        "customer_count": customer_count,
-        "sales_count": sales_count,
-        "payments_count": payments_count,
-        "receipts_count": receipts_count,
+        "user": user,
     }
-    return render(request, "dashboard/customers_detail.html", context)
+    return render(request, "dashboard/user_detail.html", context)
 
 
 @login_required(login_url="user-login")
@@ -432,23 +479,6 @@ def order(request):
         "receipts_count": receipts_count,
     }
     return render(request, "dashboard/order.html", context)
-
-
-class HomeView(TemplateView):
-    template_name = "public/home.html"
-
-    # Funcion que determina el Grupo al que pertenece el usuario
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        group_name = None
-        if user.is_authenticated:
-            group = Group.objects.filter(user=user).first()
-            if group:
-                group_name = group.name
-
-        context["user_group"] = group_name
-        return context
 
 
 @require_http_methods(["GET", "POST"])
@@ -746,3 +776,33 @@ def create_passenger(request):
         else:
             form = PassengerForm(initial={"dni_or_passport": dni_or_passport})
     return render(request, "public/create_passenger.html", {"form": form})
+
+
+@login_required
+@user_passes_test(is_employee)
+def finances(request):
+    context = {
+        "product": Product.objects.all(),
+        "order": Order.objects.all(),
+    }
+    return render(request, "dashboard/finances.html", context)
+
+
+@login_required
+@user_passes_test(is_employee)
+def supplies(request):
+    context = {
+        "product": Product.objects.all(),
+        "order": Order.objects.all(),
+    }
+    return render(request, "dashboard/supplies.html", context)
+
+
+@login_required
+@user_passes_test(is_employee)
+def users(request):
+    context = {
+        "product": Product.objects.all(),
+        "order": Order.objects.all(),
+    }
+    return render(request, "dashboard/users.html", context)

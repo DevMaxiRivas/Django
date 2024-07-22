@@ -3,8 +3,10 @@ from . import views
 from .views import *
 
 urlpatterns = [
-    path("", HomeView.as_view(), name="home"),
-    path("index/", views.index, name="dashboard-index"),
+    path("", views.index, name="home"),
+    path("customers_index/", views.index_customer, name="dashboard-customers-index"),
+    path("customer_tickets/", views.customer_tickets, name="customer_tickets"),
+    path("employee_index/", views.index_employee, name="dashboard-employee-index"),
     path("products/", views.products, name="dashboard-products"),
     path(
         "products/delete/<int:pk>/",
@@ -38,10 +40,12 @@ urlpatterns = [
         name="dashboard-meal_category-delete",
     ),
     path("customers/", views.customers, name="dashboard-customers"),
+    path("employees/", views.employees, name="dashboard-employees"),
+    path("admins/", views.admins, name="dashboard-admins"),
     path(
-        "customers/detail/<int:pk>/",
-        views.customer_detail,
-        name="dashboard-customer-detail",
+        "user_detail/detail/<int:pk>/",
+        views.user_detail,
+        name="dashboard-user-detail",
     ),
     path("order/", views.order, name="dashboard-order"),
     # VENTA DE TICKETS
@@ -53,4 +57,7 @@ urlpatterns = [
     # path("payment_detail/<int:sale_id>", views.payment_detail, name="payment_detail"),
     # Pasajeros
     path("create_passenger/", views.create_passenger, name="create_passenger"),
+    path("finances/", views.finances, name="dashboard-finances"),
+    path("supplies/", views.supplies, name="dashboard-supplies"),
+    path("users/", views.users, name="dashboard-users"),
 ]

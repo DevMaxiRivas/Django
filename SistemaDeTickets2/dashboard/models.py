@@ -301,7 +301,7 @@ class Product(models.Model):
         verbose_name=_("price"), max_digits=10, decimal_places=2, default=0
     )
     description = models.TextField(verbose_name=_("description"), null=True)
-    stock = models.PositiveIntegerField(verbose_name=_("stock"), null=True)
+    stock = models.PositiveIntegerField(verbose_name=_("stock"), default=1)
     category = models.ForeignKey(
         ProductCategory, verbose_name=_("category"), on_delete=models.CASCADE, null=True
     )
@@ -363,7 +363,7 @@ class Journey(models.Model):
         verbose_name_plural = _("Journeys")
 
     def __str__(self):
-        return f"{self.get_type_display()} - {self.description}"
+        return f"{self.type}"
 
 
 class JourneyStage(models.Model):
@@ -451,7 +451,7 @@ class JourneySchedule(models.Model):
         verbose_name_plural = _("Journey Schedules")
 
     def __str__(self):
-        return f"{self.journey} on {self.departure_time}"
+        return f"{self.journey} - {timezone.localtime(self.departure_time).strftime("%Y-%m-%d %H:%M")}"
 
 
 class Passenger(models.Model):

@@ -1,5 +1,5 @@
 {% extends 'partials/base.html' %}
-{% block title %}Products Page{% endblock %}
+{% block title %}Categories Page{% endblock %}
 {% load crispy_forms_tags %}
 {% load i18n %}
 
@@ -15,7 +15,7 @@
         {% endfor %}
         {% endif %}
         <div class="card card-body">
-            <h5>{% translate "Agregar Nuevo Producto" %}</h5>
+            <h5>{% translate "Agregar Nueva Categoría" %}</h5>
             <hr>
             <form method="POST">
                 {% csrf_token %}
@@ -24,33 +24,40 @@
             </form>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-8 text-center">
+        {% if categories %}
         <table class="table bg-white">
             <thead class="bg-primary text-white">
                 <tr>
                     <th scope="col">{% translate "Nombre" %}</th>
-                    <th scope="col">{% translate "Categoria" %}</th>
-                    <th scope="col">{% translate "Existencias" %}</th>
+                    <th scope="col">{% translate "Descripción" %}</th>
                     <th scope="col">{% translate "Acción" %}</th>
                 </tr>
             </thead>
             <tbody>
-                {% for product in product %}
+                {% for category in categories %}
                 <tr>
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.category }}</td>
-                    <td>{{ product.stock }}</td>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.description }}</td>
                     <td>
-                        <a class="btn btn-primary btn-sm mr-2" href="{% url 'dashboard-products-edit' product.id %}">
-                            {%translate "Editar" %}
+                        <a class="btn btn-primary btn-sm mr-2"
+                            href="{% url 'dashboard-meal_category-edit' category.id %}">
+                            {% translate "Editar" %}
                         </a>
                         <a class="btn btn-danger btn-sm ml-2"
-                            href="{% url 'dashboard-products-delete' product.id %}">Delete</a>
+                            href="{% url 'dashboard-meal_category-delete' category.id %}">
+                            {%translate "Borrar" %}
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <div class="card shadow p-3 mb-5 bg-white rounded text-center">
+            <p>{% translate "No se registraron categorias de platillos" %}.</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

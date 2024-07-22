@@ -2,29 +2,20 @@
 {% include 'public/base.html' %}
 {% block content %}
 <section class="section_ps home_ps">
-    {% if user.is_authenticated %}
-    <div class="container my-5 ">
-        <h1 class="display-4 fw-normal text-center">
-            {% translate "Bienvenido al Inicio" %}
-        </h1>
-
+    <div class="home-text">
+        {% blocktrans %}
+        <h5>Vamos</h5>
+        <h1>Planifique su viaje<br>con nosotros</h1>
+        <p>
+            El recorrido del Tren a las Nubes incluye salida en vehículo desde la ciudad de Salta, recorriendo por
+            la RN 51 las
+            localidades de Campo Quijano y Gobernador Solá hasta llegar al paraje El Alfarcito donde está previsto
+            un desayuno
+            campestre con productos locales elaborados por las comunidades de la zona.
+        </p>
+        {% endblocktrans %}
+        <a href="{% url 'purchase_tickets' %}" class="btn_ps">{% translate "Reserve su boleto" %}</a>
     </div>
-</section>
-{% else %}
-<div class="home-text">
-    {% blocktrans %}
-    <h5>Vamos</h5>
-    <h1>Planifique su viaje<br>con nosotros</h1>
-    <p>
-        El recorrido del Tren a las Nubes incluye salida en vehículo desde la ciudad de Salta, recorriendo por
-        la RN 51 las
-        localidades de Campo Quijano y Gobernador Solá hasta llegar al paraje El Alfarcito donde está previsto
-        un desayuno
-        campestre con productos locales elaborados por las comunidades de la zona.
-    </p>
-    {% endblocktrans %}
-    <a href="{% url 'purchase_tickets' %}" class="btn_ps">{% translate "Reserve su boleto" %}</a>
-</div>
 </section>
 
 <section class="section_ps feature">
@@ -155,5 +146,4 @@
     </div>
 </section>
 {% include 'public/footer.html' %}
-{% endif %}
 {% endblock %}

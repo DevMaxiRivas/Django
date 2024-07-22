@@ -1,40 +1,35 @@
 {% extends 'partials/base.html' %}
-{% block title %}Customer Page{% endblock %}
 {% load i18n %}
-
+{% block title %}{% translate "Detalle de Usuario" %}{% endblock %}
 {% block content %}
+{%include 'partials/topside_users.html' %}
 <div class="row my-4">
-    <div class="col-md-4"></div>
-    <div class="col-md-8">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                {% translate "Detalle de Cliente" %}
-            </div>
+                {% translate "Detalle de Usuario" %} </div>
             <div class="row p-3">
                 <div class="col-md-8">
                     <table class="table table-borderless">
                         <thead>
                             <span class="h4">{% translate "Información de Peril" %}</span class="h4">
-                            <a class="btn btn-primary btn-sm float-right" href="{% url 'user-profile-update' %}">
-                                {%translate "Editar" %}
-                            </a>
                             <hr>
                         </thead>
                         <tbody>
                             <tr>
-                                <th scope="row">{% translate "Nombre" %}</th>
+                                <th>{% translate "Nombre" %}</th>
                                 <td>{{ user.username }}</td>
                             </tr>
                             <tr>
-                                <th scope="row">{% translate "Correo Electrónico" %}</th>
+                                <th>{% translate "Correo Electrónico" %}</th>
                                 <td>{{ user.email }}</td>
                             </tr>
                             <tr>
-                                <th scope="row">{% translate "Telefóno" %}</th>
+                                <th>{% translate "Telefóno" %}</th>
                                 <td>{{ user.profile.phone }}</td>
                             </tr>
                             <tr>
-                                <th scope="row">{% translate "Dirección" %}</th>
+                                <th>{% translate "Dirección" %}</th>
                                 <td>{{ user.profile.address }}</td>
                             </tr>
                         </tbody>

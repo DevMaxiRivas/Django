@@ -228,11 +228,15 @@ class ProductForm(forms.ModelForm):
         fields = [
             "name",
             "price",
+            "category",
+            "stock",
             "description",
         ]
         labels = {
             "name": _("Name"),
             "price": _("Price"),
+            "category": _("Category"),
+            "stock": _("Stock"),
             "description": _("Description"),
         }
 

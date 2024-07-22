@@ -32,9 +32,15 @@ urlpatterns = [
     ),
     path("profile/", user_views.profile, name="user-profile"),
     path("profile/update/", user_views.profile_update, name="user-profile-update"),
+    path("profile_customer/", user_views.profile_customer, name="profile_customer"),
+    path(
+        "profile_customer/update/",
+        user_views.profile_customer_update,
+        name="profile_customer_update",
+    ),
     path(
         "logout/",
-        auth_views.LogoutView.as_view(template_name="user/logout.html"),
+        auth_views.LogoutView.as_view(next_page="/"),
         name="user-logout",
     ),
     path(

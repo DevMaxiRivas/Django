@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block content %}
-{% include 'partials/topside.html' %}
+{% include 'partials/topside_supplies.html' %}
 <div class="row my-4">
     <div class="col-md-4">
         {% if messages %}
@@ -27,7 +27,7 @@
     <div class="col-md-8 text-center">
         {% if meals %}
         <table class="table bg-white">
-            <thead class="bg-info text-white">
+            <thead class="bg-primary text-white">
                 <tr>
                     <th scope="col">{% translate "Nombre" %}</th>
                     <th scope="col">{% translate "Categoria" %}</th>
@@ -42,7 +42,7 @@
                     <td>{{ meal.category }}</td>
                     <td>${{ meal.price }}</td>
                     <td>
-                        <a class="btn btn-info btn-sm mr-2" href="{% url 'dashboard-meal-edit' meal.id %}">
+                        <a class="btn btn-primary btn-sm mr-2" href="{% url 'dashboard-meal-edit' meal.id %}">
                             {% translate "Editar" %}
                         </a>
                         <a class="btn btn-danger btn-sm ml-2" href="{% url 'dashboard-meal-delete' meal.id %}">

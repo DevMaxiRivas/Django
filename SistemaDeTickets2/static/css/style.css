@@ -613,6 +613,14 @@ a {
     .scroll-table-ps {
         width: 33em;
     }
+
+    #bt-logout {
+        display: none;
+    }
+
+    #bt-purchases {
+        display: none;
+    }
 }
 
 @media (max-width: 600px) {
