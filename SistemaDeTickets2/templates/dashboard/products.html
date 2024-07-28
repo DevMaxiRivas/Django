@@ -1,5 +1,5 @@
 {% extends 'partials/base.html' %}
-{% block title %}Products Page{% endblock %}
+
 {% load crispy_forms_tags %}
 {% load i18n %}
 
@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="col-md-8">
-        <table class="table bg-white">
+        <table class="table bg-white text-center">
             <thead class="bg-primary text-white">
                 <tr>
                     <th scope="col">{% translate "Nombre" %}</th>
@@ -41,12 +41,16 @@
                     <td>{{ product.category }}</td>
                     <td>{{ product.stock }}</td>
                     <td>
-                        <a class="btn btn-primary btn-sm mr-2" href="{% url 'dashboard-products-edit' product.id %}">
+                        <a class="btn btn-primary btn-sm mr-2 mb-1"
+                            href="{% url 'dashboard-product-edit' product.id %}">
                             {%translate "Editar" %}
                         </a>
-                        <a class="btn btn-danger btn-sm ml-2"
-                            href="{% url 'dashboard-products-delete' product.id %}">Delete</a>
+                        <a class="btn btn-danger btn-sm mr-2 b mb-1" href="" data-toggle="modal"
+                            data-target="#exampleModal{{product.id}}">
+                            {% translate "Eliminar" %}
+                        </a>
                     </td>
+                    {% include "dashboard/product_delete_modal.html" %}
                 </tr>
                 {% endfor %}
             </tbody>

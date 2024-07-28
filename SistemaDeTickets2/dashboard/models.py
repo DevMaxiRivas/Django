@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -6,6 +7,10 @@ from django.utils.translation import gettext as _
 
 # Horarios
 from django.utils import timezone
+
+# DataBase
+from django.db.models import Count, Sum
+from django.db.models.functions import TruncMonth
 
 STATES1 = (
     ("h", _("Habilitado")),
@@ -180,7 +185,6 @@ class SeatCategory(models.Model):
     def __str__(self):
         return self.type
 
-
 class Seat(models.Model):
     transport = models.ForeignKey(
         Transport,
@@ -254,6 +258,7 @@ class Meal(models.Model):
         blank=True,
         null=True,
     )
+    description = models.TextField(verbose_name=_("description"), null=True)
     price = models.DecimalField(
         verbose_name=_("price"), max_digits=10, decimal_places=2
     )
@@ -349,7 +354,11 @@ class Journey(models.Model):
         blank=True,
         default="h",
     )
-
+    #Funciones
+    def passengers_for_journey():
+        return Journey.objects.values('type').annotate(
+            total_passengers=Count('journeyschedule__ticket__passenger')
+        )
     def status_sample(self):
         if self.status:
             STATES = set(STATES1)
@@ -503,6 +512,25 @@ class Passenger(models.Model):
     def __str__(self):
         return self.name
 
+class Payments(models.Model):
+    payment_id = models.CharField(verbose_name=_("payment_id"), max_length=255)
+    payment_type = models.CharField(verbose_name=_("payment_type"), max_length=50)
+    payment_status = models.CharField(
+        verbose_name=_("payment_status"), max_length=50, null=True, blank=True
+    )
+
+    created_at = models.DateTimeField(verbose_name=_("created_at"), auto_now_add=True)
+
+    def __str__(self):
+        if self.payment_id and self.payment_type:
+            return f"Pago {self.payment_id} - {self.payment_type}"
+        return "Pago" + self.created_at
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name = _("Payments")
+        verbose_name_plural = _("Payments")
+
 
 class TicketSales(models.Model):
     email = models.EmailField(verbose_name=_("email"), null=True, blank=True)
@@ -514,6 +542,13 @@ class TicketSales(models.Model):
     )
     purchase_date = models.DateTimeField(
         verbose_name=_("purchase_date"), default=timezone.now
+    )
+    payment = models.ForeignKey(
+        Payments,
+        verbose_name=_("payment"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
     status = models.CharField(
         verbose_name=_("status"),
@@ -538,6 +573,12 @@ class TicketSales(models.Model):
         if self.user:
             return f"Sale for {self.user.username} on {self.purchase_date}"
         return f"Sale on {self.purchase_date}"
+    
+    def ventas_por_año():
+        hace_un_año = timezone.now() - timedelta(days=365)
+        ventas = TicketSales.objects.filter(purchase_date__gte=hace_un_año)
+        ventas_por_mes = ventas.annotate(mes=TruncMonth('purchase_date')).values('mes').annotate(cantidad=Count('id')).order_by('mes')
+        return ventas_por_mes
 
     class Meta:
         ordering = ["user"]
@@ -565,6 +606,10 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"Ticket for {self.passenger.name} purchased by {self.user.username}"
+    
+    # Funciones
+    def revenue_by_seat_category():
+        return Ticket.objects.values('seat__category__type').annotate(total_ingresos=Sum('price')).order_by('-total_ingresos')
 
     # Funcion para reservar el asiento
     def reserveSeat(self):
@@ -584,7 +629,7 @@ class Ticket(models.Model):
             if old_instance.seat != self.seat:
                 self.price = self.seat.category.price
 
-        self.reserveSeat()
+        # self.reserveSeat()
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -621,6 +666,13 @@ class PurchaseReceipt(models.Model):
     )
     purchase_date = models.DateTimeField(
         verbose_name=_("purchase_date"), default=timezone.now
+    )
+    payment = models.ForeignKey(
+        Payments,
+        verbose_name=_("payment"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
     status = models.CharField(
         verbose_name=_("status"),
@@ -748,6 +800,10 @@ class DetailsProductOrder(models.Model):
         blank=True,
         default="h",
     )
+    # Funciones
+    def revenue_per_product():
+        return DetailsProductOrder.objects.values('product__name').annotate(total_ingresos=Sum('unit_price * quantity')).order_by('-total_ingresos')
+
 
     def delete(self, *args, **kwargs):
         # Cambiar el campo status del asiento asociado a 'h' antes de eliminar el ticket
@@ -795,30 +851,3 @@ class DetailsProductOrder(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
-
-
-class Payments(models.Model):
-    sale = models.ForeignKey(
-        TicketSales,
-        verbose_name=_("sale"),
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    payment_id = models.CharField(verbose_name=_("payment_id"), max_length=255)
-    payment_type = models.CharField(verbose_name=_("payment_type"), max_length=50)
-    payment_status = models.CharField(
-        verbose_name=_("payment_status"), max_length=50, null=True, blank=True
-    )
-
-    created_at = models.DateTimeField(verbose_name=_("created_at"), auto_now_add=True)
-
-    def __str__(self):
-        if self.payment_id and self.payment_type and self.sale:
-            return f"Pago {self.payment_id} - {self.payment_type} for - {self.sale}"
-        return "Pago" + self.created_at
-
-    class Meta:
-        ordering = ["created_at"]
-        verbose_name = _("Payments")
-        verbose_name_plural = _("Payments")

@@ -1,4 +1,5 @@
 # Requerst
+import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 
 # Modelos de Sistema
@@ -85,17 +86,6 @@ def get_user_group(user):
     return None
 
 
-def getStatistics():
-    return [
-        Product.objects.all().count(),
-        Meal.objects.all().count(),
-        TicketSales.objects.all().count(),
-        PurchaseReceipt.objects.all().count(),
-        Payments.objects.all().count(),
-        User.objects.filter(groups=Group.objects.get(name="Customers")).count(),
-    ]
-
-
 @login_required(login_url="user-login")
 def index_customer(request):
 
@@ -156,25 +146,94 @@ def index(request):
 def index_employee(request):
     order = Order.objects.all()
     product = Product.objects.all()
+    months = [
+        ("January"),
+        ("February"),
+        ("March"),
+        ("April"),
+        ("May"),
+        ("June"),
+        ("July"),
+        ("August"),
+        ("September"),
+        ("October"),
+        ("November"),
+        ("December"),
+    ]
+
+    query = Ticket.revenue_by_seat_category()
+
+    revenue_by_seat_category = []
+
+    for rev in query:
+        revenue_by_seat_category.append(
+            [str(rev["seat__category__type"]), float(rev["total_ingresos"])]
+        )
+
+    query2 = Journey.passengers_for_journey()
+    passengers_for_journey = []
+
+    for rev in query2:
+        passengers_for_journey.append([str(rev["type"]), int(rev["total_passengers"])])
 
     context = {
         "order": order,
         "product": product,
+        "months": months[: datetime.datetime.now().month],
+        "revenue_by_seat_category": revenue_by_seat_category,
+        "passengers_for_journey": passengers_for_journey,
     }
     return render(request, "dashboard/index.html", context)
 
 
 @login_required(login_url="user-login")
-def products(request):
-    [
-        product_count,
-        meals_count,
-        sales_count,
-        receipts_count,
-        payments_count,
-        customer_count,
-    ] = getStatistics()
+def product_categories(request):
+    categories = ProductCategory.objects.all()
 
+    if request.method == "POST":
+        form = ProductCategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            category_name = form.cleaned_data.get("name")
+            messages.success(request, f"{category_name} has been added")
+            return redirect("dashboard-product_categories")
+    else:
+        form = ProductCategoryForm()
+    context = {
+        "categories": categories,
+        "form": form,
+    }
+    return render(request, "dashboard/product_categories.html", context)
+
+
+@login_required(login_url="user-login")
+@allowed_users(allowed_roles=["Admin"])
+def product_category_edit(request, pk):
+    item = ProductCategory.objects.get(id=pk)
+    if request.method == "POST":
+        form = ProductCategoryForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-product_categories")
+    else:
+        form = ProductCategoryForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@allowed_users(allowed_roles=["Admin"])
+def product_category_delete(request, pk):
+    category = get_object_or_404(ProductCategory, pk=pk)
+    category.delete()
+
+    return redirect("dashboard-product_categories")
+
+
+@login_required(login_url="user-login")
+def products(request):
     product = Product.objects.all()
 
     if request.method == "POST":
@@ -189,12 +248,6 @@ def products(request):
     context = {
         "product": product,
         "form": form,
-        "product_count": product_count,
-        "meals_count": meals_count,
-        "customer_count": customer_count,
-        "sales_count": sales_count,
-        "payments_count": payments_count,
-        "receipts_count": receipts_count,
     }
     return render(request, "dashboard/products.html", context)
 
@@ -219,12 +272,10 @@ def product_edit(request, pk):
 @login_required(login_url="user-login")
 @allowed_users(allowed_roles=["Admin"])
 def product_delete(request, pk):
-    item = Product.objects.get(id=pk)
-    if request.method == "POST":
-        item.delete()
-        return redirect("dashboard-products")
-    context = {"item": item}
-    return render(request, "dashboard/products_delete.html", context)
+    product = get_object_or_404(Product, pk=pk)
+    product.delete()
+
+    return redirect("dashboard-products")
 
 
 @login_required(login_url="user-login")
@@ -235,15 +286,6 @@ def product_detail(request, pk):
 
 @login_required(login_url="user-login")
 def meal_categories(request):
-    [
-        product_count,
-        meals_count,
-        sales_count,
-        receipts_count,
-        payments_count,
-        customer_count,
-    ] = getStatistics()
-
     categories = MealCategory.objects.all()
 
     if request.method == "POST":
@@ -258,12 +300,6 @@ def meal_categories(request):
     context = {
         "categories": categories,
         "form": form,
-        "product_count": product_count,
-        "meals_count": meals_count,
-        "customer_count": customer_count,
-        "sales_count": sales_count,
-        "payments_count": payments_count,
-        "receipts_count": receipts_count,
     }
     return render(request, "dashboard/meal_categories.html", context)
 
@@ -288,25 +324,14 @@ def meal_category_edit(request, pk):
 @login_required(login_url="user-login")
 @allowed_users(allowed_roles=["Admin"])
 def meal_category_delete(request, pk):
-    item = MealCategory.objects.get(id=pk)
-    if request.method == "POST":
-        item.delete()
-        return redirect("dashboard-meal_categories")
-    context = {"item": item}
-    return render(request, "dashboard/meal_category_delete.html", context)
+    category = get_object_or_404(MealCategory, pk=pk)
+    category.delete()
+
+    return redirect("dashboard-meal_categories")
 
 
 @login_required(login_url="user-login")
 def meals(request):
-    [
-        product_count,
-        meals_count,
-        sales_count,
-        receipts_count,
-        payments_count,
-        customer_count,
-    ] = getStatistics()
-
     meals = Meal.objects.all()
 
     if request.method == "POST":
@@ -321,12 +346,6 @@ def meals(request):
     context = {
         "meals": meals,
         "form": form,
-        "product_count": product_count,
-        "meals_count": meals_count,
-        "customer_count": customer_count,
-        "sales_count": sales_count,
-        "payments_count": payments_count,
-        "receipts_count": receipts_count,
     }
     return render(request, "dashboard/meals.html", context)
 
@@ -351,12 +370,10 @@ def meal_edit(request, pk):
 @login_required(login_url="user-login")
 @allowed_users(allowed_roles=["Admin"])
 def meal_delete(request, pk):
-    item = Meal.objects.get(id=pk)
-    if request.method == "POST":
-        item.delete()
-        return redirect("dashboard-meal")
-    context = {"item": item}
-    return render(request, "dashboard/meal_delete.html", context)
+    meal = get_object_or_404(Meal, pk=pk)
+    meal.delete()
+
+    return redirect("dashboard-meals")
 
 
 @login_required(login_url="user-login")
@@ -398,35 +415,9 @@ def admins(request):
 @login_required(login_url="user-login")
 @allowed_users(allowed_roles=["Admin"])
 def purchases(request):
-    [
-        product_count,
-        meals_count,
-        sales_count,
-        receipts_count,
-        payments_count,
-        customer_count,
-    ] = getStatistics()
-
-    customer = User.objects.filter(groups=Group.objects.get(name="Customers"))
     sales = TicketSales.objects.all()
-    sales_with_urls = []
-    for sale in sales:
-        sale_detail_url = reverse("dashboard-sale_detail", args=[sale.id])
-        sales_with_urls.append(
-            {
-                "sale": sale,
-                "detail_url": sale_detail_url,
-            }
-        )
     context = {
-        "customer": customer,
-        "product_count": product_count,
-        "meals_count": meals_count,
-        "customer_count": customer_count,
-        "sales_count": sales_count,
-        "payments_count": payments_count,
-        "receipts_count": receipts_count,
-        "sales_with_urls": sales_with_urls,
+        "sales": sales,
     }
     return render(request, "dashboard/purchases.html", context)
 
@@ -443,6 +434,18 @@ def sale_detail(request, sale_id):
     )
 
 
+@login_required
+@user_passes_test(is_employee)
+def purchase_detail(request, sale_id):
+    if TicketSales.objects.get(id=sale_id).payment:
+        return render(
+            request,
+            "dashboard/purchase_detail.html",
+            {"payment": TicketSales.objects.get(id=sale_id).payment},
+        )
+    return render(request, "dashboard/purchase_detail.html", {})
+
+
 @login_required(login_url="user-login")
 @user_passes_test(is_employee)
 def user_detail(request, pk):
@@ -457,26 +460,10 @@ def user_detail(request, pk):
 
 @login_required(login_url="user-login")
 def order(request):
-    [
-        product_count,
-        meals_count,
-        sales_count,
-        receipts_count,
-        payments_count,
-        customer_count,
-    ] = getStatistics()
-    sales_count = TicketSales.objects.all().count()
-
     order = Order.objects.all()
 
     context = {
         "order": order,
-        "product_count": product_count,
-        "meals_count": meals_count,
-        "customer_count": customer_count,
-        "sales_count": sales_count,
-        "payments_count": payments_count,
-        "receipts_count": receipts_count,
     }
     return render(request, "dashboard/order.html", context)
 
@@ -638,13 +625,13 @@ def generate_pdf_receipt(sale):
     # Número de comprobante
     elements.append(
         Paragraph(
-            f"Nro. Comprobante: {Payments.objects.get(sale=sale).payment_id}",
+            f"Nro. Comprobante: {sale.payment.payment_id}",
             title_style,
         )
     )
 
     # Obtenemos todos los tickets de la venta
-    tickets = TicketSales.objects.get(id=sale.id).tickets.all()
+    tickets = sale.tickets.all()
 
     # Datos del ticket en formato de tabla
     data = [
@@ -723,12 +710,13 @@ def payment_success(request):
 
     if payment_id and payment_type and sale_id:
         sale = get_object_or_404(TicketSales, id=sale_id)
-        Payments.objects.create(
-            sale=sale,
+        payment = Payments.objects.create(
             payment_id=payment_id,
             payment_type=payment_type,
             payment_status=payment_status,
         )
+        sale.payment = payment
+        sale.save()
     if email:
         send_email(sale, email)
 
@@ -736,10 +724,14 @@ def payment_success(request):
 
 
 def payment_failed(request):
+    sale_id = request.GET.get("external_reference")
+    TicketSales.delete(TicketSales.objects.get(id=sale_id))
     return render(request, "public/payment_failed.html")
 
 
 def payment_pending(request):
+    sale_id = request.GET.get("external_reference")
+    TicketSales.delete(TicketSales.objects.get(id=sale_id))
     return render(request, "public/payment_pending.html")
 
 

@@ -24,9 +24,9 @@
             </form>
         </div>
     </div>
-    <div class="col-md-8 text-center">
+    <div class="col-md-8">
         {% if categories %}
-        <table class="table bg-white">
+        <table class="table bg-white text-center">
             <thead class="bg-primary text-white">
                 <tr>
                     <th scope="col">{% translate "Nombre" %}</th>
@@ -40,15 +40,16 @@
                     <td>{{ category.name }}</td>
                     <td>{{ category.description }}</td>
                     <td>
-                        <a class="btn btn-primary btn-sm mr-2"
+                        <a class="btn btn-primary btn-sm mr-2 mb-1"
                             href="{% url 'dashboard-meal_category-edit' category.id %}">
                             {% translate "Editar" %}
                         </a>
-                        <a class="btn btn-danger btn-sm ml-2"
-                            href="{% url 'dashboard-meal_category-delete' category.id %}">
-                            {%translate "Borrar" %}
+                        <a class="btn btn-danger btn-sm mr-2 b mb-1" href="" data-toggle="modal"
+                            data-target="#exampleModal{{category.id}}">
+                            {% translate "Eliminar" %}
                         </a>
                     </td>
+                    {% include "dashboard/meal_category_delete_modal.html" %}
                 </tr>
                 {% endfor %}
             </tbody>

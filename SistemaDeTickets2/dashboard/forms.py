@@ -267,3 +267,16 @@ class MealCategoryForm(forms.ModelForm):
             "name": _("Name"),
             "description": _("Description"),
         }
+
+
+class ProductCategoryForm(forms.ModelForm):
+    class Meta:
+        model = ProductCategory
+        fields = [
+            "name",
+            "description",
+        ]
+        labels = {
+            "name": _("Name"),
+            "description": _("Description"),
+        }
