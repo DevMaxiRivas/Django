@@ -2,7 +2,9 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.utils import ImageReader
 from pdfrw import PdfReader, PdfWriter, PageMerge
+import qrcode
 import io
 
 # Registrar la fuente personalizada
@@ -29,9 +31,35 @@ replacements = {
 }
 
 
-def replace_text(input_pdf, output_pdf, replacements, positions):
+# Generacion de QR
+def generate_qr_code(data):
+    # Generar el código QR
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    # Crear la imagen QR en memoria
+    img = qr.make_image(fill="black", back_color="white")
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+    return buffer
+
+
+def replace_text_and_add_qr(
+    input_pdf, output_pdf, replacements, positions, qr_data, qr_x, qr_y
+):
     reader = PdfReader(input_pdf)
     writer = PdfWriter()
+
+    # Generar el código QR en memoria
+    qr_buffer = generate_qr_code(qr_data)
+    qr_image = ImageReader(qr_buffer)
 
     for page_number, page in enumerate(reader.pages, start=1):
         # Crear una nueva capa para los reemplazos en memoria
@@ -41,17 +69,21 @@ def replace_text(input_pdf, output_pdf, replacements, positions):
         # Añadir texto reemplazado en las posiciones correctas
         for text_data in positions:
             placeholder = text_data["text"]
-            replacement_text = replacements[placeholder]
-            x, y = text_data["x"], text_data["y"]
-            # Dibujar el nuevo texto
-            R, G, B = (
-                text_data["font-color-R"] / 255.0,
-                text_data["font-color-G"] / 255.0,
-                text_data["font-color-B"] / 255.0,
-            )
-            overlay.setFillColorRGB(R, G, B)  # Color personalizado Color personalizado
-            overlay.setFont("OpenSans-Regular", text_data["font-size"])
-            overlay.drawString(x, y, replacement_text)
+            if placeholder in replacements:
+                replacement_text = replacements[placeholder]
+                x, y = text_data["x"], text_data["y"]
+                font_size = text_data["font-size"]
+                R, G, B = (
+                    text_data["font-color-R"] / 255.0,
+                    text_data["font-color-G"] / 255.0,
+                    text_data["font-color-B"] / 255.0,
+                )
+                overlay.setFillColorRGB(R, G, B)
+                overlay.setFont("OpenSans-Regular", font_size)
+                overlay.drawString(x, y, replacement_text)
+
+        # Añadir la imagen QR en la posición deseada
+        overlay.drawImage(qr_image, qr_x, qr_y, width=80, height=80)
 
         # Asegúrate de finalizar la página y guardar el canvas
         overlay.showPage()
@@ -75,7 +107,7 @@ def replace_text(input_pdf, output_pdf, replacements, positions):
 # for position in positions:
 #     print(position)
 
-lista1 = [
+data = [
     {
         "text": "FechaEmision",
         "x": 26.614365,
@@ -204,4 +236,12 @@ lista1 = [
     },
 ]
 
-replace_text("base4.pdf", "Boleto_Modificado2.pdf", replacements, lista1)
+
+qr_data = "https://www.facebook.com/maxi.rivas.ok/"
+qr_x = 479.1459
+qr_y = 290.6095
+
+
+replace_text_and_add_qr(
+    "base4.pdf", "Boleto_Modificado2.pdf", replacements, data, qr_data, qr_x, qr_y
+)
