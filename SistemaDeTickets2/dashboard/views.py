@@ -60,6 +60,9 @@ import mercadopago
 # Traducciones
 from django.utils.translation import gettext as _
 
+# Envio de Emails
+from .sendEmails import send_pdf_via_email
+
 
 # Control de Acceso
 def is_client(user):
@@ -681,17 +684,8 @@ def generate_pdf_receipt(sale):
 
 def send_email(sale, email):
 
-    subject = _("Notification of Ticket Purchase")
-    message = _(
-        "You have made a ticket purchase. Please find attached the purchase receipt"
-    )
-    email_from = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [email]
-    pdf_buffer = generate_pdf_receipt(sale)
-
-    email_ = EmailMessage(subject, message, email_from, recipient_list)
-    email_.attach(_("Receipt") + ".pdf", pdf_buffer.getvalue(), "application/pdf")
-    email_.send()
+    tickets = Ticket.objects.filter(sale=sale)
+    send_pdf_via_email(tickets, email)
 
 
 def payment_success(request):
@@ -702,6 +696,7 @@ def payment_success(request):
         "external_reference"
     )  # Se aume que se envia el id de la venta por "external_reference"
     sale = TicketSales.objects.get(id=sale_id)
+    tickets = Ticket.objects.filter(sale=sale)
 
     if request.user.is_authenticated:
         email = sale.user.email
@@ -718,7 +713,7 @@ def payment_success(request):
         sale.payment = payment
         sale.save()
     if email:
-        send_email(sale, email)
+        send_email(tickets, email)
 
     return render(request, "public/payment_success.html")
 
@@ -730,8 +725,11 @@ def payment_failed(request):
 
 
 def payment_pending(request):
-    sale_id = request.GET.get("external_reference")
-    TicketSales.delete(TicketSales.objects.get(id=sale_id))
+    sale = TicketSales.objects.get(id=11)
+    tickets = Ticket.objects.filter(sale=sale)
+    send_pdf_via_email(tickets, str(sale.email))
+    # sale_id = request.GET.get("external_reference")
+    # TicketSales.delete(TicketSales.objects.get(id=sale_id))s
     return render(request, "public/payment_pending.html")
 
 
