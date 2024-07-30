@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-26 16:36-0300\n"
+"POT-Creation-Date: 2024-07-29 20:12-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: .\dashboard\forms.py:37
 msgid "Correo electrónico"
-msgstr ""
+msgstr "Correo electrónico"
 
 #: .\dashboard\forms.py:38 .\templates\dashboard\categories copy.html:32
 #: .\templates\dashboard\meal_categories.html:32
@@ -30,11 +30,11 @@ msgstr ""
 #: .\templates\dashboard\products.html:31
 #: .\templates\dashboard\user_detail.html:20 .\templates\user\profile.html:25
 msgid "Nombre"
-msgstr ""
+msgstr "Nombre"
 
 #: .\dashboard\forms.py:39
 msgid "Apellido"
-msgstr ""
+msgstr "Apellido"
 
 #: .\dashboard\forms.py:52
 #, fuzzy
@@ -44,115 +44,113 @@ msgstr "nombre"
 
 #: .\dashboard\forms.py:53 .\dashboard\models.py:536
 msgid "email"
-msgstr ""
+msgstr "correo electrónico"
 
 #: .\dashboard\forms.py:54
 msgid "first name"
-msgstr ""
+msgstr "nombre"
 
 #: .\dashboard\forms.py:55
-#, fuzzy
-#| msgid "name"
 msgid "last name"
-msgstr "nombre"
+msgstr "apellido"
 
 #: .\dashboard\forms.py:56
 msgid "password"
-msgstr ""
+msgstr "contraseña"
 
 #: .\dashboard\forms.py:57
 msgid "confirm password"
-msgstr ""
+msgstr "confirmar contraseña"
 
 #: .\dashboard\forms.py:81 .\dashboard\forms.py:236 .\dashboard\forms.py:253
-#: .\dashboard\forms.py:267 .\dashboard\forms.py:280 .\dashboard\views.py:645
+#: .\dashboard\forms.py:267 .\dashboard\forms.py:280 .\dashboard\views.py:643
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #: .\dashboard\forms.py:82 .\dashboard\forms.py:115 .\dashboard\forms.py:123
-#: .\dashboard\forms.py:162 .\dashboard\views.py:644
+#: .\dashboard\forms.py:162 .\dashboard\views.py:642
 msgid "DNI/Passport"
-msgstr ""
+msgstr "DNI/Pasaporte"
 
 #: .\dashboard\forms.py:83
 msgid "Emergency Telephone"
-msgstr ""
+msgstr "Telefóno de Emergencia"
 
 #: .\dashboard\forms.py:84
 msgid "Date of Birth"
-msgstr ""
+msgstr "Fecha de Nacimiento"
 
 #: .\dashboard\forms.py:85
 msgid "Gender"
-msgstr ""
+msgstr "Género"
 
 #: .\dashboard\forms.py:86
 msgid "Origin Country"
-msgstr ""
+msgstr "País de Origen"
 
 #: .\dashboard\forms.py:100
 msgid "Email (if not logged in)"
-msgstr ""
+msgstr "Correo Electrónico (si no inicio sesión)"
 
 #: .\dashboard\forms.py:108
 msgid "Email"
-msgstr ""
+msgstr "Correo Electrónico"
 
-#: .\dashboard\forms.py:124 .\dashboard\views.py:646
+#: .\dashboard\forms.py:124 .\dashboard\views.py:644
 msgid "Schedule"
-msgstr ""
+msgstr "Cronograma"
 
 #: .\dashboard\forms.py:125 .\dashboard\models.py:232
 msgid "Seat"
-msgstr ""
+msgstr "Asiento"
 
 #: .\dashboard\forms.py:171 .\dashboard\models.py:276
 msgid "Meal"
-msgstr ""
+msgstr "Comida"
 
 #: .\dashboard\forms.py:172 .\dashboard\forms.py:192
 msgid "Quantity"
-msgstr ""
+msgstr "Cantidad"
 
 #: .\dashboard\forms.py:191 .\dashboard\models.py:789
 msgid "product"
-msgstr ""
+msgstr "producto"
 
 #: .\dashboard\forms.py:215 .\dashboard\models.py:371
 msgid "Journey"
-msgstr ""
+msgstr "Recorrido"
 
 #: .\dashboard\forms.py:216
 msgid "Departure Time"
-msgstr ""
+msgstr "Momento de Salida"
 
 #: .\dashboard\forms.py:217
 msgid "Arrival Time"
-msgstr ""
+msgstr "Momento de Llegada"
 
-#: .\dashboard\forms.py:237 .\dashboard\forms.py:255 .\dashboard\views.py:648
+#: .\dashboard\forms.py:237 .\dashboard\forms.py:255 .\dashboard\views.py:646
 msgid "Price"
-msgstr ""
+msgstr "Precio"
 
 #: .\dashboard\forms.py:238 .\dashboard\forms.py:254
 msgid "Category"
-msgstr ""
+msgstr "Categoria"
 
 #: .\dashboard\forms.py:239
 msgid "Stock"
-msgstr ""
+msgstr "Existencias"
 
 #: .\dashboard\forms.py:240 .\dashboard\forms.py:268 .\dashboard\forms.py:281
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
 #: .\dashboard\models.py:16
 msgid "Habilitado"
-msgstr ""
+msgstr "Habilitado"
 
 #: .\dashboard\models.py:17
 msgid "Deshabilitado"
-msgstr ""
+msgstr "Deshabilitado"
 
 #: .\dashboard\models.py:22 .\dashboard\models.py:81 .\dashboard\models.py:123
 #: .\dashboard\models.py:240 .\dashboard\models.py:253
@@ -163,20 +161,20 @@ msgstr "nombre"
 
 #: .\dashboard\models.py:23
 msgid "location"
-msgstr ""
+msgstr "ubicación"
 
 #: .\dashboard\models.py:25 .\dashboard\models.py:158
 #: .\dashboard\models.py:346
 msgid "type"
-msgstr ""
+msgstr "tipo"
 
 #: .\dashboard\models.py:28 .\dashboard\models.py:144
 msgid "Bus"
-msgstr ""
+msgstr "Colectivo"
 
 #: .\dashboard\models.py:29 .\dashboard\models.py:108
 msgid "Train"
-msgstr ""
+msgstr "Tren"
 
 #: .\dashboard\models.py:35 .\dashboard\models.py:60 .\dashboard\models.py:87
 #: .\dashboard\models.py:128 .\dashboard\models.py:165
@@ -186,294 +184,302 @@ msgstr ""
 #: .\dashboard\models.py:554 .\dashboard\models.py:678
 #: .\dashboard\models.py:726 .\dashboard\models.py:797
 msgid "status"
-msgstr ""
+msgstr "estado"
 
 #: .\dashboard\models.py:47
 msgid "Stop"
-msgstr ""
+msgstr "Parada"
 
 #: .\dashboard\models.py:48
 msgid "Stops"
-msgstr ""
+msgstr "Paradas"
 
 #: .\dashboard\models.py:76 .\dashboard\models.py:118
 #: .\dashboard\models.py:191 .\dashboard\models.py:404
 msgid "transport"
-msgstr ""
+msgstr "transporte"
 
 #: .\dashboard\models.py:83 .\dashboard\models.py:125
 msgid "capacity"
-msgstr ""
+msgstr "capacidad"
 
 #: .\dashboard\models.py:109
 msgid "Trains"
-msgstr ""
+msgstr "Trenes"
 
 #: .\dashboard\models.py:145
 msgid "Buses"
-msgstr ""
+msgstr "Colectivos"
 
 #: .\dashboard\models.py:161 .\dashboard\models.py:263
 #: .\dashboard\models.py:306 .\dashboard\models.py:541
 #: .\dashboard\models.py:604 .\dashboard\models.py:665
 msgid "price"
-msgstr ""
+msgstr "precio"
 
 #: .\dashboard\models.py:182
 msgid "Seat Category"
-msgstr ""
+msgstr "Categoria de Asiento"
 
 #: .\dashboard\models.py:183
 msgid "Seat Categories"
-msgstr ""
+msgstr "Categorias de Asiento"
 
 #: .\dashboard\models.py:197
 msgid "seat_number"
-msgstr ""
+msgstr "numero_asiento"
 
 #: .\dashboard\models.py:200 .\dashboard\models.py:256
 #: .\dashboard\models.py:311
 msgid "category"
-msgstr ""
+msgstr "categoria"
 
 #: .\dashboard\models.py:233
 msgid "Seats"
-msgstr ""
+msgstr "Asientos"
 
 #: .\dashboard\models.py:241 .\dashboard\models.py:261
 #: .\dashboard\models.py:292 .\dashboard\models.py:308
 #: .\dashboard\models.py:348
 msgid "description"
-msgstr ""
+msgstr "descripción"
 
 #: .\dashboard\models.py:248
 msgid "Meal Category"
-msgstr ""
+msgstr "Categoria de Comida"
 
 #: .\dashboard\models.py:249
 msgid "Meal Categories"
-msgstr ""
+msgstr "Categorias de Comida"
 
 #: .\dashboard\models.py:277
 msgid "Meals"
-msgstr ""
+msgstr "Comidas"
 
 #: .\dashboard\models.py:299
 msgid "Product Category"
-msgstr ""
+msgstr "Categoria de Producto"
 
 #: .\dashboard\models.py:300
 msgid "Product Categories"
-msgstr ""
+msgstr "Categorias de Producto"
 
 #: .\dashboard\models.py:309
 msgid "stock"
-msgstr ""
+msgstr "existencias"
 
 #: .\dashboard\models.py:314
 msgid "state"
-msgstr ""
+msgstr "stado"
 
 #: .\dashboard\models.py:323
 msgid "Product"
-msgstr ""
+msgstr "Producto"
 
 #: .\dashboard\models.py:324
 msgid "Products"
-msgstr ""
+msgstr "Productos"
+
+#: .\dashboard\models.py:341
+#, fuzzy
+#| msgid "Train"
+msgid "Train Only"
+msgstr "Tren"
+
+#: .\dashboard\models.py:342
+msgid "Bus and Train"
+msgstr "Colectivo y Tren"
 
 #: .\dashboard\models.py:372
 msgid "Journeys"
-msgstr ""
+msgstr "Recorridos"
 
 #: .\dashboard\models.py:381 .\dashboard\models.py:437
 msgid "journey"
-msgstr ""
+msgstr "recorrido"
 
 #: .\dashboard\models.py:388
 msgid "departure_stop"
-msgstr ""
+msgstr "parada_salida"
 
 #: .\dashboard\models.py:396
 msgid "arrival_stop"
-msgstr ""
+msgstr "parada_llegada"
 
 #: .\dashboard\models.py:409
 msgid "duration"
-msgstr ""
+msgstr "duración"
 
 #: .\dashboard\models.py:428
 msgid "Journey Stage"
-msgstr ""
+msgstr "Etapa de Recorrido"
 
 #: .\dashboard\models.py:429
 msgid "Journey Stages"
-msgstr ""
+msgstr "Etapas de Recorrido"
 
 #: .\dashboard\models.py:439
 msgid "departure_time"
-msgstr ""
+msgstr "momento_salida"
 
 #: .\dashboard\models.py:440
 msgid "arrival_time"
-msgstr ""
+msgstr "momento_llegada"
 
 #: .\dashboard\models.py:459
 msgid "Journey Schedule"
-msgstr ""
+msgstr "Cronograma de Recorrido"
 
 #: .\dashboard\models.py:460
 msgid "Journey Schedules"
-msgstr ""
+msgstr "Cronogramas de Recorrido"
 
 #: .\dashboard\models.py:468
 msgid "dni_or_passport"
-msgstr ""
+msgstr "dni_o_pásaporte"
 
 #: .\dashboard\models.py:469
 msgid "origin_country"
-msgstr ""
+msgstr "pais_origen"
 
 #: .\dashboard\models.py:471
 msgid "emergency_telephone"
-msgstr ""
+msgstr "telefono_emergencia"
 
 #: .\dashboard\models.py:474
 msgid "date_of_birth"
-msgstr ""
+msgstr "fecha_nacimiento"
 
 #: .\dashboard\models.py:484
 msgid "gender"
-msgstr ""
+msgstr "genero"
 
 #: .\dashboard\models.py:509
 msgid "Passenger"
-msgstr ""
+msgstr "Pasajero"
 
 #: .\dashboard\models.py:510
 msgid "Passengers"
-msgstr ""
+msgstr "Pasajeros"
 
 #: .\dashboard\models.py:516
 msgid "payment_id"
-msgstr ""
+msgstr "id_pago"
 
 #: .\dashboard\models.py:517
 msgid "payment_type"
-msgstr ""
+msgstr "tipo_pago"
 
 #: .\dashboard\models.py:519
 msgid "payment_status"
-msgstr ""
+msgstr "estado_pago"
 
 #: .\dashboard\models.py:522
 msgid "created_at"
-msgstr ""
+msgstr "fecha_registro"
 
 #: .\dashboard\models.py:531 .\dashboard\models.py:532
 msgid "Payments"
-msgstr ""
+msgstr "Pagos"
 
 #: .\dashboard\models.py:538
 msgid "user"
-msgstr ""
+msgstr "usuario"
 
 #: .\dashboard\models.py:544 .\dashboard\models.py:668
 msgid "purchase_date"
-msgstr ""
+msgstr "fecha_compra"
 
 #: .\dashboard\models.py:548 .\dashboard\models.py:672
 msgid "payment"
-msgstr ""
+msgstr "pago"
 
 #: .\dashboard\models.py:585
 msgid "Ticket Sale"
-msgstr ""
+msgstr "Venta de Boleto"
 
 #: .\dashboard\models.py:586
 msgid "Ticket Sales"
-msgstr ""
+msgstr "Ventas de Boletos"
 
 #: .\dashboard\models.py:592
 msgid "sale"
-msgstr ""
+msgstr "venta"
 
 #: .\dashboard\models.py:597 .\dashboard\models.py:659
 msgid "passenger"
-msgstr ""
+msgstr "pasajero"
 
 #: .\dashboard\models.py:600
 msgid "schedule"
-msgstr ""
+msgstr "cronograma"
 
 #: .\dashboard\models.py:602
 msgid "seat"
-msgstr ""
+msgstr "asiento"
 
 #: .\dashboard\models.py:652
 msgid "Ticket"
-msgstr ""
+msgstr "Boleto"
 
 #: .\dashboard\models.py:653
 msgid "Tickets"
-msgstr ""
+msgstr "Boletos"
 
 #: .\dashboard\models.py:709
 msgid "Purchase Receipt"
-msgstr ""
+msgstr "Recibo Compra"
 
 #: .\dashboard\models.py:710
 msgid "Purchase Receipts"
-msgstr ""
+msgstr "Recibos Compras"
 
 #: .\dashboard\models.py:716 .\dashboard\models.py:784
 msgid "receipt"
-msgstr ""
+msgstr "recibo"
 
 #: .\dashboard\models.py:720
 msgid "meal"
-msgstr ""
+msgstr "comida"
 
 #: .\dashboard\models.py:721 .\dashboard\models.py:791
 msgid "quantity"
-msgstr ""
+msgstr "cantidad"
 
 #: .\dashboard\models.py:723 .\dashboard\models.py:793
 msgid "unit_price"
-msgstr ""
+msgstr "precio_unitario"
 
 #: .\dashboard\models.py:777
 msgid "Detail Food Order"
-msgstr ""
+msgstr "Detalle Orden de Comida"
 
 #: .\dashboard\models.py:778
 msgid "Detail Food Orders"
-msgstr ""
+msgstr "Detalles Ordenes de Comida"
 
 #: .\dashboard\models.py:849
 msgid "Details Product Order"
-msgstr ""
+msgstr "Detalles Orden de Producto"
 
 #: .\dashboard\models.py:850
 msgid "Details Product Orders"
-msgstr ""
+msgstr "Detalles Ordenes de Producto"
 
-#: .\dashboard\views.py:647
-msgid "Train Seat"
-msgstr ""
-
-#: .\dashboard\views.py:689
+#: .\dashboard\sendEmails.py:250
 msgid "Notification of Ticket Purchase"
-msgstr ""
+msgstr "Notificación de Compra de Boletos"
 
-#: .\dashboard\views.py:691
+#: .\dashboard\sendEmails.py:252
 msgid ""
 "You have made a ticket purchase. Please find attached the purchase receipt"
 msgstr ""
+"Realizo una compra de boletos. A continuación se le adjuntan su recibo de "
+"compra"
 
-#: .\dashboard\views.py:698
-msgid "Receipt"
-msgstr ""
+#: .\dashboard\views.py:645
+msgid "Train Seat"
+msgstr "Asiento Tren"
 
 #: .\inventoryproject\settings.py:133
 msgid "English"
@@ -487,13 +493,13 @@ msgstr "Español"
 #: .\templates\dashboard\meal_categories.html:18
 #: .\templates\dashboard\product_categories.html:18
 msgid "Agregar Nueva Categoría"
-msgstr ""
+msgstr "Agregar Nueva Categoría"
 
 #: .\templates\dashboard\categories copy.html:33
 #: .\templates\dashboard\meal_categories.html:33
 #: .\templates\dashboard\product_categories.html:33
 msgid "Descripción"
-msgstr ""
+msgstr "Descripción"
 
 #: .\templates\dashboard\categories copy.html:34
 #: .\templates\dashboard\customers.html:15
@@ -506,7 +512,7 @@ msgstr ""
 #: .\templates\dashboard\receipts.html:18
 #: .\templates\public\client_purchases.html:16
 msgid "Acción"
-msgstr ""
+msgstr "Acción"
 
 #: .\templates\dashboard\categories copy.html:45
 #: .\templates\dashboard\meal_categories.html:45
@@ -515,36 +521,36 @@ msgstr ""
 #: .\templates\dashboard\products.html:46 .\templates\user\profile.html:19
 #: .\templates\user\profile_customer.html:17
 msgid "Editar"
-msgstr ""
+msgstr "Editar"
 
 #: .\templates\dashboard\categories copy.html:49
 msgid "Borrar"
-msgstr ""
+msgstr "Borrar"
 
 #: .\templates\dashboard\categories copy.html:58
 #: .\templates\dashboard\meal_categories.html:59
 #: .\templates\dashboard\product_categories.html:59
 msgid "No se registraron categorias de platillos"
-msgstr ""
+msgstr "No se registraron categorias de platillos"
 
 #: .\templates\dashboard\customers.html:12
 #: .\templates\dashboard\employees.html:12
 #: .\templates\user\profile_customer.html:22
 msgid "Nombre de Usuario"
-msgstr ""
+msgstr "Nombre de Usuario"
 
 #: .\templates\dashboard\customers.html:13
 #: .\templates\dashboard\employees.html:13
 #: .\templates\user\profile_customer.html:30
 msgid "Teléfono"
-msgstr ""
+msgstr "Teléfono"
 
 #: .\templates\dashboard\customers.html:14
 #: .\templates\dashboard\employees.html:14
 #: .\templates\dashboard\user_detail.html:24 .\templates\user\profile.html:29
 #: .\templates\user\profile_customer.html:26
 msgid "Correo Electrónico"
-msgstr ""
+msgstr "Correo Electrónico"
 
 #: .\templates\dashboard\meal_categories.html:49
 #: .\templates\dashboard\meal_category_delete_modal.html:19
@@ -557,46 +563,46 @@ msgstr ""
 #: .\templates\public\purchase_food.html:33
 #: .\templates\public\purchase_tickets.html:32
 msgid "Eliminar"
-msgstr ""
+msgstr "Eliminar"
 
 #: .\templates\dashboard\meal_category_delete_modal.html:8
 #: .\templates\dashboard\meal_delete_modal.html:8
 #: .\templates\dashboard\product_category_delete_modal.html:8
 #: .\templates\dashboard\product_delete_modal.html:8
 msgid "Atención"
-msgstr ""
+msgstr "Atención"
 
 #: .\templates\dashboard\meal_category_delete_modal.html:14
 #: .\templates\dashboard\meal_delete_modal.html:14
 #: .\templates\dashboard\product_category_delete_modal.html:14
 #: .\templates\dashboard\product_delete_modal.html:14
 msgid "Desea eliminar"
-msgstr ""
+msgstr "Desea eliminar"
 
 #: .\templates\dashboard\meal_category_delete_modal.html:17
 #: .\templates\dashboard\meal_delete_modal.html:17
 #: .\templates\dashboard\product_category_delete_modal.html:17
 #: .\templates\dashboard\product_delete_modal.html:17
 msgid "Cancelar"
-msgstr ""
+msgstr "Cancelar"
 
 #: .\templates\dashboard\meals.html:33 .\templates\dashboard\products.html:32
 msgid "Categoria"
-msgstr ""
+msgstr "Categoria"
 
 #: .\templates\dashboard\meals.html:34
 msgid "Precio"
-msgstr ""
+msgstr "Precio"
 
 #: .\templates\dashboard\meals.html:60
 msgid "No se registraron platillos"
-msgstr ""
+msgstr "No se registraron platillos"
 
 #: .\templates\dashboard\payments.html:15
 #: .\templates\public\payment_detail.html:10
 #: .\templates\public\sale_detail.html:8
 msgid "Venta"
-msgstr ""
+msgstr "Venta"
 
 #: .\templates\dashboard\payments.html:17
 #: .\templates\dashboard\purchases.html:17
@@ -604,124 +610,124 @@ msgstr ""
 #: .\templates\public\client_purchases.html:15
 #: .\templates\public\sale_detail.html:10
 msgid "Fecha"
-msgstr ""
+msgstr "Fecha"
 
 #: .\templates\dashboard\payments.html:30
 #: .\templates\dashboard\receipts.html:30
 msgid "Ver Detalles"
-msgstr ""
+msgstr "Ver Detalles"
 
 #: .\templates\dashboard\payments.html:39
 #: .\templates\dashboard\purchases.html:47
 #: .\templates\dashboard\receipts.html:39
 #: .\templates\dashboard\sale_detail.html:35
 msgid "No se ha realizado ninguna compra de boletos"
-msgstr ""
+msgstr "No se ha realizado ninguna compra de boletos"
 
 #: .\templates\dashboard\products.html:18
 msgid "Agregar Nuevo Producto"
-msgstr ""
+msgstr "Agregar Nuevo Producto"
 
 #: .\templates\dashboard\products.html:33
 msgid "Existencias"
-msgstr ""
+msgstr "Existencias"
 
 #: .\templates\dashboard\purchase_detail.html:3
 msgid "Comprobante de Venta"
-msgstr ""
+msgstr "Comprobante de Venta"
 
 #: .\templates\dashboard\purchase_detail.html:12
 #: .\templates\public\payment_detail.html:7
 msgid "Comprobante"
-msgstr ""
+msgstr "Comprobante"
 
 #: .\templates\dashboard\purchase_detail.html:14
 #: .\templates\public\payment_detail.html:9
 msgid "Pago"
-msgstr ""
+msgstr "Pago"
 
 #: .\templates\dashboard\purchase_detail.html:15
 #: .\templates\public\payment_detail.html:11
 msgid "Nro. Comprobante"
-msgstr ""
+msgstr "Nro. Comprobante"
 
 #: .\templates\dashboard\purchase_detail.html:16
 #: .\templates\public\payment_detail.html:12
 msgid "Tipo de Pago"
-msgstr ""
+msgstr "Tipo de Pago"
 
 #: .\templates\dashboard\purchase_detail.html:17
 #: .\templates\public\payment_detail.html:13
 msgid "Fecha de Creación"
-msgstr ""
+msgstr "Fecha de Creación"
 
 #: .\templates\dashboard\purchase_detail.html:19
 msgid "No hay comprobante asociado a esta venta"
-msgstr ""
+msgstr "No hay comprobante asociado a esta venta"
 
 #: .\templates\dashboard\purchases.html:15 .\templates\partials\nav.html:24
 msgid "Usuario"
-msgstr ""
+msgstr "Usuario"
 
 #: .\templates\dashboard\purchases.html:28
 msgid "Usuario no registrado"
-msgstr ""
+msgstr "Usuario no registrado"
 
 #: .\templates\dashboard\purchases.html:34
 msgid "Ver Boletos"
-msgstr ""
+msgstr "Ver Boletos"
 
 #: .\templates\dashboard\purchases.html:37
 msgid "Ver Comprobante"
-msgstr ""
+msgstr "Ver Comprobante"
 
 #: .\templates\dashboard\receipts.html:15
 msgid "Pasajero"
-msgstr ""
+msgstr "Pasajero"
 
 #: .\templates\dashboard\sale_detail.html:14
 #: .\templates\public\purchase_tickets.html:17
 #: .\templates\public\sale_detail.html:16
 msgid "Boleto"
-msgstr ""
+msgstr "Boleto"
 
 #: .\templates\dashboard\sale_detail.html:15
 #: .\templates\public\sale_detail.html:17
 msgid "DNI/Pasaporte"
-msgstr ""
+msgstr "DNI/Pasaporte"
 
 #: .\templates\dashboard\sale_detail.html:16
 #: .\templates\public\sale_detail.html:18
 msgid "Asiento"
-msgstr ""
+msgstr "Asiento"
 
 #: .\templates\dashboard\sale_detail.html:17
 #: .\templates\public\sale_detail.html:19
 msgid "Clase"
-msgstr ""
+msgstr "Clase"
 
 #: .\templates\dashboard\sale_detail.html:18 .\templates\public\header.html:10
 #: .\templates\public\sale_detail.html:20
 msgid "Recorrido"
-msgstr ""
+msgstr "Recorrido"
 
 #: .\templates\dashboard\user_detail.html:3
 #: .\templates\dashboard\user_detail.html:10
 msgid "Detalle de Usuario"
-msgstr ""
+msgstr "Detalle de Usuario"
 
 #: .\templates\dashboard\user_detail.html:15 .\templates\user\profile.html:17
 msgid "Información de Peril"
-msgstr ""
+msgstr "Información de Peril"
 
 #: .\templates\dashboard\user_detail.html:28 .\templates\user\profile.html:33
 msgid "Telefóno"
-msgstr ""
+msgstr "Telefóno"
 
 #: .\templates\dashboard\user_detail.html:32 .\templates\user\profile.html:37
 #: .\templates\user\profile_customer.html:34
 msgid "Dirección"
-msgstr ""
+msgstr "Dirección"
 
 #: .\templates\partials\nav.html:18
 #: .\templates\partials\topside_finances.html:6
@@ -730,162 +736,162 @@ msgstr ""
 #: .\templates\partials\topside_supplies.html:6
 #: .\templates\partials\topside_users.html:6
 msgid "Panel de Control"
-msgstr ""
+msgstr "Panel de Control"
 
 #: .\templates\partials\nav.html:32 .\templates\public\header.html:32
 msgid "Cerrar Sesión"
-msgstr ""
+msgstr "Cerrar Sesión"
 
 #: .\templates\partials\nav.html:40 .\templates\public\header.html:38
-#: .\templates\user\login.html:23 .\templates\user\register.html:19
+#: .\templates\user\login.html:25 .\templates\user\register.html:19
 msgid "Registrarse"
-msgstr ""
+msgstr "Registrarse"
 
 #: .\templates\partials\nav.html:44 .\templates\public\header.html:37
 #: .\templates\user\password_reset_complete.html:18
 #: .\templates\user\password_reset_done.html:18
 msgid "Iniciar Sesión"
-msgstr ""
+msgstr "Iniciar Sesión"
 
 #: .\templates\partials\topside_finances.html:14
 #: .\templates\partials\topside_journeys.html:14
 msgid "Ventas de Boletos"
-msgstr ""
+msgstr "Ventas de Boletos"
 
 #: .\templates\partials\topside_finances.html:23
 #: .\templates\partials\topside_journeys.html:23
 msgid "Ventas de Productos"
-msgstr ""
+msgstr "Ventas de Productos"
 
 #: .\templates\partials\topside_finances.html:33
 #: .\templates\partials\topside_journeys.html:33
 msgid "Pagos"
-msgstr ""
+msgstr "Pagos"
 
 #: .\templates\partials\topside_main.html:14
 msgid "Insumos"
-msgstr ""
+msgstr "Insumos"
 
 #: .\templates\partials\topside_main.html:23
 msgid "Finanzas"
-msgstr ""
+msgstr "Finanzas"
 
 #: .\templates\partials\topside_main.html:32
 msgid "Recorridos"
-msgstr ""
+msgstr "Recorridos"
 
 #: .\templates\partials\topside_main.html:41
 msgid "Usuarios"
-msgstr ""
+msgstr "Usuarios"
 
 #: .\templates\partials\topside_supplies.html:14
 msgid "Productos"
-msgstr ""
+msgstr "Productos"
 
 #: .\templates\partials\topside_supplies.html:23
 msgid "Categoria de Productos"
-msgstr ""
+msgstr "Categoria de Productos"
 
 #: .\templates\partials\topside_supplies.html:32
 msgid "Platillos"
-msgstr ""
+msgstr "Platillos"
 
 #: .\templates\partials\topside_supplies.html:41
 msgid "Categorias de Platillos"
-msgstr ""
+msgstr "Categorias de Platillos"
 
 #: .\templates\partials\topside_users.html:14
 msgid "Clientes"
-msgstr ""
+msgstr "Clientes"
 
 #: .\templates\partials\topside_users.html:23
 msgid "Vendedores"
-msgstr ""
+msgstr "Vendedores"
 
 #: .\templates\partials\topside_users.html:32
 msgid "Administradores"
-msgstr ""
+msgstr "Administradores"
 
 #: .\templates\public\base.html:24
 msgid "Sistema de Reserva de Boletos"
-msgstr ""
+msgstr "Sistema de Reserva de Boletos"
 
 #: .\templates\public\client_purchases.html:7
 msgid "Mis Compras"
-msgstr ""
+msgstr "Mis Compras"
 
 #: .\templates\public\client_purchases.html:26
 msgid "Ver Tickets"
-msgstr ""
+msgstr "Ver Tickets"
 
 #: .\templates\public\client_purchases.html:34
 msgid "No has realizado ninguna compra"
-msgstr ""
+msgstr "No has realizado ninguna compra"
 
 #: .\templates\public\create_passenger.html:6
 msgid "Confirmar Datos"
-msgstr ""
+msgstr "Confirmar Datos"
 
 #: .\templates\public\footer.html:4
 msgid "Información"
-msgstr ""
+msgstr "Información"
 
 #: .\templates\public\footer.html:6
 msgid "Estación Central de Trenes"
-msgstr ""
+msgstr "Estación Central de Trenes"
 
 #: .\templates\public\footer.html:7
 msgid "Ciudad de Salta - Argentina"
-msgstr ""
+msgstr "Ciudad de Salta - Argentina"
 
 #: .\templates\public\footer.html:8
 msgid "Código Postal: A4400CRL"
-msgstr ""
+msgstr "Código Postal: A4400CRL"
 
 #: .\templates\public\footer.html:11
 msgid "Sobre nosotros"
-msgstr ""
+msgstr "Sobre nosotros"
 
 #: .\templates\public\footer.html:12
 msgid "Nuestra Historia"
-msgstr ""
+msgstr "Nuestra Historia"
 
 #: .\templates\public\footer.html:13
 msgid "Beneficios y Promociones"
-msgstr ""
+msgstr "Beneficios y Promociones"
 
 #: .\templates\public\footer.html:14
 msgid "Equipó de Trabajo"
-msgstr ""
+msgstr "Equipó de Trabajo"
 
 #: .\templates\public\footer.html:17
 msgid "Soporte"
-msgstr ""
+msgstr "Soporte"
 
 #: .\templates\public\footer.html:19 .\templates\public\header.html:12
 msgid "Contáctenos"
-msgstr ""
+msgstr "Contáctenos"
 
 #: .\templates\public\footer.html:22
 msgid "Redes Sociales"
-msgstr ""
+msgstr "Redes Sociales"
 
-#: .\templates\public\header.html:9 .\templates\user\login.html:22
+#: .\templates\public\header.html:9 .\templates\user\login.html:24
 #: .\templates\user\register.html:18
 msgid "Inicio"
-msgstr ""
+msgstr "Inicio"
 
 #: .\templates\public\header.html:11
 msgid "Beneficios"
-msgstr ""
+msgstr "Beneficios"
 
 #: .\templates\public\header.html:19
 msgid "Perfil"
-msgstr ""
+msgstr "Perfil"
 
 #: .\templates\public\header.html:25
 msgid "Ver Compras"
-msgstr ""
+msgstr "Ver Compras"
 
 #: .\templates\public\home.html:6
 msgid ""
@@ -1130,175 +1136,180 @@ msgstr "Volver al inicio"
 
 #: .\templates\public\payment_success.html:7
 msgid "¡Compra exitosa!"
-msgstr ""
+msgstr "¡Compra exitosa!"
 
 #: .\templates\public\payment_success.html:8
 msgid "Gracias por su compra. La operación se realizó correctamente."
-msgstr ""
+msgstr "Gracias por su compra. La operación se realizó correctamente."
 
 #: .\templates\public\purchase_food.html:8
 msgid "Venta de Platillos"
-msgstr ""
+msgstr "Venta de Platillos"
 
 #: .\templates\public\purchase_food.html:17
 msgid "Platillo"
-msgstr ""
+msgstr "Platillo"
 
 #: .\templates\public\purchase_food.html:46
 msgid "Agregar otro platillo"
-msgstr ""
+msgstr "Agregar otro platillo"
 
 #: .\templates\public\purchase_food.html:48
 msgid "Registrar Venta"
-msgstr ""
+msgstr "Registrar Venta"
 
 #: .\templates\public\purchase_food.html:55
 msgid "Nuevo Platillo"
-msgstr ""
+msgstr "Nuevo Platillo"
 
 #: .\templates\public\purchase_food.html:81
 msgid "Los campos del formulario no se llenaron correctamente."
-msgstr ""
+msgstr "Los campos del formulario no se llenaron correctamente."
 
 #: .\templates\public\purchase_food.html:105
 msgid "Pasajero no existe. Por favor, contacte a soporte"
-msgstr ""
+msgstr "Pasajero no existe. Por favor, contacte a soporte"
 
 #: .\templates\public\purchase_food.html:108
 msgid "Todos los platillos tiene marca para eliminar"
-msgstr ""
+msgstr "Todos los platillos tiene marca para eliminar"
 
 #: .\templates\public\purchase_food.html:110
 #: .\templates\public\purchase_merchandise.html:111
 msgid "Ocurrio un error inesperado intente nuevamente"
-msgstr ""
+msgstr "Ocurrio un error inesperado intente nuevamente"
 
 #: .\templates\public\purchase_merchandise.html:8
 msgid "Venta de Mercaderia"
-msgstr ""
+msgstr "Venta de Mercaderia"
 
 #: .\templates\public\purchase_merchandise.html:17
 msgid "Merchandise"
-msgstr ""
+msgstr "Merchandise"
 
 #: .\templates\public\purchase_merchandise.html:45
 msgid "Agregar otro producto"
-msgstr ""
+msgstr "Agregar otro producto"
 
 #: .\templates\public\purchase_merchandise.html:47
 msgid "Comprar Mercaderias"
-msgstr ""
+msgstr "Comprar Mercaderias"
 
 #: .\templates\public\purchase_merchandise.html:54
 msgid "Nueva Mercancia"
-msgstr ""
+msgstr "Nueva Mercancia"
 
 #: .\templates\public\purchase_merchandise.html:82
 msgid "Los campos de los formularios no se llenaron correctamente"
-msgstr ""
+msgstr "Los campos de los formularios no se llenaron correctamente"
 
 #: .\templates\public\purchase_merchandise.html:106
 msgid "El pasajero no existe. Por favor, contacte a soporte"
-msgstr ""
+msgstr "El pasajero no existe. Por favor, contacte a soporte"
 
 #: .\templates\public\purchase_merchandise.html:109
 msgid "Toda la mercaderia tiene marca para eliminar"
-msgstr ""
+msgstr "Toda la mercaderia tiene marca para eliminar"
 
 #: .\templates\public\purchase_tickets.html:8
 msgid "Reservaciones de Boletos"
-msgstr ""
+msgstr "Reservaciones de Boletos"
 
 #: .\templates\public\purchase_tickets.html:46
 msgid "Agregar otro boleto"
-msgstr ""
+msgstr "Agregar otro boleto"
 
 #: .\templates\public\purchase_tickets.html:48
 msgid "Reservar Boletos"
-msgstr ""
+msgstr "Reservar Boletos"
 
 #: .\templates\public\purchase_tickets.html:55
 msgid "Nuevo Boleto"
-msgstr ""
+msgstr "Nuevo Boleto"
 
 #: .\templates\public\purchase_tickets.html:67
 msgid "Información del Pasajero"
-msgstr ""
+msgstr "Información del Pasajero"
 
 #: .\templates\public\purchase_tickets.html:143
 msgid "Fallo al cargar el modal. Por favor, intenta de nuevo."
-msgstr ""
+msgstr "Fallo al cargar el modal. Por favor, intenta de nuevo."
 
 #: .\templates\public\sale_detail.html:7
 msgid "Detalles de Venta"
-msgstr ""
+msgstr "Detalles de Venta"
 
 #: .\templates\public\sale_detail.html:36
 msgid "No hay boletos asociados a esta venta"
-msgstr ""
+msgstr "No hay boletos asociados a esta venta"
 
 #: .\templates\user\login.html:8
 msgid "INICIO DE SESION"
-msgstr ""
+msgstr "INICIO DE SESION"
 
 #: .\templates\user\login.html:14
 msgid "Ingrese sus credenciales"
-msgstr ""
+msgstr "Ingrese sus credenciales"
 
-#: .\templates\user\login.html:27 .\templates\user\register.html:23
+#: .\templates\user\login.html:19
+msgid "¿Olvidaste tu contraseña?"
+msgstr "¿Olvidaste tu contraseña?"
+
+#: .\templates\user\login.html:29 .\templates\user\register.html:23
 msgid "Iniciar sesión"
-msgstr ""
+msgstr "Iniciar sesión"
 
 #: .\templates\user\password_reset.html:10
 #: .\templates\user\password_reset.html:15
 #: .\templates\user\password_reset_confirm.html:10
 #: .\templates\user\password_reset_done.html:10
 msgid "Restablecer Contraseña"
-msgstr ""
+msgstr "Restablecer Contraseña"
 
 #: .\templates\user\password_reset_complete.html:10
 msgid "Resetear Contraseña"
-msgstr ""
+msgstr "Resetear Contraseña"
 
 #: .\templates\user\password_reset_complete.html:14
 msgid "Su contraseña ha sido restablecida con exito."
-msgstr ""
+msgstr "Su contraseña ha sido restablecida con exito."
 
 #: .\templates\user\password_reset_complete.html:15
 msgid "Ahora puede ingresar con su nueva contraseña."
-msgstr ""
+msgstr "Ahora puede ingresar con su nueva contraseña."
 
 #: .\templates\user\password_reset_confirm.html:15
 msgid "Confirmar"
-msgstr ""
+msgstr "Confirmar"
 
 #: .\templates\user\password_reset_done.html:14
 msgid "Un correo le ha sido enviado a la su dirección de correo."
-msgstr ""
+msgstr "Un correo le ha sido enviado a la su dirección de correo."
 
 #: .\templates\user\password_reset_done.html:15
 msgid ""
 "Con las instrucciones que necesita seguir para restablecer su contraseña"
 msgstr ""
+"Con las instrucciones que necesita seguir para restablecer su contraseña"
 
 #: .\templates\user\profile.html:11
 #: .\templates\user\profile_customer_update.html:11
 #: .\templates\user\profile_update.html:10
 msgid "Detalle de Cliente"
-msgstr ""
+msgstr "Detalle de Cliente"
 
 #: .\templates\user\profile_customer.html:9
 msgid "Detalles de Cuenta"
-msgstr ""
+msgstr "Detalles de Cuenta"
 
 #: .\templates\user\profile_customer.html:15
 msgid "Información de Usuario"
-msgstr ""
+msgstr "Información de Usuario"
 
 #: .\templates\user\register.html:7
 msgid "REGISTRO DE USUARIO"
-msgstr ""
+msgstr "REGISTRO DE USUARIO"
 
 #: .\templates\user\register.html:13
 msgid "Complete todos los datos"
-msgstr ""
+msgstr "Complete todos los datos"

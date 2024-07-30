@@ -1,0 +1,75 @@
+{% include 'public/base.html' %}
+{% load i18n %}
+{% block content %}
+<section class="section_ps home_ps form-register">
+    <div class="mt-5 row my-4">
+        <div class="col-md-12 font-black">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    {%translate "Detalles de Boleto"%}
+                </div>
+                <div class="row p-3">
+                    <div class="col-md-12">
+                        {% if data %}
+                        <table class="table table-borderless">
+                            <thead>
+                                <span class="h4 font-black">{%translate "Información de Boleto"%}</span class="h4">
+                                <hr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">{% translate "N° de Boleto" %}</th>
+                                    <td>{{ data.IdTicket }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">{% translate "Nombre" %}</th>
+                                    <td>{{ data.NombrePasajero }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">{% translate "Fecha de Embarque" %}</th>
+                                    <td>{{ data.FechaBoleto }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">{% translate "Operado por" %}</th>
+                                    <td>Tren a las Nubes</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">{% translate "Asiento" %}</th>
+                                    <td>{{ data.IdAsiento }} ({{data.CategoriaAsiento}})</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">{% translate "En puerta de embarque" %}</th>
+                                    <td>{{ data.HorarioEspera }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">{% translate "El embarque finalizara a las" %}</th>
+                                    <td>{{ data.HorarioSalida }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">{% translate "Parada Salida" %}</th>
+                                    <td>{{ data.EstacionSalida }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">{% translate "Horario Salida" %}</th>
+                                    <td>{{ data.HorarioSalida }}</td>
+                                <tr>
+                                    <th scope="row">{% translate "Parada Llegada" %}</th>
+                                    <td>{{ data.EstacionLlegada }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">{% translate "Horario Llegada" %}</th>
+                                    <td>{{ data.HorarioLlegada }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {% else %}
+                        {% translate "No hay datos" %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'public/footer.html' %}
+{% endblock %}

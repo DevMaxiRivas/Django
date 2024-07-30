@@ -682,9 +682,7 @@ def generate_pdf_receipt(sale):
     return buffer
 
 
-def send_email(sale, email):
-
-    tickets = Ticket.objects.filter(sale=sale)
+def send_email(tickets, email):
     send_pdf_via_email(tickets, email)
 
 
@@ -796,3 +794,11 @@ def users(request):
         "order": Order.objects.all(),
     }
     return render(request, "dashboard/users.html", context)
+
+
+def ticket_data(request, pk):
+    if Ticket.objects.filter(id=pk).exists():
+        ticket = Ticket.objects.get(id=pk)
+        data = ticket.getDataPublic()
+        return render(request, "public/ticket_data.html", {"data": data})
+    return render(request, "public/ticket_data.html")

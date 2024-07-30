@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-26 16:36-0300\n"
+"POT-Creation-Date: 2024-07-29 20:12-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,9 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: .\dashboard\forms.py:37
 msgid "Correo electrónico"
-msgstr ""
+msgstr "Email"
 
 #: .\dashboard\forms.py:38 .\templates\dashboard\categories copy.html:32
 #: .\templates\dashboard\meal_categories.html:32
@@ -59,12 +60,12 @@ msgid "confirm password"
 msgstr "confirm password"
 
 #: .\dashboard\forms.py:81 .\dashboard\forms.py:236 .\dashboard\forms.py:253
-#: .\dashboard\forms.py:267 .\dashboard\forms.py:280 .\dashboard\views.py:645
+#: .\dashboard\forms.py:267 .\dashboard\forms.py:280 .\dashboard\views.py:643
 msgid "Name"
 msgstr "Name"
 
 #: .\dashboard\forms.py:82 .\dashboard\forms.py:115 .\dashboard\forms.py:123
-#: .\dashboard\forms.py:162 .\dashboard\views.py:644
+#: .\dashboard\forms.py:162 .\dashboard\views.py:642
 msgid "DNI/Passport"
 msgstr "DNI/Passport"
 
@@ -92,7 +93,7 @@ msgstr "Email (if not logged in)"
 msgid "Email"
 msgstr "Email"
 
-#: .\dashboard\forms.py:124 .\dashboard\views.py:646
+#: .\dashboard\forms.py:124 .\dashboard\views.py:644
 msgid "Schedule"
 msgstr "Schedule"
 
@@ -124,7 +125,7 @@ msgstr "Departure Time"
 msgid "Arrival Time"
 msgstr "Arrival Time"
 
-#: .\dashboard\forms.py:237 .\dashboard\forms.py:255 .\dashboard\views.py:648
+#: .\dashboard\forms.py:237 .\dashboard\forms.py:255 .\dashboard\views.py:646
 msgid "Price"
 msgstr "Price"
 
@@ -275,6 +276,16 @@ msgstr "Product"
 #: .\dashboard\models.py:324
 msgid "Products"
 msgstr "Products"
+
+#: .\dashboard\models.py:341
+#, fuzzy
+#| msgid "Train"
+msgid "Train Only"
+msgstr "Train"
+
+#: .\dashboard\models.py:342
+msgid "Bus and Train"
+msgstr "Bus and Train"
 
 #: .\dashboard\models.py:372
 msgid "Journeys"
@@ -452,23 +463,19 @@ msgstr "Details Product Order"
 msgid "Details Product Orders"
 msgstr "Details Product Orders"
 
-#: .\dashboard\views.py:647
-msgid "Train Seat"
-msgstr "Train Seat"
-
-#: .\dashboard\views.py:689
+#: .\dashboard\sendEmails.py:250
 msgid "Notification of Ticket Purchase"
 msgstr "Notification of Ticket Purchase"
 
-#: .\dashboard\views.py:691
+#: .\dashboard\sendEmails.py:252
 msgid ""
 "You have made a ticket purchase. Please find attached the purchase receipt"
 msgstr ""
 "You have made a ticket purchase. Please find attached the purchase receipt"
 
-#: .\dashboard\views.py:698
-msgid "Receipt"
-msgstr "Receipt"
+#: .\dashboard\views.py:645
+msgid "Train Seat"
+msgstr "Train Seat"
 
 #: .\inventoryproject\settings.py:133
 msgid "English"
@@ -732,7 +739,7 @@ msgid "Cerrar Sesión"
 msgstr "Logout"
 
 #: .\templates\partials\nav.html:40 .\templates\public\header.html:38
-#: .\templates\user\login.html:23 .\templates\user\register.html:19
+#: .\templates\user\login.html:25 .\templates\user\register.html:19
 msgid "Registrarse"
 msgstr "Register"
 
@@ -865,7 +872,7 @@ msgstr "Contact us"
 msgid "Redes Sociales"
 msgstr "Social Networks"
 
-#: .\templates\public\header.html:9 .\templates\user\login.html:22
+#: .\templates\public\header.html:9 .\templates\user\login.html:24
 #: .\templates\user\register.html:18
 msgid "Inicio"
 msgstr "Home"
@@ -1093,8 +1100,7 @@ msgstr "Purchase Failed!"
 #: .\templates\public\payment_failed.html:8
 msgid ""
 "Lo sentimos, ha ocurrido un error con su pago. Por favor, intente nuevamente"
-msgstr ""
-"We're sorry, an error has occurred with your payment. Please try again"
+msgstr "We're sorry, an error has occurred with your payment. Please try again"
 
 #: .\templates\public\payment_failed.html:9
 msgid "Reservar nuevamente"
@@ -1234,7 +1240,11 @@ msgstr "LOGIN"
 msgid "Ingrese sus credenciales"
 msgstr "Enter your credentials"
 
-#: .\templates\user\login.html:27 .\templates\user\register.html:23
+#: .\templates\user\login.html:19
+msgid "¿Olvidaste tu contraseña?"
+msgstr "Forgot your password?"
+
+#: .\templates\user\login.html:29 .\templates\user\register.html:23
 msgid "Iniciar sesión"
 msgstr "Login"
 
@@ -1268,8 +1278,7 @@ msgstr "An email has been sent to your email address."
 #: .\templates\user\password_reset_done.html:15
 msgid ""
 "Con las instrucciones que necesita seguir para restablecer su contraseña"
-msgstr ""
-"With the instructions you need to follow to reset your password."
+msgstr "With the instructions you need to follow to reset your password."
 
 #: .\templates\user\profile.html:11
 #: .\templates\user\profile_customer_update.html:11
@@ -1292,3 +1301,6 @@ msgstr "USER REGISTRATION"
 #: .\templates\user\register.html:13
 msgid "Complete todos los datos"
 msgstr "Complete all data"
+
+#~ msgid "Receipt"
+#~ msgstr "Receipt"

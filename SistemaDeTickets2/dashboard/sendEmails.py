@@ -148,8 +148,8 @@ positions = [
 ]
 
 qr_data = {
-    "qr_x": 479.1459,
-    "qr_y": 290.6095,
+    "qr_x": 464.1459,
+    "qr_y": 260.6095,
     "url": "https://www.trenalasnubes.com.ar",
 }
 
@@ -173,17 +173,18 @@ def generate_qr_code(data):
     return buffer
 
 
-def generate_pdf(replacements):
+def generate_pdf(replacements, language):
 
     #     # Ruta de la fuente
     font_path = os.path.join(
         settings.BASE_DIR, "static", "fonts", "OpenSans-Regular.ttf"
     )
 
-    #     # Ruta de la pdf
-    pdf_path = os.path.join(
-        settings.BASE_DIR, "static", "pdf", "base-es_compressed.pdf"
-    )
+    if language == "es":
+        #     # Ruta de la pdf
+        pdf_path = os.path.join(settings.BASE_DIR, "static", "pdf", "base-es.pdf")
+    else:
+        pdf_path = os.path.join(settings.BASE_DIR, "static", "pdf", "base-en.pdf")
 
     # Registrar la fuente personalizada
     pdfmetrics.registerFont(TTFont("OpenSans-Regular", font_path))
@@ -201,6 +202,11 @@ def generate_pdf(replacements):
         packet = BytesIO()
         overlay = canvas.Canvas(packet, pagesize=letter)
 
+        # Añadir la imagen QR en la posición deseada
+        overlay.drawImage(
+            qr_image, qr_data["qr_x"], qr_data["qr_y"], width=100, height=100
+        )
+
         # Añadir texto reemplazado en las posiciones correctas
         for text_data in positions:
             placeholder = text_data["text"]
@@ -216,11 +222,6 @@ def generate_pdf(replacements):
                 overlay.setFillColorRGB(R, G, B)
                 overlay.setFont("OpenSans-Regular", font_size)
                 overlay.drawString(x, y, replacement_text)
-
-        # Añadir la imagen QR en la posición deseada
-        overlay.drawImage(
-            qr_image, qr_data["qr_x"], qr_data["qr_y"], width=100, height=100
-        )
 
         # Asegúrate de finalizar la página y guardar el canvas
         overlay.showPage()
@@ -241,10 +242,6 @@ def generate_pdf(replacements):
     return buffer
 
 
-def toStringDate(date, minutes):
-    return (timezone.localtime(date) - timedelta(minutes=minutes)).strftime("%H:%M")
-
-
 def send_pdf_via_email(tickets, email_):
     subject = _("Notification of Ticket Purchase")
     message = _(
@@ -257,26 +254,14 @@ def send_pdf_via_email(tickets, email_):
         email_from,
         [email_],
     )
+    language = "en" if subject == "Notification of Ticket Purchase" else "es"
     for ticket in tickets:
-        replacements = {
-            "IdVenta": str(ticket.sale.id),
-            "NombrePasajero": ticket.passenger.name,
-            "IdTicket": str(ticket.id),
-            "FechaBoleto": ticket.schedule.departure_time.strftime("%d/%m/%Y"),
-            "EstacionSalida": "Salta",
-            "HorarioPartida": toStringDate(ticket.schedule.departure_time, 0),
-            "EstacionLlegada": "San Antonio de los Cobres",
-            "HorarioLlegada": toStringDate(ticket.schedule.arrival_time, 0),
-            "IdAsiento": str(ticket.seat.seat_number),
-            "CategoriaAsiento": str(ticket.seat.category),
-            "HorarioEspera": toStringDate(ticket.schedule.departure_time, 40),
-            "HorarioSalida": toStringDate(ticket.schedule.departure_time, 0),
-            "FechaEmision": timezone.localtime(timezone.now()).strftime(
-                "%d/%m/%Y, %H:%M"
-            ),
-            "EnlaceWeb": "https://www.trenalasnubes.com.ar",
-        }
-        pdf_buffer = generate_pdf(replacements)
-        email.attach("Boleto_Modificado2.pdf", pdf_buffer.getvalue(), "application/pdf")
+        replacements = ticket.getDataPublic()
+        pdf_buffer = generate_pdf(replacements, language)
+
+        filename = (
+            ticket.passenger.dni_or_passport + "_" + str(ticket.schedule) + ".pdf"
+        )
+        email.attach(filename, pdf_buffer.getvalue(), "application/pdf")
 
     email.send()

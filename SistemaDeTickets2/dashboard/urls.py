@@ -7,6 +7,11 @@ urlpatterns = [
     # CUSTOMERS
     path("customers_index/", views.index_customer, name="dashboard-customers-index"),
     path("customer_tickets/", views.customer_tickets, name="customer_tickets"),
+    path(
+        "ticket-data/<int:pk>/",
+        views.ticket_data,
+        name="ticket_data",
+    ),
     # EMPLOYEES
     path("employee_index/", views.index_employee, name="dashboard-employee-index"),
     # PRODUCTS

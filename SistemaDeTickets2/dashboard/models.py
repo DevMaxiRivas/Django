@@ -12,11 +12,15 @@ from django.utils import timezone
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncMonth
 
+def toStringDate(date, minutes):
+        return (timezone.localtime(date) - timedelta(minutes=minutes)).strftime("%H:%M")
+
 STATES1 = (
     ("h", _("Habilitado")),
     ("d", _("Deshabilitado")),
 )
 
+url_website = "http://127.0.0.1:8000/"
 
 class Stops(models.Model):
     name = models.CharField(verbose_name=_("name"), max_length=100)
@@ -324,6 +328,7 @@ class Product(models.Model):
         verbose_name_plural = _("Products")
 
     def __str__(self):
+        
         return f"{self.name}"
 
 
@@ -338,8 +343,8 @@ class Order(models.Model):
 
 class Journey(models.Model):
     JOURNEY_TYPE_CHOICES = [
-        ("TRAIN_ONLY", "Train Only"),
-        ("BUS_AND_TRAIN", "Bus and Train"),
+        ("TRAIN_ONLY", _("Train Only")),
+        ("BUS_AND_TRAIN", _("Bus and Train")),
     ]
 
     type = models.CharField(
@@ -372,7 +377,10 @@ class Journey(models.Model):
         verbose_name_plural = _("Journeys")
 
     def __str__(self):
-        return f"{self.type}"
+        for tuple in self.JOURNEY_TYPE_CHOICES:
+            if self.type == tuple[0]:
+                return f"{tuple[1]}"
+        return self.type
 
 
 class JourneyStage(models.Model):
@@ -610,6 +618,24 @@ class Ticket(models.Model):
     # Funciones
     def revenue_by_seat_category():
         return Ticket.objects.values('seat__category__type').annotate(total_ingresos=Sum('price')).order_by('-total_ingresos')
+    
+    # Datos
+    def getDataPublic(self):
+        return {
+            "IdVenta": str(self.sale.id),
+            "NombrePasajero": self.passenger.name,
+            "IdTicket": str(self.id),
+            "FechaBoleto": self.schedule.departure_time.strftime("%d/%m/%Y"),
+            "EstacionSalida": "Salta",
+            "HorarioPartida": toStringDate(self.schedule.departure_time, 0),
+            "EstacionLlegada": "San Antonio de los Cobres",
+            "HorarioLlegada": toStringDate(self.schedule.arrival_time, 0),
+            "IdAsiento": str(self.seat.seat_number),
+            "CategoriaAsiento": str(self.seat.category),
+            "HorarioEspera": toStringDate(self.schedule.departure_time, 40),
+            "HorarioSalida": toStringDate(self.schedule.departure_time, 0),
+            "EnlaceWeb": f"{url_website}ticket-data/{self.id}",
+        }
 
     # Funcion para reservar el asiento
     def reserveSeat(self):
