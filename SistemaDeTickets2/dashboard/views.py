@@ -704,9 +704,9 @@ def payment_success(request):
     if payment_id and payment_type and sale_id:
         sale = get_object_or_404(TicketSales, id=sale_id)
         payment = Payments.objects.create(
-            payment_id=payment_id,
-            payment_type=payment_type,
-            payment_status=payment_status,
+            voucher_no=payment_id,
+            type=payment_type,
+            status=payment_status,
         )
         sale.payment = payment
         sale.save()
@@ -729,6 +729,20 @@ def payment_pending(request):
     # sale_id = request.GET.get("external_reference")
     # TicketSales.delete(TicketSales.objects.get(id=sale_id))s
     return render(request, "public/payment_pending.html")
+
+
+def payments(request):
+
+    data = []
+    for payment in Payments.objects.all():
+        if TicketSales.objects.filter(payment=payment).exists():
+            sale_id = TicketSales.objects.get(payment=payment).id
+            data.append({"payment": payment, "sale_id": sale_id, "type": "T"})
+        else:
+            sale_id = PurchaseReceipt.objects.get(payment=payment).id
+            data.append({"payment": payment, "sale_id": sale_id, "type": "P"})
+
+    return render(request, "dashboard/payments.html", {"data": data})
 
 
 def create_passenger(request):
@@ -788,6 +802,36 @@ def supplies(request):
 
 @login_required
 @user_passes_test(is_employee)
+def journeys(request):
+    context = {
+        "product": Product.objects.all(),
+        "order": Order.objects.all(),
+    }
+    return render(request, "dashboard/journeys.html", context)
+
+
+@login_required
+@user_passes_test(is_employee)
+def transports(request):
+    context = {
+        "product": Product.objects.all(),
+        "order": Order.objects.all(),
+    }
+    return render(request, "dashboard/transports.html", context)
+
+
+@login_required
+@user_passes_test(is_employee)
+def planning(request):
+    context = {
+        "product": Product.objects.all(),
+        "order": Order.objects.all(),
+    }
+    return render(request, "dashboard/planning.html", context)
+
+
+@login_required
+@user_passes_test(is_employee)
 def users(request):
     context = {
         "product": Product.objects.all(),
@@ -802,3 +846,37 @@ def ticket_data(request, pk):
         data = ticket.getDataPublic()
         return render(request, "public/ticket_data.html", {"data": data})
     return render(request, "public/ticket_data.html")
+
+
+def prueba(request):
+    return render(request, "public/Untitled-1.html")
+
+
+@login_required
+@user_passes_test(is_employee)
+def receipts(request):
+    context = {"receipts": PurchaseReceipt.objects.all()}
+    return render(request, "dashboard/receipts.html", context)
+
+
+@login_required
+@user_passes_test(is_employee)
+def receipt_payment(request, sale_id):
+    if PurchaseReceipt.objects.get(id=sale_id).payment:
+        return render(
+            request,
+            "dashboard/purchase_detail.html",
+            {"payment": PurchaseReceipt.objects.get(id=sale_id).payment},
+        )
+    return render(request, "dashboard/purchase_detail.html", {})
+
+
+@login_required
+@user_passes_test(is_employee)
+def receipt_detail(request, sale_id):
+    receipt = PurchaseReceipt.objects.get(id=sale_id)
+    if DetailFoodOrder.objects.filter(receipt=receipt).exists():
+        context = {"details": DetailFoodOrder.objects.filter(receipt=receipt)}
+    else:
+        context = {"details": DetailsProductOrder.objects.filter(receipt=receipt)}
+    return render(request, "dashboard/receipt_detail.html", context)

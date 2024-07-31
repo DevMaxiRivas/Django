@@ -35,6 +35,16 @@ urlpatterns = [
         views.purchase_detail,
         name="purchase_detail",
     ),
+    # Recibos
+    path("receipts/", views.receipts, name="dashboard-receipts"),
+    path(
+        "receipt_detail/<int:sale_id>/", receipt_detail, name="dashboard-receipt_detail"
+    ),
+    path(
+        "receipt_payment/<int:sale_id>",
+        views.receipt_payment,
+        name="dashboard-receipt_payment",
+    ),
     # PLATOS
     path("meals/", views.meals, name="dashboard-meals"),
     path("meals/edit/<int:pk>/", views.meal_edit, name="dashboard-meal-edit"),
@@ -84,6 +94,7 @@ urlpatterns = [
     # VENTA DE TICKETS
     path("purchase-tickets/", views.purchase_tickets, name="purchase_tickets"),
     # Pagos
+    path("payments/", views.payments, name="dashboard-payments"),
     path("payment_success/", views.payment_success, name="payment_success"),
     path("payment_failed/", views.payment_failed, name="payment_failed"),
     path("payment_pending/", views.payment_pending, name="payment_pending"),
@@ -91,5 +102,9 @@ urlpatterns = [
     path("create_passenger/", views.create_passenger, name="create_passenger"),
     path("finances/", views.finances, name="dashboard-finances"),
     path("supplies/", views.supplies, name="dashboard-supplies"),
+    path("journeys/", views.journeys, name="dashboard-journeys"),
+    path("transports/", views.transports, name="dashboard-transports"),
+    path("planning/", views.planning, name="dashboard-planning"),
     path("users/", views.users, name="dashboard-users"),
+    path("prueba/", views.prueba, name="prueba"),
 ]

@@ -521,17 +521,37 @@ class Passenger(models.Model):
         return self.name
 
 class Payments(models.Model):
-    payment_id = models.CharField(verbose_name=_("payment_id"), max_length=255)
-    payment_type = models.CharField(verbose_name=_("payment_type"), max_length=50)
-    payment_status = models.CharField(
+    voucher_no = models.CharField(verbose_name=_("voucher_no"), max_length=255)
+    TYPES = (
+        ("credit_card", _("Credit Card")),
+        ("debit_card", _("Debit Card")),
+        ("account_money", _("Account Money MP")),
+        ("cash", _("Cash")),
+    )
+
+    type = models.CharField(
+        verbose_name=_("type"),
+        max_length=50,
+        choices=TYPES,
+        blank=True,
+        default="cash",
+        help_text=_("Payment Type"),
+    )
+    status = models.CharField(
         verbose_name=_("payment_status"), max_length=50, null=True, blank=True
     )
 
     created_at = models.DateTimeField(verbose_name=_("created_at"), auto_now_add=True)
 
+    def getType(self):
+        for tuple in self.TYPES:
+            if self.type == tuple[0]:
+                return f"{tuple[1]}"
+        return self.type
+
     def __str__(self):
-        if self.payment_id and self.payment_type:
-            return f"Pago {self.payment_id} - {self.payment_type}"
+        if self.voucher_no and self.type:
+            return f"Pago {self.voucher_no} - {self.type}"
         return "Pago" + self.created_at
 
     class Meta:
