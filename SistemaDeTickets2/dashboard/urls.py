@@ -53,6 +53,94 @@ urlpatterns = [
         views.meal_delete,
         name="dashboard-meal-delete",
     ),
+    # ASIENTOS
+    path("seats/", views.seats, name="dashboard-seats"),
+    path(
+        "seats/edit/<int:pk>/",
+        views.seat_edit,
+        name="dashboard-seat-edit",
+    ),
+    path(
+        "seats/delete/<int:pk>/",
+        views.seat_delete,
+        name="dashboard-seat-delete",
+    ),
+    # COLECTIVOS
+    path("buses/", views.buses, name="dashboard-buses"),
+    path(
+        "buses/edit/<int:pk>/",
+        views.bus_edit,
+        name="dashboard-bus-edit",
+    ),
+    path(
+        "buses/delete/<int:pk>/",
+        views.bus_delete,
+        name="dashboard-bus-delete",
+    ),
+    # TRENES
+    path("trains/", views.trains, name="dashboard-trains"),
+    path(
+        "trains/edit/<int:pk>/",
+        views.train_edit,
+        name="dashboard-train-edit",
+    ),
+    path(
+        "trains/delete/<int:pk>/",
+        views.train_delete,
+        name="dashboard-train-delete",
+    ),
+    # TIPOS DE RECORRIDO
+    path("types_journey/", views.types_journey, name="dashboard-types_journey"),
+    path(
+        "types_journey/edit/<int:pk>/",
+        views.type_journey_edit,
+        name="dashboard-type_journey-edit",
+    ),
+    path(
+        "types_journey/delete/<int:pk>/",
+        views.type_journey_delete,
+        name="dashboard-type_journey-delete",
+    ),
+    # ETAPAS DE RECORRIDOS
+    path("journey_stages/", views.journey_stages, name="dashboard-journey_stages"),
+    path(
+        "journey_stages/edit/<int:pk>/",
+        views.journey_stage_edit,
+        name="dashboard-journey_stage-edit",
+    ),
+    path(
+        "journey_stages/delete/<int:pk>/",
+        views.journey_stage_delete,
+        name="dashboard-journey_stage-delete",
+    ),
+    # CRONOGRAMAS DE RECORRIDOS
+    path(
+        "journey_schedules/",
+        views.journey_schedules,
+        name="dashboard-journey_schedules",
+    ),
+    path(
+        "journey_schedules/edit/<int:pk>/",
+        views.journey_schedule_edit,
+        name="dashboard-journey_schedule-edit",
+    ),
+    path(
+        "journey_schedules/delete/<int:pk>/",
+        views.journey_schedule_delete,
+        name="dashboard-journey_schedule-delete",
+    ),
+    # PARADAS
+    path("stops/", views.stops, name="dashboard-stops"),
+    path(
+        "stops/edit/<int:pk>/",
+        views.stop_edit,
+        name="dashboard-stop-edit",
+    ),
+    path(
+        "stops/delete/<int:pk>/",
+        views.stop_delete,
+        name="dashboard-stop-delete",
+    ),
     # CATEGORIAS DE PLATOS
     path("meal_categories/", views.meal_categories, name="dashboard-meal_categories"),
     path(
@@ -81,6 +169,18 @@ urlpatterns = [
         views.product_category_delete,
         name="dashboard-product_category-delete",
     ),
+    # CATEGORIAS DE ASIENTOS
+    path("seat_categories/", views.seat_categories, name="dashboard-seat_categories"),
+    path(
+        "seat_categories/edit/<int:pk>/",
+        views.seat_category_edit,
+        name="dashboard-seat_category-edit",
+    ),
+    path(
+        "seat_categories/delete/<int:pk>/",
+        views.seat_category_delete,
+        name="dashboard-seat_category-delete",
+    ),
     # DASHBOARD DE USUARIOS
     path("customers/", views.customers, name="dashboard-customers"),
     path("employees/", views.employees, name="dashboard-employees"),
@@ -107,4 +207,17 @@ urlpatterns = [
     path("planning/", views.planning, name="dashboard-planning"),
     path("users/", views.users, name="dashboard-users"),
     path("prueba/", views.prueba, name="prueba"),
+    # VENTAS DE PRODUCTOS
+    path("product_sales/", views.product_sales, name="dashboard-product_sales"),
+    # APIS
+    path(
+        "api/product_categories/",
+        views.api_product_categories,
+        name="api_product_categories",
+    ),
+    path(
+        "api/products_per_category/",
+        views.api_products_per_category,
+        name="api_products_per_category",
+    ),
 ]

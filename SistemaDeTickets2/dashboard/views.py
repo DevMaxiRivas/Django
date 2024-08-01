@@ -89,7 +89,7 @@ def get_user_group(user):
     return None
 
 
-@login_required(login_url="user-login")
+@login_required
 def index_customer(request):
 
     if request.method == "POST":
@@ -189,7 +189,8 @@ def index_employee(request):
     return render(request, "dashboard/index.html", context)
 
 
-@login_required(login_url="user-login")
+@login_required
+@user_passes_test(is_employee)
 def product_categories(request):
     categories = ProductCategory.objects.all()
 
@@ -210,7 +211,7 @@ def product_categories(request):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def product_category_edit(request, pk):
     item = ProductCategory.objects.get(id=pk)
     if request.method == "POST":
@@ -227,7 +228,7 @@ def product_category_edit(request, pk):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def product_category_delete(request, pk):
     category = get_object_or_404(ProductCategory, pk=pk)
     category.delete()
@@ -235,7 +236,8 @@ def product_category_delete(request, pk):
     return redirect("dashboard-product_categories")
 
 
-@login_required(login_url="user-login")
+@login_required
+@user_passes_test(is_employee)
 def products(request):
     product = Product.objects.all()
 
@@ -256,7 +258,7 @@ def products(request):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def product_edit(request, pk):
     item = Product.objects.get(id=pk)
     if request.method == "POST":
@@ -273,7 +275,7 @@ def product_edit(request, pk):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.delete()
@@ -281,13 +283,15 @@ def product_delete(request, pk):
     return redirect("dashboard-products")
 
 
-@login_required(login_url="user-login")
+@login_required
+@user_passes_test(is_employee)
 def product_detail(request, pk):
     context = {}
     return render(request, "dashboard/products_detail.html", context)
 
 
-@login_required(login_url="user-login")
+@login_required
+@user_passes_test(is_employee)
 def meal_categories(request):
     categories = MealCategory.objects.all()
 
@@ -308,7 +312,7 @@ def meal_categories(request):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def meal_category_edit(request, pk):
     item = MealCategory.objects.get(id=pk)
     if request.method == "POST":
@@ -325,7 +329,7 @@ def meal_category_edit(request, pk):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def meal_category_delete(request, pk):
     category = get_object_or_404(MealCategory, pk=pk)
     category.delete()
@@ -333,7 +337,8 @@ def meal_category_delete(request, pk):
     return redirect("dashboard-meal_categories")
 
 
-@login_required(login_url="user-login")
+@login_required
+@user_passes_test(is_employee)
 def meals(request):
     meals = Meal.objects.all()
 
@@ -354,7 +359,7 @@ def meals(request):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def meal_edit(request, pk):
     item = Meal.objects.get(id=pk)
     if request.method == "POST":
@@ -371,7 +376,7 @@ def meal_edit(request, pk):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def meal_delete(request, pk):
     meal = get_object_or_404(Meal, pk=pk)
     meal.delete()
@@ -380,7 +385,7 @@ def meal_delete(request, pk):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def customers(request):
 
     users = User.objects.filter(groups=Group.objects.get(name="Customers"))
@@ -392,7 +397,7 @@ def customers(request):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def employees(request):
 
     users = User.objects.filter(groups=Group.objects.get(name="Employees"))
@@ -404,7 +409,7 @@ def employees(request):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def admins(request):
 
     users = User.objects.filter(groups=Group.objects.get(name="Admin"))
@@ -416,7 +421,7 @@ def admins(request):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def purchases(request):
     sales = TicketSales.objects.all()
     context = {
@@ -426,7 +431,7 @@ def purchases(request):
 
 
 @login_required(login_url="user-login")
-@allowed_users(allowed_roles=["Admin"])
+@user_passes_test(is_employee)
 def sale_detail(request, sale_id):
     sale = TicketSales.objects.get(id=sale_id)
     tickets = (
@@ -454,14 +459,32 @@ def purchase_detail(request, sale_id):
 def user_detail(request, pk):
 
     user = User.objects.get(id=pk)
+    current_group = user.groups.first()
 
+    if request.method == "POST":
+        form = ChangeUserGroupForm(request.POST)
+        if form.is_valid():
+            group = form.cleaned_data["group"]
+            # Remove user from all groups and add to the selected one
+            user.groups.clear()
+            user.groups.add(group)
+            match group.name:
+                case "Admin":
+                    return redirect("dashboard-admins")
+                case "Employees":
+                    return redirect("dashboard-employees")
+                case "Customers":
+                    return redirect("dashboard-customers")
+    form = ChangeUserGroupForm(initial_group=current_group)
     context = {
+        "form": form,
         "user": user,
     }
     return render(request, "dashboard/user_detail.html", context)
 
 
-@login_required(login_url="user-login")
+@login_required
+@user_passes_test(is_employee)
 def order(request):
     order = Order.objects.all()
 
@@ -880,3 +903,476 @@ def receipt_detail(request, sale_id):
     else:
         context = {"details": DetailsProductOrder.objects.filter(receipt=receipt)}
     return render(request, "dashboard/receipt_detail.html", context)
+
+
+@login_required
+@user_passes_test(is_employee)
+def seat_categories(request):
+    categories = SeatCategory.objects.all()
+
+    if request.method == "POST":
+        form = SeatCategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            category_name = form.cleaned_data.get("type")
+            messages.success(request, f"{category_name} has been added")
+            return redirect("dashboard-seat_categories")
+    else:
+        form = SeatCategoryForm()
+    context = {
+        "categories": categories,
+        "form": form,
+    }
+    return render(request, "dashboard/seat_categories.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def seat_category_edit(request, pk):
+    item = SeatCategory.objects.get(id=pk)
+    if request.method == "POST":
+        form = SeatCategoryForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-seat_categories")
+    else:
+        form = SeatCategoryForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def seat_category_delete(request, pk):
+    category = get_object_or_404(SeatCategory, pk=pk)
+    category.delete()
+
+    return redirect("dashboard-seat_categories")
+
+
+@login_required
+@user_passes_test(is_employee)
+def seats(request):
+    seats = Seat.objects.all()
+
+    if request.method == "POST":
+        form = SeatForm(request.POST)
+        if form.is_valid():
+            form.save()
+            seat_name = form.cleaned_data.get("seat_number")
+            messages.success(request, f"{seat_name} has been added")
+            return redirect("dashboard-seats")
+    else:
+        form = SeatForm()
+    context = {
+        "seats": seats,
+        "form": form,
+    }
+    return render(request, "dashboard/seats.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def seat_edit(request, pk):
+    item = Seat.objects.get(id=pk)
+    if request.method == "POST":
+        form = SeatForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-seats")
+    else:
+        form = SeatForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def seat_delete(request, pk):
+    item = get_object_or_404(Seat, pk=pk)
+    item.delete()
+
+    return redirect("dashboard-seats")
+
+
+@login_required
+@user_passes_test(is_employee)
+def buses(request):
+    buses = Bus.objects.all()
+
+    if request.method == "POST":
+        form = BusForm(request.POST)
+        if form.is_valid():
+            form.save()
+            bus_name = form.cleaned_data.get("name")
+            messages.success(request, f"{bus_name} has been added")
+            return redirect("dashboard-buses")
+    else:
+        form = BusForm()
+    context = {
+        "blocktitle": _("Buses"),
+        "topside": "partials/topside_transports.html",
+        "title_form": _("Add New Bus"),
+        "columns": [
+            "ID",
+            _("Name"),
+            _("Capacity"),
+        ],
+        "atributes": ["id", "name", "capacity"],
+        "url_edit": "dashboard-bus-edit",
+        "url_delete": "dashboard-bus-delete",
+        "items": buses,
+        "form": form,
+    }
+    return render(request, "dashboard/base_table.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def bus_edit(request, pk):
+    item = Bus.objects.get(id=pk)
+    if request.method == "POST":
+        form = BusForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-buses")
+    else:
+        form = BusForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def bus_delete(request, pk):
+    item = get_object_or_404(Bus, pk=pk)
+    item.delete()
+
+    return redirect("dashboard-buses")
+
+
+@login_required
+@user_passes_test(is_employee)
+def trains(request):
+    trains = Train.objects.all()
+
+    if request.method == "POST":
+        form = TrainForm(request.POST)
+        if form.is_valid():
+            form.save()
+            train_name = form.cleaned_data.get("name")
+            messages.success(request, f"{train_name} has been added")
+            return redirect("dashboard-trains")
+    else:
+        form = TrainForm()
+    context = {
+        "blocktitle": _("Trains"),
+        "topside": "partials/topside_transports.html",
+        "title_form": _("Add New Train"),
+        "columns": [
+            "ID",
+            _("Name"),
+            _("Capacity"),
+        ],
+        "atributes": ["id", "name", "capacity"],
+        "url_edit": "dashboard-train-edit",
+        "url_delete": "dashboard-train-delete",
+        "items": trains,
+        "form": form,
+    }
+    return render(request, "dashboard/base_table.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def train_edit(request, pk):
+    item = Train.objects.get(id=pk)
+    if request.method == "POST":
+        form = TrainForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-trains")
+    else:
+        form = TrainForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def train_delete(request, pk):
+    item = get_object_or_404(Train, pk=pk)
+    item.delete()
+
+    return redirect("dashboard-trains")
+
+
+@login_required
+@user_passes_test(is_employee)
+def types_journey(request):
+    types_journey = Journey.objects.all()
+
+    if request.method == "POST":
+        form = JourneyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            journey_name = form.cleaned_data.get("type")
+            messages.success(request, f"{journey_name} has been added")
+            return redirect("dashboard-types_journey")
+    else:
+        form = JourneyForm()
+    context = {
+        "blocktitle": _("Types Journey"),
+        "topside": "partials/topside_planning.html",
+        "title_form": _("Add New Journey"),
+        "columns": [
+            "ID",
+            _("Type"),
+            _("Description"),
+        ],
+        "atributes": ["id", "type", "description"],
+        "url_edit": "dashboard-type_journey-edit",
+        "url_delete": "dashboard-type_journey-delete",
+        "items": types_journey,
+        "form": form,
+    }
+    return render(request, "dashboard/base_table.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def type_journey_edit(request, pk):
+    item = Journey.objects.get(id=pk)
+    if request.method == "POST":
+        form = JourneyForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-types_journey")
+    else:
+        form = JourneyForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def type_journey_delete(request, pk):
+    item = get_object_or_404(Journey, pk=pk)
+    item.delete()
+
+    return redirect("dashboard-types_journey")
+
+
+@login_required
+@user_passes_test(is_employee)
+def journey_stages(request):
+    journey_stages = JourneyStage.objects.all()
+
+    if request.method == "POST":
+        form = JourneyStageForm(request.POST)
+        if form.is_valid():
+            form.save()
+            journeystage_name = form.cleaned_data.get("name")
+            messages.success(request, f"{journeystage_name} has been added")
+            return redirect("dashboard-journey_stages")
+    else:
+        form = JourneyStageForm()
+    context = {
+        "blocktitle": _("Journey Stages"),
+        "topside": "partials/topside_planning.html",
+        "title_form": _("Add New Journey Stage"),
+        "columns": [
+            _("Journey"),
+            _("Order"),
+            _("Departure Stop"),
+            _("Arrival Stop"),
+            _("Transport"),
+            _("Duration"),
+        ],
+        "atributes": [
+            "journey",
+            "order",
+            "departure_stop",
+            "arrival_stop",
+            "transport",
+            "duration",
+        ],
+        "url_edit": "dashboard-journey_stage-edit",
+        "url_delete": "dashboard-journey_stage-delete",
+        "items": journey_stages,
+        "form": form,
+    }
+    return render(request, "dashboard/base_table.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def journey_stage_edit(request, pk):
+    item = JourneyStage.objects.get(id=pk)
+    if request.method == "POST":
+        form = JourneyStageForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-journey_stages")
+    else:
+        form = JourneyStageForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def journey_stage_delete(request, pk):
+    item = get_object_or_404(JourneyStage, pk=pk)
+    item.delete()
+
+    return redirect("dashboard-journey_stages")
+
+
+@login_required
+@user_passes_test(is_employee)
+def journey_schedules(request):
+    journey_schedules = JourneySchedule.objects.all()
+
+    if request.method == "POST":
+        form = JourneyScheduleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            journey_schedule_name = form.cleaned_data.get("name")
+            messages.success(request, f"{journey_schedule_name} has been added")
+            return redirect("dashboard-journey_schedules")
+    else:
+        form = JourneyScheduleForm()
+    context = {
+        "blocktitle": _("Journey Schedule"),
+        "topside": "partials/topside_planning.html",
+        "title_form": _("Add New Journey Schedule"),
+        "columns": [
+            _("Journey"),
+            _("Departure Time"),
+            _("Arrival Time"),
+        ],
+        "atributes": ["journey", "departure_time", "arrival_time"],
+        "url_edit": "dashboard-journey_schedule-edit",
+        "url_delete": "dashboard-journey_schedule-delete",
+        "items": journey_schedules,
+        "form": form,
+    }
+    return render(request, "dashboard/base_table.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def journey_schedule_edit(request, pk):
+    item = JourneySchedule.objects.get(id=pk)
+    if request.method == "POST":
+        form = JourneyScheduleForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-journey_schedules")
+    else:
+        form = JourneyScheduleForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def journey_schedule_delete(request, pk):
+    item = get_object_or_404(JourneySchedule, pk=pk)
+    item.delete()
+
+    return redirect("dashboard-journey_schedules")
+
+
+@login_required
+@user_passes_test(is_employee)
+def stops(request):
+    stops = Stops.objects.all()
+
+    if request.method == "POST":
+        form = StopForm(request.POST)
+        if form.is_valid():
+            form.save()
+            stop_name = form.cleaned_data.get("name")
+            messages.success(request, f"{stop_name} has been added")
+            return redirect("dashboard-stops")
+    else:
+        form = StopForm()
+    context = {
+        "blocktitle": _("Stops"),
+        "topside": "partials/topside_planning.html",
+        "title_form": _("Add New Stop"),
+        "columns": [
+            _("Name"),
+            _("Location"),
+            _("Type"),
+        ],
+        "atributes": ["name", "location", "type"],
+        "url_edit": "dashboard-stop-edit",
+        "url_delete": "dashboard-stop-delete",
+        "items": stops,
+        "form": form,
+    }
+    return render(request, "dashboard/base_table.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def stop_edit(request, pk):
+    item = Stops.objects.get(id=pk)
+    if request.method == "POST":
+        form = StopForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-stops")
+    else:
+        form = StopForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def stop_delete(request, pk):
+    item = get_object_or_404(Stops, pk=pk)
+    item.delete()
+
+    return redirect("dashboard-stops")
+
+
+def api_product_categories(request):
+    return JsonResponse(
+        list(ProductCategory.objects.all().values("id", "name")), safe=False
+    )
+
+
+def api_products_per_category(request):
+    category_id = request.GET.get("category_id")
+    print(category_id)
+    return JsonResponse(
+        list(
+            Product.objects.filter(category=category_id).values("id", "name", "price")
+        ),
+        safe=False,
+    )
+
+
+def product_sales(request):
+    return render(request, "dashboard/product_sales.html")

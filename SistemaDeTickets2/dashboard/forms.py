@@ -19,6 +19,9 @@ from django.forms import inlineformset_factory
 # Traducciones
 from django.utils.translation import gettext as _
 
+# Roles
+from django.contrib.auth.models import Group
+
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -280,3 +283,118 @@ class ProductCategoryForm(forms.ModelForm):
             "name": _("Name"),
             "description": _("Description"),
         }
+
+
+class BusForm(forms.ModelForm):
+    class Meta:
+        model = Bus
+        fields = [
+            "name",
+            "capacity",
+        ]
+        labels = {
+            "name": _("Name"),
+            "capacity": _("Capacity"),
+        }
+
+
+class TrainForm(forms.ModelForm):
+    class Meta:
+        model = Train
+        fields = [
+            "name",
+            "capacity",
+        ]
+        labels = {
+            "name": _("Name"),
+            "capacity": _("Capacity"),
+        }
+
+
+class SeatForm(forms.ModelForm):
+    class Meta:
+        model = Seat
+        fields = [
+            "transport",
+            "seat_number",
+            "category",
+        ]
+        labels = {
+            "transport": _("Transport"),
+            "seat_number": _("Seat Number"),
+            "category": _("Category"),
+        }
+
+
+class SeatCategoryForm(forms.ModelForm):
+    class Meta:
+        model = SeatCategory
+        fields = [
+            "type",
+            "price",
+        ]
+        labels = {
+            "type": _("Type"),
+            "price": _("Price"),
+        }
+
+
+class JourneyForm(forms.ModelForm):
+    class Meta:
+        model = Journey
+        fields = [
+            "type",
+            "description",
+        ]
+        labels = {
+            "type": _("Type"),
+            "description": _("Description"),
+        }
+
+
+class JourneyStageForm(forms.ModelForm):
+    class Meta:
+        model = JourneyStage
+        fields = [
+            "journey",
+            "order",
+            "departure_stop",
+            "arrival_stop",
+            "transport",
+            "duration",
+        ]
+        labels = {
+            "journey": _("Journey"),
+            "order": _("Order"),
+            "departure_stop": _("Departure Stop"),
+            "arrival_stop": _("Arrival Stop"),
+            "transport": _("Transport"),
+            "duration": _("Duration"),
+        }
+
+
+class StopForm(forms.ModelForm):
+    class Meta:
+        model = Stops
+        fields = [
+            "name",
+            "location",
+            "type",
+        ]
+        labels = {
+            "name": _("Name"),
+            "location": _("Location"),
+            "type": _("Type"),
+        }
+
+
+class ChangeUserGroupForm(forms.Form):
+    group = forms.ModelChoiceField(
+        queryset=Group.objects.all(), label=_("Change Group")
+    )
+
+    def __init__(self, *args, **kwargs):
+        initial_group = kwargs.pop("initial_group", None)
+        super(ChangeUserGroupForm, self).__init__(*args, **kwargs)
+        if initial_group:
+            self.fields["group"].initial = initial_group

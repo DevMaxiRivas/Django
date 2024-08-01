@@ -23,15 +23,18 @@ STATES1 = (
 url_website = "http://127.0.0.1:8000/"
 
 class Stops(models.Model):
+    TYPES = (
+            ("b", _("Bus")),
+            ("t", _("Train")),
+    )
+    
+    
     name = models.CharField(verbose_name=_("name"), max_length=100)
     location = models.CharField(verbose_name=_("location"), max_length=255)
     type = models.CharField(
         verbose_name=_("type"),
         max_length=1,
-        choices=(
-            ("b", _("Bus")),
-            ("t", _("Train")),
-        ),
+        choices=TYPES,
         blank=True,
         default="t",
     )
@@ -42,6 +45,12 @@ class Stops(models.Model):
         blank=True,
         default="h",
     )
+    
+    def getType(self):
+        for tuple in self.TYPES:
+            if self.type == tuple[0]:
+                return f"{tuple[1]}"
+        return self.type
 
     def __str__(self):
         return self.name
@@ -70,8 +79,11 @@ class Transport(models.Model):
 
     def __str__(self):
         if Train.objects.filter(transport=self).exists():
-            return f"ID Transport {self.id} - Train {Train.objects.get(transport=self).name}"
-        return f"ID Transport {self.id} - Bus {Bus.objects.get(transport=self).name}"
+            return f"Train {Train.objects.get(transport=self).name}"
+        elif Bus.objects.filter(transport=self).exists():
+            return f"Bus {Bus.objects.get(transport=self).name}"
+        else:
+            return f"Transport {self.id}"
 
 
 class Train(models.Model):
