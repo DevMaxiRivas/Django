@@ -29,7 +29,13 @@
                         <a href="{% url 'dashboard-receipt_detail' item.sale_id %}">{{ item.sale_id }}</a>
                         {% endif %}
                     </td>
-                    <td>{{ item.payment.voucher_no }}</td>
+                    <td>
+                        {% if item.payment.voucher_no %}
+                        {{ item.payment.voucher_no }}
+                        {% else %}
+                        {% translate "Sin Registrar" %}
+                        {% endif %}
+                    </td>
                     <td>{{ item.payment.getType }}</td>
                     <td>{{ item.payment.created_at }}</td>
                 </tr>

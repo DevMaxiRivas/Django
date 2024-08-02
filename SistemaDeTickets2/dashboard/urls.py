@@ -208,7 +208,10 @@ urlpatterns = [
     path("users/", views.users, name="dashboard-users"),
     path("prueba/", views.prueba, name="prueba"),
     # VENTAS DE PRODUCTOS
-    path("product_sales/", views.product_sales, name="dashboard-product_sales"),
+    path(
+        "product_sales/", views.register_sales_products, name="dashboard-product-sales"
+    ),
+    path("meals_sales/", views.register_sales_meals, name="dashboard-meal-sales"),
     # APIS
     path(
         "api/product_categories/",
@@ -216,8 +219,34 @@ urlpatterns = [
         name="api_product_categories",
     ),
     path(
+        "api/type_payment/",
+        views.api_type_payment,
+        name="api_type_payment",
+    ),
+    path(
         "api/products_per_category/",
         views.api_products_per_category,
         name="api_products_per_category",
+    ),
+    path(
+        "api/register_sale_products/",
+        views.api_register_sale_products,
+        name="api_register_sale_products",
+    ),
+    # API Meals
+    path(
+        "api/meal_categories/",
+        views.api_meal_categories,
+        name="api_meal_categories",
+    ),
+    path(
+        "api/meals_per_category/",
+        views.api_meals_per_category,
+        name="api_meals_per_category",
+    ),
+    path(
+        "api/register_sale_meals/",
+        views.api_register_sale_meals,
+        name="api_register_sale_meals",
     ),
 ]

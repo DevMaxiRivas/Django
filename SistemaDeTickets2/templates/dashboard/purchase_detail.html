@@ -12,7 +12,14 @@
                 <h1>{% translate "Comprobante" %}</h1>
                 {% if payment %}
                 <h4>{% translate "Pago" %} ID: {{ payment.id }}</h4>
-                <p>{% translate "Nro. Comprobante" %}: {{ payment.voucher_no }}</p>
+                <p>
+                    {% translate "Nro. Comprobante" %}:
+                    {% if payment.voucher_no %}
+                    {{ payment.voucher_no }}
+                    {% else %}
+                    {% translate "Sin Registrar" %}
+                    {% endif %}
+                </p>
                 <p>{% translate "Tipo de Pago" %}: {{ payment.getType }}</p>
                 <p>{% translate "Fecha de Creación" %}: {{ payment.created_at }}</p>
                 {% else %}

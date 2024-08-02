@@ -533,7 +533,7 @@ class Passenger(models.Model):
         return self.name
 
 class Payments(models.Model):
-    voucher_no = models.CharField(verbose_name=_("voucher_no"), max_length=255)
+    voucher_no = models.CharField(verbose_name=_("voucher_no"), max_length=255, blank=True, null=True)
     TYPES = (
         ("credit_card", _("Credit Card")),
         ("debit_card", _("Debit Card")),
@@ -550,7 +550,7 @@ class Payments(models.Model):
         help_text=_("Payment Type"),
     )
     status = models.CharField(
-        verbose_name=_("payment_status"), max_length=50, null=True, blank=True
+        verbose_name=_("payment_status"), max_length=50, null=True, blank=True, default="success"
     )
 
     created_at = models.DateTimeField(verbose_name=_("created_at"), auto_now_add=True)

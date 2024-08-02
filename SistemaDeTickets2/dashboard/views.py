@@ -63,6 +63,9 @@ from django.utils.translation import gettext as _
 # Envio de Emails
 from .sendEmails import send_pdf_via_email
 
+# Archivos JSON
+import json
+
 
 # Control de Acceso
 def is_client(user):
@@ -478,7 +481,7 @@ def user_detail(request, pk):
     form = ChangeUserGroupForm(initial_group=current_group)
     context = {
         "form": form,
-        "user": user,
+        "user_profile": user,
     }
     return render(request, "dashboard/user_detail.html", context)
 
@@ -1363,9 +1366,15 @@ def api_product_categories(request):
     )
 
 
+def api_type_payment(request):
+    types = []
+    for type in Payments.TYPES:
+        types.append([type[0], type[1]])
+    return JsonResponse(types, safe=False)
+
+
 def api_products_per_category(request):
     category_id = request.GET.get("category_id")
-    print(category_id)
     return JsonResponse(
         list(
             Product.objects.filter(category=category_id).values("id", "name", "price")
@@ -1374,5 +1383,132 @@ def api_products_per_category(request):
     )
 
 
+@require_http_methods(["POST"])
+def api_register_sale_products(request):
+    try:
+        data = json.loads(request.body)
+        id_pasajero = data.get("id_pasajero")
+        productos = data.get("productos")
+        type_payment = data.get("metodo_pago")
+        voucher_no = data.get("nro_comprobante")
+
+        if voucher_no:
+            payment = Payments.objects.create(type=type_payment, voucher_no=voucher_no)
+        else:
+            payment = Payments.objects.create(type=type_payment)
+
+        sale = PurchaseReceipt.objects.create(
+            passenger=Passenger.objects.get(dni_or_passport=id_pasajero),
+            payment=payment,
+        )
+        for product in productos:
+            DetailsProductOrder.objects.create(
+                receipt=sale,
+                product=Product.objects.get(id=product["producto_id"]),
+                quantity=int(product["cantidad"]),
+            )
+
+        return JsonResponse(
+            {
+                "msg": "Venta registrada con éxito.",
+            },
+            status=200,
+        )
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        if str(e) == "Passenger matching query does not exist.":
+            msg = _("Passenger not exist")
+        else:
+            msg = _("Something went wrong")
+        return JsonResponse(
+            {
+                "error": msg,
+            },
+            status=400,
+        )
+
+
 def product_sales(request):
     return render(request, "dashboard/product_sales.html")
+
+
+# Cambio
+def api_meal_categories(request):
+    return JsonResponse(
+        list(MealCategory.objects.all().values("id", "name")), safe=False
+    )
+
+
+def api_meals_per_category(request):
+    category_id = request.GET.get("category_id")
+    return JsonResponse(
+        list(Meal.objects.filter(category=category_id).values("id", "name", "price")),
+        safe=False,
+    )
+
+
+@require_http_methods(["POST"])
+def api_register_sale_meals(request):
+    try:
+        data = json.loads(request.body)
+        id_pasajero = data.get("id_pasajero")
+        productos = data.get("productos")
+        type_payment = data.get("metodo_pago")
+        voucher_no = data.get("nro_comprobante")
+
+        if voucher_no:
+            payment = Payments.objects.create(type=type_payment, voucher_no=voucher_no)
+        else:
+            payment = Payments.objects.create(type=type_payment)
+
+        sale = PurchaseReceipt.objects.create(
+            passenger=Passenger.objects.get(dni_or_passport=id_pasajero),
+            payment=payment,
+        )
+        for product in productos:
+            DetailFoodOrder.objects.create(
+                receipt=sale,
+                meal=Meal.objects.get(id=product["producto_id"]),
+                quantity=int(product["cantidad"]),
+            )
+
+        return JsonResponse(
+            {
+                "msg": _("Venta registrada con éxito."),
+            },
+            status=200,
+        )
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        if str(e) == "Passenger matching query does not exist.":
+            msg = _("Passenger not exist")
+        else:
+            msg = _("Something went wrong")
+        return JsonResponse(
+            {
+                "error": msg,
+            },
+            status=400,
+        )
+
+
+def register_sales_meals(request):
+    context = {
+        "title": _("Orden de Compra de Comidas"),
+        "model_singular": _("Comida"),
+        "get_categories": "api_meal_categories",
+        "get_product_per_category": "api_meals_per_category",
+        "register_sale": "api_register_sale_meals",
+    }
+    return render(request, "dashboard/register_sale.html", context)
+
+
+def register_sales_products(request):
+    context = {
+        "title": _("Orden de Compra de Productos"),
+        "model_singular": _("Producto"),
+        "get_categories": "api_product_categories",
+        "get_product_per_category": "api_products_per_category",
+        "register_sale": "api_register_sale_products",
+    }
+    return render(request, "dashboard/register_sale.html", context)

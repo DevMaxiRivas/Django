@@ -21,25 +21,25 @@
                         <tbody>
                             <tr>
                                 <th>{% translate "Nombre" %}</th>
-                                <td>{{ user.username }}</td>
+                                <td>{{ user_profile.username }}</td>
                             </tr>
                             <tr>
                                 <th>{% translate "Correo Electrónico" %}</th>
-                                <td>{{ user.email }}</td>
+                                <td>{{ user_profile.email }}</td>
                             </tr>
                             <tr>
                                 <th>{% translate "Telefóno" %}</th>
-                                <td>{{ user.profile.phone }}</td>
+                                <td>{{ user_profile.profile.phone }}</td>
                             </tr>
                             <tr>
                                 <th>{% translate "Dirección" %}</th>
-                                <td>{{ user.profile.address }}</td>
+                                <td>{{ user_profile.profile.address }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-4">
-                    <img class="img-thumbnail" src="{{ user.profile.image.url }}" alt="profile-image">
+                    <img class="img-thumbnail" src="{{ user_profile.profile.image.url }}" alt="profile-image">
                 </div>
             </div>
             <div class="card-header bg-primary text-white">
