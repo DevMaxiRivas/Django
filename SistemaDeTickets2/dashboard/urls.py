@@ -193,6 +193,7 @@ urlpatterns = [
     path("order/", views.order, name="dashboard-order"),
     # VENTA DE TICKETS
     path("purchase-tickets/", views.purchase_tickets, name="purchase_tickets"),
+    path("tickets_reserve/", views.tickets_reserve, name="tickets_reserve"),
     # Pagos
     path("payments/", views.payments, name="dashboard-payments"),
     path("payment_success/", views.payment_success, name="payment_success"),
@@ -213,6 +214,7 @@ urlpatterns = [
     ),
     path("meals_sales/", views.register_sales_meals, name="dashboard-meal-sales"),
     # APIS
+    # API Products
     path(
         "api/product_categories/",
         views.api_product_categories,
@@ -248,5 +250,16 @@ urlpatterns = [
         "api/register_sale_meals/",
         views.api_register_sale_meals,
         name="api_register_sale_meals",
+    ),
+    # API Journeys
+    path(
+        "api/types_journey/",
+        views.api_types_journey,
+        name="api_types_journey",
+    ),
+    path(
+        "api/journey_per_date/",
+        views.api_journey_per_date,
+        name="api_journey_per_date",
     ),
 ]

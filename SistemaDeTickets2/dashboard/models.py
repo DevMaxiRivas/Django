@@ -12,6 +12,9 @@ from django.utils import timezone
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncMonth
 
+# Fechas
+from datetime import datetime
+
 def toStringDate(date, minutes):
         return (timezone.localtime(date) - timedelta(minutes=minutes)).strftime("%H:%M")
 
@@ -481,7 +484,26 @@ class JourneySchedule(models.Model):
 
     def __str__(self):
         return f"{self.journey} - {timezone.localtime(self.departure_time).strftime("%Y-%m-%d %H:%M")}"
+    
+    # Funciones
+    def getSchedules(type, date):
+        # Convertir la fecha a un objeto datetime
+        data_datetime = datetime.strptime(date, "%Y-%m-%d")
 
+        # Realizar la consulta
+        schedules = JourneySchedule.objects.filter(
+            departure_time__gte=data_datetime, journey__type=type
+        )
+
+        list = []
+        # Mostrar resultados
+        for schedule in schedules:
+            list.append({
+                "id" : schedule.id,
+                "departure_time": timezone.localtime(schedule.departure_time).strftime("%Y-%m-%d %H:%M"),
+                "arrival_time": timezone.localtime(schedule.arrival_time).strftime("%Y-%m-%d %H:%M"),
+            })
+        return list
 
 class Passenger(models.Model):
     name = models.CharField(verbose_name=_("name"), max_length=100)

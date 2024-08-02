@@ -66,6 +66,9 @@ from .sendEmails import send_pdf_via_email
 # Archivos JSON
 import json
 
+# Fechas
+from datetime import datetime
+
 
 # Control de Acceso
 def is_client(user):
@@ -1512,3 +1515,23 @@ def register_sales_products(request):
         "register_sale": "api_register_sale_products",
     }
     return render(request, "dashboard/register_sale.html", context)
+
+
+def api_types_journey(request):
+    types = []
+    for type in Journey.JOURNEY_TYPE_CHOICES:
+        types.append([type[0], type[1]])
+    return JsonResponse(types, safe=False)
+
+
+def api_journey_per_date(request):
+    fecha = request.GET.get("fecha")
+    print(fecha)
+    # Parámetros
+    type = "TRAIN_ONLY"
+    schedules = JourneySchedule.getSchedules(type, fecha)
+    
+    return JsonResponse(schedules, safe=False)
+
+def tickets_reserve(request):
+    return render(request, "public/ticket_reserve.html")
