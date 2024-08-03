@@ -1,5 +1,5 @@
 # Requerst
-import datetime
+# import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 
 # Modelos de Sistema
@@ -170,14 +170,14 @@ def index_employee(request):
         ("December"),
     ]
 
-    query = Ticket.revenue_by_seat_category()
+    # query = Ticket.revenue_by_journey_price()
 
-    revenue_by_seat_category = []
+    # revenue_by_journey_price = []
 
-    for rev in query:
-        revenue_by_seat_category.append(
-            [str(rev["seat__category__type"]), float(rev["total_ingresos"])]
-        )
+    # for rev in query:
+    #     revenue_by_journey_price.append(
+    #         [str(rev["seat__category__type"]), float(rev["total_ingresos"])]
+    #     )
 
     query2 = Journey.passengers_for_journey()
     passengers_for_journey = []
@@ -188,8 +188,8 @@ def index_employee(request):
     context = {
         "order": order,
         "product": product,
-        "months": months[: datetime.datetime.now().month],
-        "revenue_by_seat_category": revenue_by_seat_category,
+        "months": months[: datetime.now().month],
+        # "revenue_by_journey_price": revenue_by_journey_price,
         "passengers_for_journey": passengers_for_journey,
     }
     return render(request, "dashboard/index.html", context)
@@ -913,36 +913,36 @@ def receipt_detail(request, sale_id):
 
 @login_required
 @user_passes_test(is_employee)
-def seat_categories(request):
-    categories = SeatCategory.objects.all()
+def journey_prices(request):
+    prices = JourneyPrices.objects.all()
 
     if request.method == "POST":
-        form = SeatCategoryForm(request.POST)
+        form = JourneyPricesForm(request.POST)
         if form.is_valid():
             form.save()
             category_name = form.cleaned_data.get("type")
             messages.success(request, f"{category_name} has been added")
-            return redirect("dashboard-seat_categories")
+            return redirect("dashboard-journey_prices")
     else:
-        form = SeatCategoryForm()
+        form = JourneyPricesForm()
     context = {
-        "categories": categories,
+        "prices": prices,
         "form": form,
     }
-    return render(request, "dashboard/seat_categories.html", context)
+    return render(request, "dashboard/journey_prices.html", context)
 
 
 @login_required(login_url="user-login")
 @user_passes_test(is_employee)
-def seat_category_edit(request, pk):
-    item = SeatCategory.objects.get(id=pk)
+def journey_price_edit(request, pk):
+    item = JourneyPrices.objects.get(id=pk)
     if request.method == "POST":
-        form = SeatCategoryForm(request.POST, instance=item)
+        form = JourneyPricesForm(request.POST, instance=item)
         if form.is_valid():
             form.save()
-            return redirect("dashboard-seat_categories")
+            return redirect("dashboard-journey_prices")
     else:
-        form = SeatCategoryForm(instance=item)
+        form = JourneyPricesForm(instance=item)
     context = {
         "form": form,
     }
@@ -951,11 +951,11 @@ def seat_category_edit(request, pk):
 
 @login_required(login_url="user-login")
 @user_passes_test(is_employee)
-def seat_category_delete(request, pk):
-    category = get_object_or_404(SeatCategory, pk=pk)
-    category.delete()
+def journey_price_delete(request, pk):
+    price = get_object_or_404(JourneyPrices, pk=pk)
+    price.delete()
 
-    return redirect("dashboard-seat_categories")
+    return redirect("dashboard-journey_prices")
 
 
 @login_required
@@ -1526,12 +1526,122 @@ def api_types_journey(request):
 
 def api_journey_per_date(request):
     fecha = request.GET.get("fecha")
-    print(fecha)
+    type = request.GET.get("tipo_recorrido")
     # Parámetros
-    type = "TRAIN_ONLY"
     schedules = JourneySchedule.getSchedules(type, fecha)
-    
     return JsonResponse(schedules, safe=False)
+
 
 def tickets_reserve(request):
     return render(request, "public/ticket_reserve.html")
+
+
+def api_available_seats_per_schedule(request):
+    categoria = request.GET.get("categoria")
+    horario = request.GET.get("horario")
+
+    schedule = JourneySchedule.objects.get(id=horario)
+    seats = Ticket.objects.filter(schedule=schedule)
+    category = JourneyPrices.objects.get(id=categoria).category
+    seatsfilter = []
+    response = []
+    print(list(seats))
+    if list(seats) != []:
+        for seat in seats:
+            if seat.seat.category == category:
+                seatsfilter.append(seat.seat)
+
+        if seatsfilter != []:
+            tranport = seatsfilter[0].transport
+
+            seats_transport_category = Seat.objects.filter(
+                transport=tranport, category=category
+            )
+
+            for seat in seats_transport_category:
+                if seat not in seatsfilter:
+                    response.append({"id": seat.id, "numero": seat.seat_number})
+    else:
+        seats = Seat.objects.filter(category=category)
+        for seat in seats:
+            response.append({"id": seat.id, "numero": seat.seat_number})
+    return JsonResponse(response, safe=False)
+
+
+def api_price_journey(request):
+    type = request.GET.get("tipo_recorrido")
+    print(type)
+    journey = Journey.objects.get(type=type)
+    prices = JourneyPrices.objects.filter(journey=journey)
+    response = []
+    for price in prices:
+        response.append(
+            {
+                "id": price.id,
+                "category": price.getCategory(),
+                "price": price.price,
+            }
+        )
+    return JsonResponse(
+        response,
+        safe=False,
+    )
+
+
+@require_http_methods(["GET", "POST"])
+@transaction.atomic
+def api_reserve_tickets(request):
+    data = json.loads(request.body)
+    email = data.get("email")
+    tickets = data.get("pasajeros")
+    user = data.get("id_user")
+
+    if user:
+        user = User.objects.get(id=user)
+        sale = TicketSales.objects.create(email=email, user=user)
+    else:
+        sale = TicketSales.objects.create(email=email)
+
+    for ticket in tickets:
+        schedule = JourneySchedule.objects.get(id=ticket["horario"])
+        seat = Seat.objects.get(id=ticket["asiento"])
+        passenger = Passenger.objects.filter(
+            dni_or_passport=ticket["dni_o_pasaporte"]
+        ).first()
+        Ticket.objects.create(
+            sale=sale, passenger=passenger, schedule=schedule, seat=seat
+        )
+
+    sale.update_total_price()
+
+    # Crear una instancia de Mercado Pago
+    mp = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
+
+    # Crear una preferencia de pago
+    preference_data = {
+        "items": [
+            {
+                "title": "Tickets",
+                "quantity": 1,
+                "currency_id": "ARS",
+                "unit_price": float(sale.price),
+            }
+        ],
+        "back_urls": {
+            "success": request.build_absolute_uri(reverse("payment_success")),
+            "failure": request.build_absolute_uri(reverse("payment_pending")),
+            "pending": request.build_absolute_uri(reverse("payment_pending")),
+        },
+        "auto_return": "approved",
+        "payment_methods": {
+            "excluded_payment_types": [{"id": "ticket"}],
+            "installments": 1,
+        },
+        "external_reference": str(sale.id),
+    }
+    preference_response = mp.preference().create(preference_data)
+    preference = preference_response["response"]
+
+    return JsonResponse(
+        {"success": True, "init_point": preference["sandbox_init_point"]}
+    )

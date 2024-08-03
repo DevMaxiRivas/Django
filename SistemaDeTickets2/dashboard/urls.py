@@ -169,17 +169,17 @@ urlpatterns = [
         views.product_category_delete,
         name="dashboard-product_category-delete",
     ),
-    # CATEGORIAS DE ASIENTOS
-    path("seat_categories/", views.seat_categories, name="dashboard-seat_categories"),
+    # PRECIOS POR RECORRIDO
+    path("journey_prices/", views.journey_prices, name="dashboard-journey_prices"),
     path(
-        "seat_categories/edit/<int:pk>/",
-        views.seat_category_edit,
-        name="dashboard-seat_category-edit",
+        "journey_prices/edit/<int:pk>/",
+        views.journey_price_edit,
+        name="dashboard-journey_price-edit",
     ),
     path(
-        "seat_categories/delete/<int:pk>/",
-        views.seat_category_delete,
-        name="dashboard-seat_category-delete",
+        "journey_prices/delete/<int:pk>/",
+        views.journey_price_delete,
+        name="dashboard-journey_price-delete",
     ),
     # DASHBOARD DE USUARIOS
     path("customers/", views.customers, name="dashboard-customers"),
@@ -261,5 +261,20 @@ urlpatterns = [
         "api/journey_per_date/",
         views.api_journey_per_date,
         name="api_journey_per_date",
+    ),
+    path(
+        "api/available_seats_per_schedule/",
+        views.api_available_seats_per_schedule,
+        name="api_available_seats_per_schedule",
+    ),
+    path(
+        "api/price_journey/",
+        views.api_price_journey,
+        name="api_price_journey",
+    ),
+    path(
+        "api/reserve_tickets/",
+        views.api_reserve_tickets,
+        name="api_reserve_tickets",
     ),
 ]

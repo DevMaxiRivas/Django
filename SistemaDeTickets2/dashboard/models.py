@@ -7,6 +7,7 @@ from django.utils.translation import gettext as _
 
 # Horarios
 from django.utils import timezone
+from django.utils.timezone import make_aware
 
 # DataBase
 from django.db.models import Count, Sum
@@ -172,9 +173,69 @@ class Bus(models.Model):
         super().save(*args, **kwargs)
 
 
-class SeatCategory(models.Model):
+class Journey(models.Model):
+    JOURNEY_TYPE_CHOICES = [
+        ("TRAIN_ONLY", _("Train Only")),
+        ("BUS_AND_TRAIN", _("Bus and Train")),
+    ]
+
     type = models.CharField(
-        verbose_name=_("type"), max_length=100, null=True, blank=True
+        verbose_name=_("type"), max_length=20, choices=JOURNEY_TYPE_CHOICES
+    )
+    description = models.TextField(verbose_name=_("description"))
+
+    status = models.CharField(
+        verbose_name=_("status"),
+        max_length=1,
+        choices=STATES1,
+        blank=True,
+        default="h",
+    )
+    #Funciones
+    def passengers_for_journey():
+        return Journey.objects.values('type').annotate(
+            total_passengers=Count('journeyschedule__ticket__passenger')
+        )
+    def status_sample(self):
+        if self.status:
+            STATES = set(STATES1)
+            # Retornar el valor correspondiente
+            return STATES.get(self.status)
+        return None
+
+    class Meta:
+        ordering = ["type"]
+        verbose_name = _("Journey")
+        verbose_name_plural = _("Journeys")
+
+    def __str__(self):
+        for tuple in self.JOURNEY_TYPE_CHOICES:
+            if self.type == tuple[0]:
+                return f"{tuple[1]}"
+        return self.type
+
+class JourneyPrices(models.Model):
+    journey = models.ForeignKey(
+        Journey,
+        verbose_name=_("journey"),
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    description = models.TextField(verbose_name=_("description"), blank=True)
+    CATEGORIES = (
+        ("standar", _("Standar")),
+        ("vip", _("VIP")),
+        ("ejecutive", _("Ejecutive")),
+    )
+
+    category = models.CharField(
+        verbose_name=_("category"),
+        max_length=50,
+        choices=CATEGORIES,
+        blank=True,
+        default="cash",
+        help_text=_("Category"),
     )
     price = models.DecimalField(
         verbose_name=_("price"), max_digits=10, decimal_places=2
@@ -197,12 +258,19 @@ class SeatCategory(models.Model):
         return None
 
     class Meta:
-        ordering = ["type"]
-        verbose_name = _("Seat Category")
-        verbose_name_plural = _("Seat Categories")
+        ordering = ["category"]
+        verbose_name = _("Journey Price")
+        verbose_name_plural = _("Journey Prices")
+
+    # Funciones
+    def getCategory(self):
+        for tuple in self.CATEGORIES:
+            if self.category == tuple[0]:
+                return f"{tuple[1]}"
+        return self.category
 
     def __str__(self):
-        return self.type
+        return self.getCategory() + "-" + str(self.journey)
 
 class Seat(models.Model):
     transport = models.ForeignKey(
@@ -214,11 +282,19 @@ class Seat(models.Model):
         blank=True,
     )
     seat_number = models.CharField(verbose_name=_("seat_number"), max_length=10)
-    category = models.ForeignKey(
-        SeatCategory,
-        verbose_name=_("category"),
-        related_name="seats",
-        on_delete=models.CASCADE,
+    CATEGORIES = (
+        ("standar", _("Standar")),
+        ("vip", _("VIP")),
+        ("ejecutive", _("Ejecutive")),
+    )
+
+    category = models.CharField(
+        verbose_name=_("type"),
+        max_length=50,
+        choices=CATEGORIES,
+        blank=True,
+        default="cash",
+        help_text=_("Seat Type"),
     )
 
     status = models.CharField(
@@ -251,8 +327,14 @@ class Seat(models.Model):
         verbose_name = _("Seat")
         verbose_name_plural = _("Seats")
 
+    # Funciones
+    def getCategory(self):
+        for tuple in self.CATEGORIES:
+            if self.category == tuple[0]:
+                return f"{tuple[1]}"
+        return self.category
     def __str__(self):
-        return f"{self.seat_number} ({self.category.type})"
+        return f"{self.seat_number} ({self.getCategory()})"
 
 
 class MealCategory(models.Model):
@@ -356,47 +438,6 @@ class Order(models.Model):
         return f"{self.customer}-{self.name}"
 
 
-class Journey(models.Model):
-    JOURNEY_TYPE_CHOICES = [
-        ("TRAIN_ONLY", _("Train Only")),
-        ("BUS_AND_TRAIN", _("Bus and Train")),
-    ]
-
-    type = models.CharField(
-        verbose_name=_("type"), max_length=20, choices=JOURNEY_TYPE_CHOICES
-    )
-    description = models.TextField(verbose_name=_("description"))
-
-    status = models.CharField(
-        verbose_name=_("status"),
-        max_length=1,
-        choices=STATES1,
-        blank=True,
-        default="h",
-    )
-    #Funciones
-    def passengers_for_journey():
-        return Journey.objects.values('type').annotate(
-            total_passengers=Count('journeyschedule__ticket__passenger')
-        )
-    def status_sample(self):
-        if self.status:
-            STATES = set(STATES1)
-            # Retornar el valor correspondiente
-            return STATES.get(self.status)
-        return None
-
-    class Meta:
-        ordering = ["type"]
-        verbose_name = _("Journey")
-        verbose_name_plural = _("Journeys")
-
-    def __str__(self):
-        for tuple in self.JOURNEY_TYPE_CHOICES:
-            if self.type == tuple[0]:
-                return f"{tuple[1]}"
-        return self.type
-
 
 class JourneyStage(models.Model):
     journey = models.ForeignKey(
@@ -488,12 +529,11 @@ class JourneySchedule(models.Model):
     # Funciones
     def getSchedules(type, date):
         # Convertir la fecha a un objeto datetime
-        data_datetime = datetime.strptime(date, "%Y-%m-%d")
-
+        data_datetime = make_aware(datetime.strptime(date, "%Y-%m-%d"))
         # Realizar la consulta
         schedules = JourneySchedule.objects.filter(
             departure_time__gte=data_datetime, journey__type=type
-        )
+        ).order_by('departure_time')
 
         list = []
         # Mostrar resultados
@@ -586,7 +626,7 @@ class Payments(models.Model):
     def __str__(self):
         if self.voucher_no and self.type:
             return f"Pago {self.voucher_no} - {self.type}"
-        return "Pago" + self.created_at
+        return "Pago - " + timezone.localtime(self.created_at).strftime("%Y-%m-%d %H:%M")
 
     class Meta:
         ordering = ["created_at"]
@@ -633,8 +673,9 @@ class TicketSales(models.Model):
 
     def __str__(self):
         if self.user:
-            return f"Sale for {self.user.username} on {self.purchase_date}"
-        return f"Sale on {self.purchase_date}"
+            return f"Sale for {self.user.username} on {timezone.localtime(self.purchase_date).strftime("%Y-%m-%d %H:%M")}"
+        return f"Sale on {timezone.localtime(self.purchase_date).strftime("%Y-%m-%d %H:%M")}"
+        
     
     def ventas_por_año():
         hace_un_año = timezone.now() - timedelta(days=365)
@@ -663,7 +704,7 @@ class Ticket(models.Model):
     )
     seat = models.ForeignKey(Seat, verbose_name=_("seat"), on_delete=models.CASCADE)
     price = models.DecimalField(
-        verbose_name=_("price"), max_digits=10, decimal_places=2
+        verbose_name=_("price"), max_digits=10, decimal_places=2, default=0
     )
 
     def __str__(self):
@@ -701,13 +742,13 @@ class Ticket(models.Model):
         # Si es el mismo asiento con el que se creo la venta no modificar el precio
         if self._state.adding:
             if self.seat:
-                self.price = self.seat.category.price
+                self.price = JourneyPrices.objects.filter(category = self.seat.category).first().price
         # Sino es el mismo asiento con el que se creo la venta modificar el precio de la venta al precio del asiento nuevo seleccionado.
         else:
             # Si el objeto ya existe en la base de datos
             old_instance = Ticket.objects.get(pk=self.pk)
             if old_instance.seat != self.seat:
-                self.price = self.seat.category.price
+                self.price = JourneyPrices.objects.filter(category = self.seat.category).first().price
 
         # self.reserveSeat()
         super().save(*args, **kwargs)

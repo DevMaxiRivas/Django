@@ -326,15 +326,19 @@ class SeatForm(forms.ModelForm):
         }
 
 
-class SeatCategoryForm(forms.ModelForm):
+class JourneyPricesForm(forms.ModelForm):
     class Meta:
-        model = SeatCategory
+        model = JourneyPrices
         fields = [
-            "type",
+            "journey",
+            "description",
+            "category",
             "price",
         ]
         labels = {
-            "type": _("Type"),
+            "journey": _("Journey"),
+            "description": _("Description"),
+            "category": _("Category"),
             "price": _("Price"),
         }
 

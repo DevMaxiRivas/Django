@@ -1,6 +1,6 @@
 <!-- Modal -->
 {% load i18n %}
-<div class="modal fade font-black" id="exampleModal{{category.id}}" tabindex="-1" role="dialog"
+<div class="modal fade font-black" id="exampleModal{{price.id}}" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -11,11 +11,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                {% translate "Desea eliminar" %} {{category}} ?
+                {% translate "Desea eliminar" %} {{price}} ?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{% translate "Cancelar" %}</button>
-                <a class="btn btn-danger" href="{% url 'dashboard-seat_category-delete' category.id %}">
+                <a class="btn btn-danger" href="{% url 'dashboard-journey_price-delete' price.id %}">
                     {% translate "Eliminar"%}
                 </a>
             </div>

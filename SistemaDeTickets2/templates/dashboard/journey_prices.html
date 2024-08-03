@@ -15,7 +15,7 @@
         {% endfor %}
         {% endif %}
         <div class="card card-body">
-            <h5>{% translate "Agregar Nueva Categoría" %}</h5>
+            <h5>{% translate "Agregar Nueva Precio por Recorrido" %}</h5>
             <hr>
             <form method="POST">
                 {% csrf_token %}
@@ -25,31 +25,33 @@
         </div>
     </div>
     <div class="col-md-8">
-        {% if categories %}
+        {% if prices %}
         <table class="table bg-white text-center">
             <thead class="bg-primary text-white">
                 <tr>
-                    <th scope="col">{% translate "Nombre" %}</th>
+                    <th scope="col">{% translate "Tipo de Recorrido" %}</th>
+                    <th scope="col">{% translate "Categoria" %}</th>
                     <th scope="col">{% translate "Precio" %}</th>
                     <th scope="col">{% translate "Acción" %}</th>
                 </tr>
             </thead>
             <tbody>
-                {% for category in categories %}
+                {% for price in prices %}
                 <tr>
-                    <td>{{ category.type }}</td>
-                    <td>${{ category.price }}</td>
+                    <td>{{ price.journey }}</td>
+                    <td>{{ price.getCategory }}</td>
+                    <td>${{ price.price }}</td>
                     <td>
                         <a class="btn btn-primary btn-sm mr-2 mb-1"
-                            href="{% url 'dashboard-seat_category-edit' category.id %}">
+                            href="{% url 'dashboard-journey_price-edit' price.id %}">
                             {% translate "Editar" %}
                         </a>
                         <a class="btn btn-danger btn-sm mr-2 b mb-1" href="" data-toggle="modal"
-                            data-target="#exampleModal{{category.id}}">
+                            data-target="#exampleModal{{price.id}}">
                             {% translate "Eliminar" %}
                         </a>
                     </td>
-                    {% include "dashboard/seat_category_delete_modal.html" %}
+                    {% include "dashboard/journey_prices_delete_modal.html" %}
                 </tr>
                 {% endfor %}
             </tbody>
