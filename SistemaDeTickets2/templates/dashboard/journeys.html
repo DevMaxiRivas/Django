@@ -7,7 +7,6 @@
     <div class="col-md-6 my-4">
         <div class="bg-white">
             <div class="card-body">
-                <h5 class="card-title text-center">{% translate "Boletos Vendidos por Tipo de Recorridos" %}</h5>
                 <canvas id="myChart1" width="400" height="300"></canvas>
                 <script>
                     var ctx = document.getElementById('myChart1').getContext('2d');
@@ -44,6 +43,10 @@
                                     beginAtZero: true
                                 }
                             }]
+                        },
+                        title: {
+                            display: true,
+                                text: '{% translate "Boletos Vendidos por Tipo de Recorridos" %}'
                         }
                     }
                     });
@@ -54,7 +57,6 @@
     <div class="col-md-6 my-4">
         <div class="bg-white">
             <div class="card-body">
-                <h5 class="card-title text-center">{% translate "Ventas por Categoria de Asiento" %}</h5>
                 <canvas id="myChart" width="400" height="300"></canvas>
                 <script>
                     var ctx = document.getElementById('myChart').getContext('2d');
@@ -91,6 +93,10 @@
                                     beginAtZero: true
                                 }
                             }]
+                        },
+                        title: {
+                            display: true,
+                                text: '{% translate "Ventas por Categoria de Asiento" %}'
                         }
                     }
                     });

@@ -457,6 +457,14 @@ class Product(models.Model):
     def __str__(self):
         
         return f"{self.name}"
+    
+    # Funciones
+    def update_stock(self, quantity):
+        self.stock -= quantity
+        self.save()
+        
+    def getStock(self):
+        return self.stock
 
 
 class Order(models.Model):

@@ -805,24 +805,21 @@ def payment_failed(request):
 
 
 def payment_pending(request):
-    sale = TicketSales.objects.get(id=11)
-    tickets = Ticket.objects.filter(sale=sale)
-    send_pdf_via_email(tickets, str(sale.email))
-    # sale_id = request.GET.get("external_reference")
-    # TicketSales.delete(TicketSales.objects.get(id=sale_id))s
+    sale_id = request.GET.get("external_reference")
+    TicketSales.delete(TicketSales.objects.get(id=sale_id))
     return render(request, "public/payment_pending.html")
 
 
 def payments(request):
-
     data = []
     for payment in Payments.objects.all():
         if TicketSales.objects.filter(payment=payment).exists():
             sale_id = TicketSales.objects.get(payment=payment).id
             data.append({"payment": payment, "sale_id": sale_id, "type": "T"})
         else:
-            sale_id = PurchaseReceipt.objects.get(payment=payment).id
-            data.append({"payment": payment, "sale_id": sale_id, "type": "P"})
+            if PurchaseReceipt.objects.filter(payment=payment).exists():
+                sale_id = PurchaseReceipt.objects.get(payment=payment).id
+                data.append({"payment": payment, "sale_id": sale_id, "type": "P"})
 
     return render(request, "dashboard/payments.html", {"data": data})
 
@@ -1498,8 +1495,31 @@ def api_products_per_category(request):
 def api_register_sale_products(request):
     try:
         data = json.loads(request.body)
-        id_pasajero = data.get("id_pasajero")
         productos = data.get("productos")
+
+        exist_stock = True
+        product_without_stock = []
+        for product in productos:
+            if Product.objects.get(id=product["producto_id"]).stock < int(
+                product["cantidad"]
+            ):
+                exist_stock = False
+                product_without_stock.append(
+                    Product.objects.get(id=product["producto_id"]).name
+                )
+
+        if not exist_stock:
+            return JsonResponse(
+                {
+                    "error": _(
+                        f"No hay suficiente stock. \nPara los siguientes productos: "
+                    )
+                    + ", ".join(product_without_stock),
+                },
+                status=400,
+            )
+
+        id_pasajero = data.get("id_pasajero")
         type_payment = data.get("metodo_pago")
         voucher_no = data.get("nro_comprobante")
 
@@ -1517,6 +1537,9 @@ def api_register_sale_products(request):
                 receipt=sale,
                 product=Product.objects.get(id=product["producto_id"]),
                 quantity=int(product["cantidad"]),
+            )
+            Product.objects.get(id=product["producto_id"]).update_stock(
+                int(product["cantidad"])
             )
 
         return JsonResponse(
