@@ -17,7 +17,7 @@ from django.forms import modelformset_factory
 from django.forms import inlineformset_factory
 
 # Traducciones
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 # Roles
 from django.contrib.auth.models import Group

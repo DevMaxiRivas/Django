@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Traducciones
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 # Horarios
 from django.utils import timezone
@@ -36,7 +36,6 @@ class Stops(models.Model):
             ("b", _("Bus")),
             ("t", _("Train")),
     )
-    
     
     name = models.CharField(verbose_name=_("name"), max_length=100)
     location = models.CharField(verbose_name=_("location"), max_length=255)
@@ -540,6 +539,9 @@ class JourneySchedule(models.Model):
     )
     departure_time = models.DateTimeField(verbose_name=_("departure_time"))
     arrival_time = models.DateTimeField(verbose_name=_("arrival_time"))
+    # principal_transport = models.ForeignKey(
+    #     Transport, verbose_name=_("principal_transport"), on_delete=models.CASCADE, null=True, blank=True
+    # )
 
     status = models.CharField(
         verbose_name=_("status"),

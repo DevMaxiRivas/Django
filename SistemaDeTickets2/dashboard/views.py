@@ -58,7 +58,7 @@ import mercadopago
 
 
 # Traducciones
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 # Envio de Emails
 from .sendEmails import send_pdf_via_email
