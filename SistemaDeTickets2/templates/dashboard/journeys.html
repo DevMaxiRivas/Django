@@ -2,23 +2,22 @@
 {% block title %}Home Page{% endblock %}
 {% load i18n %}
 
-{% block content %}
-{% if user.is_authenticated and user.is_staff and user.is_superuser %}
-{% include 'partials/topside_journeys.html' %}
+{% block content %}{% include 'partials/topside_journeys.html' %}
 <div class="row ">
     <div class="col-md-6 my-4">
         <div class="bg-white">
             <div class="card-body">
+                <h5 class="card-title text-center">{% translate "Boletos Vendidos por Tipo de Recorridos" %}</h5>
                 <canvas id="myChart1" width="400" height="300"></canvas>
                 <script>
                     var ctx = document.getElementById('myChart1').getContext('2d');
                     var myChart1 = new Chart(ctx, {
                         type: 'pie',
                         data: {
-                            labels: [{% for product in product %} '{{product.name}}', {% endfor %}],
+                            labels: [{% for popular_schedule in popular_schedules %} '{{popular_schedule.journey__type}}', {% endfor %}],
                     datasets: [{
-                        label: 'Number of Products',
-                        data: [{% for product in product %} {{ product.stock }}, {% endfor %}],
+                        label: 'Number of Sales',
+                        data: [{% for popular_schedule in popular_schedules %} '{{popular_schedule.ticket_count}}', {% endfor %}],
                         backgroundColor: [
                             'rgba(255, 99, 132, 1)',
                             'rgba(54, 162, 235, 1)',
@@ -55,16 +54,17 @@
     <div class="col-md-6 my-4">
         <div class="bg-white">
             <div class="card-body">
+                <h5 class="card-title text-center">{% translate "Ventas por Categoria de Asiento" %}</h5>
                 <canvas id="myChart" width="400" height="300"></canvas>
                 <script>
                     var ctx = document.getElementById('myChart').getContext('2d');
                     var myChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
-                            labels: [{% for order in order %} '{{order.name}}',{% endfor %}],
+                            labels: [{% for sale_by_seat_category in sales_by_seat_category %} '{{sale_by_seat_category.category}}',{% endfor %}],
                     datasets: [{
-                        label: 'Orders',
-                        data: [{% for order in order %} {{ order.order_quantity }}, {% endfor %}],
+                        label: '',
+                        data: [{% for sale_by_seat_category in sales_by_seat_category %} '{{sale_by_seat_category.total_sales}}', {% endfor %}],
                         backgroundColor: [
                             'rgba(255, 99, 132, 1)',
                             'rgba(54, 162, 235, 1)',
@@ -98,9 +98,37 @@
             </div>
         </div>
     </div>
+    <div class="col-md-12 my-4">
+        <div class="bg-white">
+            <div class="card-body">
+                <canvas id="bar-chart-horizontal" width="800" height="450"></canvas>
+                <script>
+                    new Chart(document.getElementById("bar-chart-horizontal"), {
+                        type: 'horizontalBar',
+                        data: {
+                            labels: [{% for revenue in revenue_by_journey_type %} '{{revenue.type}}',{% endfor %}],
+                        datasets: [
+                        {
+                            label: "{% translate 'Ingresos totales' %}",
+                            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
+                            data: [{% for revenue in revenue_by_journey_type %} '{{revenue.total_revenue}}', {% endfor %}],
+                        }
+                    ]
+                        },
+                        options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: '{% translate "Ingresos totales por tipo de recorrido"%}'
+                        }
+                    }
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+
 </div>
-{% else %}
-{% include 'dashboard/customer_index.html' %}
-{% endif%}
+
 
 {% endblock %}

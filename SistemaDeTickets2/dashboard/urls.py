@@ -185,6 +185,17 @@ urlpatterns = [
     path("customers/", views.customers, name="dashboard-customers"),
     path("employees/", views.employees, name="dashboard-employees"),
     path("admins/", views.admins, name="dashboard-admins"),
+    path("passengers/", views.passengers, name="dashboard-passengers"),
+    path(
+        "passengers/edit/<int:pk>/",
+        views.passenger_edit,
+        name="dashboard-passenger-edit",
+    ),
+    path(
+        "passengers/delete/<int:pk>/",
+        views.passenger_delete,
+        name="dashboard-passenger-delete",
+    ),
     path(
         "user_detail/detail/<int:pk>/",
         views.user_detail,

@@ -10,11 +10,16 @@ from django.utils import timezone
 from django.utils.timezone import make_aware
 
 # DataBase
-from django.db.models import Count, Sum
-from django.db.models.functions import TruncMonth
+from django.db.models import Count, Sum, Avg, F
+from django.db.models.functions import TruncMonth, ExtractYear, ExtractHour
 
 # Fechas
 from datetime import datetime
+from django.utils.timezone import now
+
+# Modelos
+from django.db.models import Avg, IntegerField, FloatField
+from django.db.models.functions import Cast
 
 def toStringDate(date, minutes):
         return (timezone.localtime(date) - timedelta(minutes=minutes)).strftime("%H:%M")
@@ -89,7 +94,12 @@ class Transport(models.Model):
         else:
             return f"Transport {self.id}"
 
-
+    # Funciones
+    # def average_occupancy_by_transport():
+    #     return Transport.objects.annotate(
+    #         avg_occupancy=Avg(Cast('seats__ticket__id', output_field=IntegerField()) / Cast('seats__count', output_field=FloatField()))
+    #     ).values('id', 'avg_occupancy')
+        
 class Train(models.Model):
     transport = models.ForeignKey(
         Transport,
@@ -196,6 +206,16 @@ class Journey(models.Model):
         return Journey.objects.values('type').annotate(
             total_passengers=Count('journeyschedule__ticket__passenger')
         )
+    
+    def revenue_by_journey_type():
+        return Journey.objects.values('type').annotate(total_revenue=Sum('journeyschedule__ticket__price'))
+    
+    def getType(type):
+        for tuple in Journey.JOURNEY_TYPE_CHOICES:
+            if type == tuple[0]:
+                return f"{tuple[1]}"
+        return type
+    
     def status_sample(self):
         if self.status:
             STATES = set(STATES1)
@@ -294,7 +314,7 @@ class Seat(models.Model):
         choices=CATEGORIES,
         blank=True,
         default="cash",
-        help_text=_("Seat Type"),
+        help_text=_("Seat Category"),
     )
 
     status = models.CharField(
@@ -333,6 +353,16 @@ class Seat(models.Model):
             if self.category == tuple[0]:
                 return f"{tuple[1]}"
         return self.category
+    
+    def getCategory2(category):
+        for tuple in Seat.CATEGORIES:
+            if category == tuple[0]:
+                return f"{tuple[1]}"
+        return category
+    
+    def sales_by_seat_category():
+        return Seat.objects.values('category').annotate(total_sales=Sum('ticket__price'))
+    
     def __str__(self):
         return f"{self.seat_number} ({self.getCategory()})"
 
@@ -544,6 +574,14 @@ class JourneySchedule(models.Model):
                 "arrival_time": timezone.localtime(schedule.arrival_time).strftime("%Y-%m-%d %H:%M"),
             })
         return list
+    
+    def top_5_popular_routes():
+        return JourneySchedule.objects.values('journey__type').annotate(ticket_count=Count('ticket')).order_by('-ticket_count')[:5]
+    
+    # def occupancy_rate_by_journey():
+    #     return JourneySchedule.objects.annotate(
+    #         occupancy_rate=Count('ticket') / Cast(F('journey__stages__transport__seats__count'), output_field=FloatField())
+    #     ).values('journey__type', 'occupancy_rate')
 
 class Passenger(models.Model):
     name = models.CharField(verbose_name=_("name"), max_length=100)
@@ -558,8 +596,8 @@ class Passenger(models.Model):
     # Telefono (Emergencia)
     # Fecha de Nacimiento
     GENDER = (
-        ("m", "Male"),
-        ("w", "Female"),
+        ("m", _("Male")),
+        ("w", _("Female")),
     )
 
     gender = models.CharField(
@@ -593,6 +631,24 @@ class Passenger(models.Model):
 
     def __str__(self):
         return self.name
+    
+    # Funciones
+    def passengers_by_gender():
+        return Passenger.objects.values('gender').annotate(count=Count('id'))
+    
+    def passengers_by_origin_country():
+        return Passenger.objects.values('origin_country').annotate(count=Count('id'))
+    
+    def passenger_age_distribution():
+        return Passenger.objects.annotate(
+            age=ExtractYear(now()) - ExtractYear('date_of_birth')
+        ).values('age').annotate(count=Count('id'))
+        
+    def getGender(type):
+        for tuple in Passenger.GENDER:
+            if type == tuple[0]:
+                return f"{tuple[1]}"
+        return type
 
 class Payments(models.Model):
     voucher_no = models.CharField(verbose_name=_("voucher_no"), max_length=255, blank=True, null=True)
@@ -616,12 +672,23 @@ class Payments(models.Model):
     )
 
     created_at = models.DateTimeField(verbose_name=_("created_at"), auto_now_add=True)
+    
+    # Funciones
+    
+    def sales_by_payment_type():
+        return Payments.objects.values('type').annotate(count=Count('id'), total=Sum('ticketsales__price'))
 
     def getType(self):
         for tuple in self.TYPES:
             if self.type == tuple[0]:
                 return f"{tuple[1]}"
         return self.type
+    
+    def renameType(type):
+        for tuple in Payments.TYPES:
+            if type == tuple[0]:
+                return f"{tuple[1]}"
+        return type
 
     def __str__(self):
         if self.voucher_no and self.type:
@@ -677,11 +744,23 @@ class TicketSales(models.Model):
         return f"Sale on {timezone.localtime(self.purchase_date).strftime("%Y-%m-%d %H:%M")}"
         
     
+    # Funciones
     def ventas_por_año():
         hace_un_año = timezone.now() - timedelta(days=365)
         ventas = TicketSales.objects.filter(purchase_date__gte=hace_un_año)
         ventas_por_mes = ventas.annotate(mes=TruncMonth('purchase_date')).values('mes').annotate(cantidad=Count('id')).order_by('mes')
         return ventas_por_mes
+    
+    def sales_by_hour():
+        return TicketSales.objects.annotate(hour=ExtractHour('purchase_date')).values('hour').annotate(total_sales=Count('id'))
+    
+    def average_revenue_per_sale():
+        return TicketSales.objects.aggregate(avg_revenue=Avg('price'))
+    
+    def year_over_year_sales():
+        return TicketSales.objects.annotate(
+            year=ExtractYear('purchase_date')
+        ).values('year').annotate(total_sales=Sum('price')).order_by('year')
 
     class Meta:
         ordering = ["user"]
@@ -706,9 +785,6 @@ class Ticket(models.Model):
     price = models.DecimalField(
         verbose_name=_("price"), max_digits=10, decimal_places=2, default=0
     )
-
-    def __str__(self):
-        return f"Ticket for {self.passenger.name} purchased by {self.user.username}"
     
     # Funciones
     def revenue_by_seat_category():
@@ -726,7 +802,7 @@ class Ticket(models.Model):
             "EstacionLlegada": "San Antonio de los Cobres",
             "HorarioLlegada": toStringDate(self.schedule.arrival_time, 0),
             "IdAsiento": str(self.seat.seat_number),
-            "CategoriaAsiento": str(self.seat.category),
+            "CategoriaAsiento": str(self.seat.getCategory()),
             "HorarioEspera": toStringDate(self.schedule.departure_time, 40),
             "HorarioSalida": toStringDate(self.schedule.departure_time, 0),
             "EnlaceWeb": f"{url_website}ticket-data/{self.id}",
@@ -767,7 +843,7 @@ class Ticket(models.Model):
         return None
 
     def __str__(self):
-        return f"Ticket for {self.passenger.name}"
+        return f"Ticket for {self.passenger.name} - schedule {self.schedule.journey.type}"
 
     class Meta:
         verbose_name = _("Ticket")
@@ -897,7 +973,14 @@ class DetailFoodOrder(models.Model):
         ordering = ["receipt"]
         verbose_name = _("Detail Food Order")
         verbose_name_plural = _("Detail Food Orders")
-
+        
+    # Funciones
+    def monthly_food_sales():
+        return DetailFoodOrder.objects.annotate(month=TruncMonth('receipt__purchase_date')).values('month').annotate(total_sales=Sum('unit_price'))
+    
+    def sales_by_meal_category():
+        return DetailFoodOrder.objects.values('meal__category__name').annotate(total_sales=Sum('unit_price'))
+    
 
 class DetailsProductOrder(models.Model):
     receipt = models.ForeignKey(
@@ -925,6 +1008,8 @@ class DetailsProductOrder(models.Model):
     def revenue_per_product():
         return DetailsProductOrder.objects.values('product__name').annotate(total_ingresos=Sum('unit_price * quantity')).order_by('-total_ingresos')
 
+    def top_selling_products():
+        return DetailsProductOrder.objects.values('product__name').annotate(total_sold=Sum('quantity')).order_by('-total_sold')[:10]
 
     def delete(self, *args, **kwargs):
         # Cambiar el campo status del asiento asociado a 'h' antes de eliminar el ticket

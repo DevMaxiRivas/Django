@@ -2,9 +2,7 @@
 {% block title %}Home Page{% endblock %}
 {% load i18n %}
 
-{% block content %}
-{% if user.is_authenticated and user.is_staff and user.is_superuser %}
-{% include 'partials/topside_transports.html' %}
+{% block content %}{% include 'partials/topside_transports.html' %}
 <div class="row ">
     <div class="col-md-6 my-4">
         <div class="bg-white">
@@ -99,8 +97,6 @@
         </div>
     </div>
 </div>
-{% else %}
-{% include 'dashboard/customer_index.html' %}
-{% endif%}
+
 
 {% endblock %}

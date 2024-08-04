@@ -68,6 +68,23 @@ import json
 
 # Fechas
 from datetime import datetime
+from django.db.models.functions import TruncMonth, ExtractMonth
+
+# Meses
+MONTHS = [
+    ("January"),
+    ("February"),
+    ("March"),
+    ("April"),
+    ("May"),
+    ("June"),
+    ("July"),
+    ("August"),
+    ("September"),
+    ("October"),
+    ("November"),
+    ("December"),
+]
 
 
 # Control de Acceso
@@ -153,45 +170,14 @@ def index(request):
 @login_required(login_url="user-login")
 @user_passes_test(is_employee)
 def index_employee(request):
-    order = Order.objects.all()
-    product = Product.objects.all()
-    months = [
-        ("January"),
-        ("February"),
-        ("March"),
-        ("April"),
-        ("May"),
-        ("June"),
-        ("July"),
-        ("August"),
-        ("September"),
-        ("October"),
-        ("November"),
-        ("December"),
-    ]
+    hours = []
+    for i in range(24):
+        hours.append({"hour": i + 1, "total_sales": 0})
 
-    # query = Ticket.revenue_by_journey_price()
+    for sale in TicketSales.sales_by_hour():
+        hours[sale["hour"] + 1]["total_sales"] = sale["total_sales"]
 
-    # revenue_by_journey_price = []
-
-    # for rev in query:
-    #     revenue_by_journey_price.append(
-    #         [str(rev["seat__category__type"]), float(rev["total_ingresos"])]
-    #     )
-
-    query2 = Journey.passengers_for_journey()
-    passengers_for_journey = []
-
-    for rev in query2:
-        passengers_for_journey.append([str(rev["type"]), int(rev["total_passengers"])])
-
-    context = {
-        "order": order,
-        "product": product,
-        "months": months[: datetime.now().month],
-        # "revenue_by_journey_price": revenue_by_journey_price,
-        "passengers_for_journey": passengers_for_journey,
-    }
+    context = {"hours": hours}
     return render(request, "dashboard/index.html", context)
 
 
@@ -396,6 +382,7 @@ def customers(request):
 
     users = User.objects.filter(groups=Group.objects.get(name="Customers"))
     context = {
+        "title": _("Customers"),
         "users": users,
     }
 
@@ -408,6 +395,7 @@ def employees(request):
 
     users = User.objects.filter(groups=Group.objects.get(name="Employees"))
     context = {
+        "title": _("Employees"),
         "users": users,
     }
 
@@ -420,10 +408,77 @@ def admins(request):
 
     users = User.objects.filter(groups=Group.objects.get(name="Admin"))
     context = {
+        "title": _("Administrators"),
         "users": users,
     }
 
     return render(request, "dashboard/employees.html", context)
+
+
+@login_required
+@user_passes_test(is_employee)
+def passengers(request):
+    passengers = Passenger.objects.all()
+
+    if request.method == "POST":
+        form = PassengerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            passengers = form.cleaned_data.get("name")
+            messages.success(request, f"{passengers} has been added")
+            return redirect("dashboard-passengers")
+    else:
+        form = PassengerForm()
+    context = {
+        "blocktitle": _("Passengers"),
+        "topside": "partials/topside_users.html",
+        "title_form": _("Add New Passenger"),
+        "columns": [
+            _("DNI/Passaport"),
+            _("Name"),
+            _("Emergency Phone"),
+            _("Gender"),
+            _("Origin Country"),
+        ],
+        "atributes": [
+            "dni_or_passport",
+            "name",
+            "emergency_telephone",
+            "gender",
+            "origin_country",
+        ],
+        "url_edit": "dashboard-passenger-edit",
+        "url_delete": "dashboard-passenger-delete",
+        "items": passengers,
+        "form": form,
+    }
+    return render(request, "dashboard/base_table.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def passenger_edit(request, pk):
+    item = Passenger.objects.get(id=pk)
+    if request.method == "POST":
+        form = PassengerForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard-passengers")
+    else:
+        form = PassengerForm(instance=item)
+    context = {
+        "form": form,
+    }
+    return render(request, "dashboard/item_edit.html", context)
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_employee)
+def passenger_delete(request, pk):
+    passenger = get_object_or_404(Passenger, pk=pk)
+    passenger.delete()
+
+    return redirect("dashboard-passengers")
 
 
 @login_required(login_url="user-login")
@@ -511,9 +566,7 @@ def purchase_tickets(request):
         if sales_form.is_valid() and formset.is_valid():
             all_passengers_exist = True
             all_passengers_no_deleted = False
-            # print(formset)
             for form in formset:
-                # print(type(form))
                 if form.cleaned_data and not form.cleaned_data.get("DELETE"):
                     # print(form.cleaned_data)
                     all_passengers_no_deleted = True
@@ -812,7 +865,33 @@ def create_passenger(request):
 @login_required
 @user_passes_test(is_employee)
 def finances(request):
+
+    # print(Payments.sales_by_payment_type())  # Finances
+    # print(TicketSales.average_revenue_per_sale())  # Finances
+
+    # print(DetailFoodOrder.monthly_food_sales())  # Supplies
+    # print(DetailFoodOrder.sales_by_meal_category())  # Supplies
+
+    sales_by_payment_type = Payments.sales_by_payment_type()
+    for payment in sales_by_payment_type:
+        payment["type"] = Payments.renameType(payment["type"])
+        if not payment["total"]:
+            payment["total"] = 0
+
+    monthly_food_sales = []
+    for month in MONTHS:
+        monthly_food_sales.append({"month": month, "total": 0})
+
+    for food in DetailFoodOrder.monthly_food_sales():
+        month = int(food["month"].strftime("%m")) - 1
+        monthly_food_sales[month]["total"] = food["total_sales"]
+
+    sales_by_meal_category = DetailFoodOrder.sales_by_meal_category()
+
     context = {
+        "monthly_food_sales": monthly_food_sales,
+        "sales_by_meal_category": sales_by_meal_category,
+        "sales_by_payment_type": sales_by_payment_type,
         "product": Product.objects.all(),
         "order": Order.objects.all(),
     }
@@ -822,9 +901,11 @@ def finances(request):
 @login_required
 @user_passes_test(is_employee)
 def supplies(request):
+    top_selling_products = DetailsProductOrder.top_selling_products()
+
     context = {
+        "top_selling_products": top_selling_products,
         "product": Product.objects.all(),
-        "order": Order.objects.all(),
     }
     return render(request, "dashboard/supplies.html", context)
 
@@ -832,9 +913,25 @@ def supplies(request):
 @login_required
 @user_passes_test(is_employee)
 def journeys(request):
+    popular_schedules = list(JourneySchedule.top_5_popular_routes())
+    for schedule in popular_schedules:
+        schedule["journey__type"] = Journey.getType(schedule["journey__type"])
+
+    sales_by_seat_category = list(Seat.sales_by_seat_category())
+
+    for seat in sales_by_seat_category:
+        seat["category"] = Seat.getCategory2(seat["category"])
+
+    revenue_by_journey_type = list(Journey.revenue_by_journey_type())
+    for revenue in revenue_by_journey_type:
+        revenue["type"] = Journey.getType(revenue["type"])
+        if not revenue["total_revenue"]:
+            revenue["total_revenue"] = 0
+
     context = {
-        "product": Product.objects.all(),
-        "order": Order.objects.all(),
+        "revenue_by_journey_type": revenue_by_journey_type,
+        "sales_by_seat_category": sales_by_seat_category,
+        "popular_schedules": popular_schedules,
     }
     return render(request, "dashboard/journeys.html", context)
 
@@ -862,7 +959,18 @@ def planning(request):
 @login_required
 @user_passes_test(is_employee)
 def users(request):
+    passengers_by_gender = list(Passenger.passengers_by_gender())
+    for passenger in passengers_by_gender:
+        passenger["gender"] = Passenger.getGender(passenger["gender"])
+
+    passengers_by_origin_country = list(Passenger.passengers_by_origin_country())
+
+    passengers_by_age = list(Passenger.passenger_age_distribution())
+
     context = {
+        "passengers_by_age": passengers_by_age,
+        "passengers_by_origin_country": passengers_by_origin_country,
+        "passengers_by_gender": passengers_by_gender,
         "product": Product.objects.all(),
         "order": Order.objects.all(),
     }
@@ -1545,7 +1653,6 @@ def api_available_seats_per_schedule(request):
     category = JourneyPrices.objects.get(id=categoria).category
     seatsfilter = []
     response = []
-    print(list(seats))
     if list(seats) != []:
         for seat in seats:
             if seat.seat.category == category:
@@ -1570,7 +1677,6 @@ def api_available_seats_per_schedule(request):
 
 def api_price_journey(request):
     type = request.GET.get("tipo_recorrido")
-    print(type)
     journey = Journey.objects.get(type=type)
     prices = JourneyPrices.objects.filter(journey=journey)
     response = []

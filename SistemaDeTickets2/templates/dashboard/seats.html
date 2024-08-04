@@ -26,35 +26,37 @@
     </div>
     <div class="col-md-8">
         {% if seats %}
-        <table class="table bg-white text-center">
-            <thead class="bg-primary text-white">
-                <tr>
-                    <th scope="col">{% translate "Transporte" %}</th>
-                    <th scope="col">{% translate "Identificador de Asiento" %}</th>
-                    <th scope="col">{% translate "Categoria" %}</th>
-                    <th scope="col">{% translate "Acción" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for seat in seats %}
-                <tr>
-                    <td>{{ seat.transport }}</td>
-                    <td>{{ seat.seat_number }}</td>
-                    <td>{{ seat.category }}</td>
-                    <td>
-                        <a class="btn btn-primary btn-sm mr-2 mb-1" href="{% url 'dashboard-seat-edit' seat.id %}">
-                            {% translate "Editar" %}
-                        </a>
-                        <a class="btn btn-danger btn-sm mr-2 b mb-1" href="" data-toggle="modal"
-                            data-target="#exampleModal{{seat.id}}">
-                            {% translate "Eliminar" %}
-                        </a>
-                    </td>
-                    {% include "dashboard/seat_delete_modal.html" %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table bg-white text-center">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th scope="col">{% translate "Transporte" %}</th>
+                        <th scope="col">{% translate "Identificador de Asiento" %}</th>
+                        <th scope="col">{% translate "Categoria" %}</th>
+                        <th scope="col">{% translate "Acción" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for seat in seats %}
+                    <tr>
+                        <td>{{ seat.transport }}</td>
+                        <td>{{ seat.seat_number }}</td>
+                        <td>{{ seat.getCategory }}</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm mr-2 mb-1" href="{% url 'dashboard-seat-edit' seat.id %}">
+                                {% translate "Editar" %}
+                            </a>
+                            <a class="btn btn-danger btn-sm mr-2 b mb-1" href="" data-toggle="modal"
+                                data-target="#exampleModal{{seat.id}}">
+                                {% translate "Eliminar" %}
+                            </a>
+                        </td>
+                        {% include "dashboard/seat_delete_modal.html" %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
         <div class="card shadow p-3 mb-5 bg-white rounded text-center">
             <p>{% translate "No se registraron asientos" %}.</p>

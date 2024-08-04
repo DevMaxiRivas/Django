@@ -7,7 +7,16 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <a class="text-decoration-none text-dark" href="{% url 'dashboard-passengers' %}">
+                            <div class="card my-card shadow">
+                                <div class="card-body text-center">
+                                    <h4>{% translate "Pasajeros" %} <i class="ri-id-card-line"></i></h4>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
                         <a class="text-decoration-none text-dark" href="{% url 'dashboard-customers' %}">
                             <div class="card my-card shadow">
                                 <div class="card-body text-center">
@@ -16,7 +25,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <a class="text-decoration-none text-dark" href="{% url 'dashboard-employees' %}">
                             <div class="card my-card shadow">
                                 <div class="card-body text-center">
@@ -25,7 +34,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <a class="text-decoration-none text-dark" href="{% url 'dashboard-admins' %}">
                             <div class="card my-card shadow">
                                 <div class="card-body text-center">
