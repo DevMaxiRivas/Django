@@ -14,7 +14,7 @@
                         data: {
                             labels: [{% for gender in passengers_by_gender %} '{{gender.gender}}', {% endfor %}],
                         datasets: [{
-                            label: "Population (millions)",
+                            label: "{% translate 'Pasajeros Registrados' %}",
                             backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
                             data: [{% for gender in passengers_by_gender %} '{{gender.count}}', {% endfor %}]
                                 }]
@@ -69,7 +69,7 @@
                             labels: [{% for age in passengers_by_age %} '{{age.age}}', {% endfor %}],
                         datasets: [
                         {
-                            label: "Population (millions)",
+                            label: "{% translate 'Pasajeros' %}",
                             backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
                             data: [{% for age in passengers_by_age %} '{{age.count}}', {% endfor %}], 
                                     }

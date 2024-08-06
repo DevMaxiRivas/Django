@@ -265,3 +265,25 @@ def send_pdf_via_email(tickets, email_):
         email.attach(filename, pdf_buffer.getvalue(), "application/pdf")
 
     email.send()
+
+
+def send_pdf_via_email_change_passenger(ticket, email_):
+    subject = _("Notification of Passenger Change")
+    message = _(
+        "There has been a change of passenger on a ticket you have purchased. The ticket is attached below."
+    )
+    email_from = settings.DEFAULT_FROM_EMAIL
+    email = EmailMessage(
+        subject,
+        message,
+        email_from,
+        [email_],
+    )
+    language = "en" if subject == "Notification of Passenger Change" else "es"
+    replacements = ticket.getDataPublic()
+    pdf_buffer = generate_pdf(replacements, language)
+
+    filename = ticket.passenger.dni_or_passport + "_" + str(ticket.schedule) + ".pdf"
+    email.attach(filename, pdf_buffer.getvalue(), "application/pdf")
+
+    email.send()

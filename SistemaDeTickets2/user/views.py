@@ -60,7 +60,7 @@ def profile_customer_update(request):
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            return redirect("user-profile")
+            return redirect("profile_customer")
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)

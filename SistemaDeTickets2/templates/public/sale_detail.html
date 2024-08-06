@@ -35,11 +35,15 @@
                             {% translate "Cambiar de Pasajero" %}
                         </a>
                     </td>
-                    {% include "public/change_passenger_modal.html" %}
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        {% for ticket in tickets %}
+        {% include 'public/change_passenger_modal.html' %}
+        {% endfor %}
+
         {% else %}
         <p>{% translate "No hay boletos asociados a esta venta" %}.</p>
         {% endif %}
@@ -82,5 +86,38 @@
             openCreatePassengerModal(dni_or_passport);
         }
     });
+
+    // Cambiar de pasajero
+    $(document).ready(function () {
+        $('.change_passenger_form').on('submit', function (e) {
+            e.preventDefault(); // Evita el envío tradicional del formulario
+            let id_ticket = $(this).find('.ticket_id').val();
+            let dni_o_pasaporte = $(this).find('.dni_o_pasaporte').val();
+            const data = {
+                'id_ticket': id_ticket,
+                'dni_or_passport': dni_o_pasaporte
+            }
+
+            $.ajax({
+                url: '{% url "change_passenger_ticket" %}',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('{% translate "Error en la petición:" %}', error);
+                    alert('{% translate "Hubo un error al procesar su solicitud" %}');
+                }
+            });
+        });
+    });
+
 </script>
 {% endblock %}

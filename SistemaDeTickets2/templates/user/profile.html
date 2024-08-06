@@ -1,6 +1,6 @@
 {% extends 'partials/base.html' %}
-{% block title %}Customer Page{% endblock %}
 {% load i18n %}
+{% block title %}{% translate "Perfil de Usuario" %}{% endblock %}
 
 {% block content %}
 <div class="row my-4">
@@ -14,7 +14,7 @@
                 <div class="col-md-8">
                     <table class="table table-borderless">
                         <thead>
-                            <span class="h4">{% translate "Información de Peril" %}</span class="h4">
+                            <span class="h4">{% translate "Información de Perfil" %}</span class="h4">
                             <a class="btn btn-primary btn-sm float-right" href="{% url 'user-profile-update' %}">
                                 {%translate "Editar" %}
                             </a>

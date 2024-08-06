@@ -13,6 +13,11 @@ urlpatterns = [
         name="customer_sale_detail",
     ),
     path(
+        "change_passenger_ticket/",
+        change_passenger_ticket,
+        name="change_passenger_ticket",
+    ),
+    path(
         "ticket-data/<int:pk>/",
         views.ticket_data,
         name="ticket_data",

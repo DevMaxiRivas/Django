@@ -4,19 +4,19 @@
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{% translate "Atención" %}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            {% translate "Desea cambiar pasajero" %} {{ticket.passenger}} ?
-            <form id="change_passenger_form">
+            <form class="change_passenger_form">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{% translate "Atención" %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <div class="mb-3">
+                        <h5>{% translate "Desea cambiar pasajero" %} {{ticket.passenger}} ?</h5>
                         <label class="form-label">{% translate "DNI o Pasaporte del Nuevo Pasajero" %}</label>
                         <input type="text" class="form-control dni_o_pasaporte" required>
-                        <input type="hidden" id="ticket_id" value="{{ticket.id}}">
+                        <input type="hidden" class="ticket_id" value="{{ticket.id}}">
                     </div>
                 </div>
                 <div class="modal-footer">

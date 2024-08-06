@@ -20,7 +20,7 @@
                     {% for item in sales_with_urls %}
                     <tr>
                         <td>{{ item.sale.id }}</td>
-                        <td>{{ item.sale.price }}</td>
+                        <td>${{ item.sale.price }}</td>
                         <td>{{ item.sale.purchase_date }}</td>
                         <td>
                             <a href="{{ item.detail_url }}" class="btn btn-primary">{% translate "Ver Tickets" %}</a>

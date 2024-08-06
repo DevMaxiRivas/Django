@@ -61,7 +61,7 @@ import mercadopago
 from django.utils.translation import gettext_lazy as _
 
 # Envio de Emails
-from .sendEmails import send_pdf_via_email
+from .sendEmails import send_pdf_via_email, send_pdf_via_email_change_passenger
 
 # Archivos JSON
 import json
@@ -165,6 +165,34 @@ def customer_sale_detail(request, sale_id):
     )
 
 
+def change_passenger_ticket(request):
+    data = json.loads(request.body)
+    ticket_id = data.get("id_ticket")
+    passenger = data.get("dni_or_passport")
+
+    try:
+        if Ticket.objects.filter(id=ticket_id).exists():
+            ticket = Ticket.objects.get(id=ticket_id)
+            ticket.passenger = Passenger.objects.filter(
+                dni_or_passport=passenger
+            ).first()
+            ticket.save()
+
+            email = ticket.sale.email
+            send_pdf_via_email_change_passenger(ticket, email)
+
+            return JsonResponse({"success": True})
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        msg = _("Something went wrong")
+        return JsonResponse(
+            {
+                "error": msg,
+            },
+            status=400,
+        )
+
+
 def index(request):
     if not request.user.is_authenticated or is_client(request.user):
         return render(
@@ -189,7 +217,7 @@ def index_employee(request):
     for sale in TicketSales.sales_by_hour():
         hours[sale["hour"] + 1]["total_sales"] = sale["total_sales"]
 
-    print(Journey.objects.get(type="BUS_AND_TRAIN").get_start_and_end_stop())
+    # print(Journey.objects.get(type="BUS_AND_TRAIN").get_start_and_end_stop())
     context = {"hours": hours}
     return render(request, "dashboard/index.html", context)
 
