@@ -14,6 +14,7 @@
                             shadow p-3 mb-5 bg-white rounded
                             ">
             <div class="card-body">
+                {% if data %}
                 <div>
                     <h6 class="display-5">{% translate "N° de Boleto" %} {{ data.IdTicket }}</h6>
                 </div>
@@ -218,6 +219,9 @@
                         </div>
                     </div>
                 </section>
+                {% else %}
+                <h1>{% translate "No se encontró información del boleto" %}</h1>
+                {% endif %}
             </div>
         </div>
     </div>

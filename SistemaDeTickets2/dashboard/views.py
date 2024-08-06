@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group
 from django.views.generic import TemplateView
 
 # Response
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 
 # # Formularios
 from .forms import *
@@ -136,7 +136,7 @@ def customer_tickets(request):
     sales = TicketSales.objects.filter(user=request.user)
     sales_with_urls = []
     for sale in sales:
-        sale_detail_url = reverse("sale_detail", args=[sale.id])
+        sale_detail_url = reverse("customer_sale_detail", args=[sale.id])
         sales_with_urls.append(
             {
                 "sale": sale,
@@ -150,6 +150,18 @@ def customer_tickets(request):
             "user_group": get_user_group(request.user),
             "sales_with_urls": sales_with_urls,
         },
+    )
+
+
+@login_required(login_url="user-login")
+@user_passes_test(is_client)
+def customer_sale_detail(request, sale_id):
+    sale = TicketSales.objects.get(id=sale_id)
+    tickets = (
+        sale.tickets.all()
+    )  # Utiliza el related_name 'tickets' para obtener todos los tickets asociados a esa venta
+    return render(
+        request, "public/sale_detail.html", {"sale": sale, "tickets": tickets}
     )
 
 
@@ -177,6 +189,7 @@ def index_employee(request):
     for sale in TicketSales.sales_by_hour():
         hours[sale["hour"] + 1]["total_sales"] = sale["total_sales"]
 
+    print(Journey.objects.get(type="BUS_AND_TRAIN").get_start_and_end_stop())
     context = {"hours": hours}
     return render(request, "dashboard/index.html", context)
 
@@ -978,8 +991,34 @@ def ticket_data(request, pk):
     if Ticket.objects.filter(id=pk).exists():
         ticket = Ticket.objects.get(id=pk)
         data = ticket.getDataPublic()
+        if request.user.is_authenticated and is_employee(request.user):
+            data["assistance"] = ticket.assistance
+            return render(request, "dashboard/checkin.html", {"data": data})
         return render(request, "public/ticket_data.html", {"data": data})
     return render(request, "public/ticket_data.html")
+
+
+def checkin_ticket(request):
+    data = json.loads(request.body)
+    ticket_id = data.get("ticket_id")
+    print(ticket_id)
+
+    try:
+        if Ticket.objects.filter(id=ticket_id).exists():
+            ticket = Ticket.objects.get(id=ticket_id)
+            ticket.assistance = True
+            ticket.save()
+
+            return JsonResponse({"success": True})
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        msg = _("Something went wrong")
+        return JsonResponse(
+            {
+                "error": msg,
+            },
+            status=400,
+        )
 
 
 def prueba(request):
@@ -1672,27 +1711,28 @@ def api_available_seats_per_schedule(request):
     horario = request.GET.get("horario")
 
     schedule = JourneySchedule.objects.get(id=horario)
-    seats = Ticket.objects.filter(schedule=schedule)
+    tickets = Ticket.objects.filter(schedule=schedule)
     category = JourneyPrices.objects.get(id=categoria).category
+    transport = schedule.principal_transport
+
     seatsfilter = []
     response = []
-    if list(seats) != []:
-        for seat in seats:
-            if seat.seat.category == category:
-                seatsfilter.append(seat.seat)
+
+    if list(tickets) != []:
+        for ticket in tickets:
+            if ticket.seat.category == category:
+                seatsfilter.append(ticket.seat)
 
         if seatsfilter != []:
-            tranport = seatsfilter[0].transport
-
             seats_transport_category = Seat.objects.filter(
-                transport=tranport, category=category
+                transport=transport, category=category
             )
 
             for seat in seats_transport_category:
                 if seat not in seatsfilter:
                     response.append({"id": seat.id, "numero": seat.seat_number})
     else:
-        seats = Seat.objects.filter(category=category)
+        seats = Seat.objects.filter(category=category, transport=transport)
         for seat in seats:
             response.append({"id": seat.id, "numero": seat.seat_number})
     return JsonResponse(response, safe=False)

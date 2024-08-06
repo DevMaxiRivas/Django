@@ -17,6 +17,7 @@
                         <th>{% translate "Asiento" %}</th>
                         <th>{% translate "Clase" %}</th>
                         <th>{% translate "Recorrido" %}</th>
+                        <th>{% translate "Asistencia" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,8 +26,15 @@
                         <td>{{ ticket.id }}</td>
                         <td>{{ ticket.passenger.dni_or_passport }}</td>
                         <td>{{ ticket.seat.seat_number }}</td>
-                        <td>{{ ticket.seat.category }}</td>
+                        <td>{{ ticket.getCategorySeat }}</td>
                         <td>{{ ticket.schedule }}</td>
+                        <td>
+                            {% if ticket.assistance %}
+                            {% translate "Si" %}
+                            {% else %}
+                            {% translate "No" %}
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -194,7 +194,7 @@ def generate_pdf(replacements, language):
     writer = PdfWriter()
 
     # Generar el código QR en memoria
-    qr_buffer = generate_qr_code(qr_data["url"])
+    qr_buffer = generate_qr_code(replacements["EnlaceWeb"])
     qr_image = ImageReader(qr_buffer)
 
     for page_number, page in enumerate(reader.pages, start=1):

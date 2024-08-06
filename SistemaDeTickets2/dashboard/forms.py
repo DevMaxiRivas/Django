@@ -213,15 +213,17 @@ class JourneyScheduleForm(forms.ModelForm):
             "journey",
             "departure_time",
             "arrival_time",
+            "principal_transport",
         ]
         labels = {
             "journey": _("Journey"),
             "departure_time": _("Departure Time"),
             "arrival_time": _("Arrival Time"),
+            "principal_transport": _("Principal Transport"),
         }
         widgets = {
-            "departure_time": NumberInput(attrs={"type": "datetime"}),
-            "arrival_time": NumberInput(attrs={"type": "datetime"}),
+            "departure_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "arrival_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
 
 

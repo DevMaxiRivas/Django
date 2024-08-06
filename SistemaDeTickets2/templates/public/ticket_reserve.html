@@ -76,7 +76,6 @@
             $.get('{% url "api_price_journey" %}', {
                 tipo_recorrido: tipoRecorrido
             }, function (data) {
-                console.log(data);
                 select.empty();
                 if (data.length > 0) {
                     select.append($('<option></option>').val("").text("{% translate 'Seleccione una Categoria' %}"));
@@ -170,7 +169,6 @@
             let horario = $(this).val();
             let categoriaSelect = pasajeroForm.find('.categoria');
             let asientoSelect = pasajeroForm.find('.asiento');
-            console.log(fecha);
             if (fecha && horario) {
                 cargarCategorias(tipoRecorrido, categoriaSelect);
                 // cargarAsientos(fecha, horario, asientoSelect);
@@ -187,7 +185,6 @@
             let categoria = $(this).val();
             let horario = pasajeroForm.find('.horario').val();
             let asientoSelect = pasajeroForm.find('.asiento');
-            console.log(horario);
             if (categoria && horario) {
                 cargarAsientos(categoria, horario, asientoSelect);
             } else {
@@ -239,7 +236,6 @@
                     pasajeros: []
                 };
             }
-            console.log(reserva)
             $('.pasajero-form').each(function () {
                 let pasajero = {
                     tipoRecorrido: $(this).find('.tipo-recorrido').val(),
@@ -251,7 +247,6 @@
                 reserva.pasajeros.push(pasajero);
             });
 
-            console.log(JSON.stringify(reserva))
             if (reserva.pasajeros.length == 0) {
                 alert('{% translate "Por favor, agrega al menos un pasajero" %}');
                 return;

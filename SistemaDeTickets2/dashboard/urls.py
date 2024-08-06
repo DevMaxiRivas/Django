@@ -8,9 +8,19 @@ urlpatterns = [
     path("customers_index/", views.index_customer, name="dashboard-customers-index"),
     path("customer_tickets/", views.customer_tickets, name="customer_tickets"),
     path(
+        "customer_sale_detail/<int:sale_id>/",
+        customer_sale_detail,
+        name="customer_sale_detail",
+    ),
+    path(
         "ticket-data/<int:pk>/",
         views.ticket_data,
         name="ticket_data",
+    ),
+    path(
+        "checkin-ticket/",
+        views.checkin_ticket,
+        name="checkin_ticket",
     ),
     # EMPLOYEES
     path("employee_index/", views.index_employee, name="dashboard-employee-index"),

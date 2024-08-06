@@ -28,7 +28,7 @@
                         {% else %}
                         <td>{% translate "Usuario no registrado" %}</td>
                         {% endif %}
-                        <td>{{ sale.price }}</td>
+                        <td>${{ sale.price }}</td>
                         <td>{{ sale.purchase_date }}</td>
                         <td>
                             <a href="{% url 'dashboard-sale_detail' sale.id %}" class="btn btn-primary mb-2">

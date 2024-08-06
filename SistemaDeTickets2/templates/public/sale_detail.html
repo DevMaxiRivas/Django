@@ -6,7 +6,7 @@
     <div class="card container mt-5 center-text">
         <h1 class="mb-3 mt-3">{% translate "Detalles de Venta" %}</h1>
         <h4>{% translate "Venta" %} ID: {{ sale.id }}</h4>
-        <p>Total: {{ sale.price }}</p>
+        <p>Total: ${{ sale.price }}</p>
         <p>{% translate "Fecha" %}: {{ sale.purchase_date }}</p>
 
         {% if tickets %}
@@ -18,6 +18,7 @@
                     <th>{% translate "Asiento" %}</th>
                     <th>{% translate "Clase" %}</th>
                     <th>{% translate "Recorrido" %}</th>
+                    <th>{% translate "Acción" %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,8 +27,15 @@
                     <td>{{ ticket.id }}</td>
                     <td>{{ ticket.passenger.dni_or_passport }}</td>
                     <td>{{ ticket.seat.seat_number }}</td>
-                    <td>{{ ticket.seat.category }}</td>
+                    <td>{{ ticket.getCategorySeat }}</td>
                     <td>{{ ticket.schedule }}</td>
+                    <td>
+                        <a class="btn btn-danger btn-sm mr-2 b mb-1" href="" data-toggle="modal"
+                            data-target="#exampleModal{{ticket.id}}">
+                            {% translate "Cambiar de Pasajero" %}
+                        </a>
+                    </td>
+                    {% include "public/change_passenger_modal.html" %}
                 </tr>
                 {% endfor %}
             </tbody>
@@ -37,5 +45,42 @@
         {% endif %}
     </div>
 </section>
+<!-- Modal para crear un nuevo pasajero -->
+<div id="passenger-modal" class="modal fade font-black" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% translate "Información del Pasajero" %}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="new-passenger-form-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
 {% include 'public/footer.html' %}
+
+<script>
+    function openCreatePassengerModal(dni_or_passport) {
+        $.get('{% url "create_passenger" %}', {
+            dni_or_passport: dni_or_passport
+        }, function (data) {
+            $('#new-passenger-form-container').html(data);
+            $('#passenger-modal').modal('show');
+        }).fail(function () {
+            alert('{% translate "Fallo al cargar el modal. Por favor, intenta de nuevo" %}.');
+        });
+    }
+
+    $(document).on('blur', '.dni_o_pasaporte', function () {
+        var dni_or_passport = $(this).val();
+        var inputField = $(this); // Referencia al campo de entrada
+        if (dni_or_passport) {
+            openCreatePassengerModal(dni_or_passport);
+        }
+    });
+</script>
 {% endblock %}

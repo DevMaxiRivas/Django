@@ -209,6 +209,18 @@ class Journey(models.Model):
     def revenue_by_journey_type():
         return Journey.objects.values('type').annotate(total_revenue=Sum('journeyschedule__ticket__price'))
     
+    def get_start_and_end_stop(self):
+        
+        stop_departure, stop_arrival = (
+            JourneyStage.objects.filter(journey=self).values('departure_stop').order_by("order").first(),
+            JourneyStage.objects.filter(journey=self).values('arrival_stop').order_by("-order").first()
+        )
+        
+        return (
+            Stops.objects.get(id=stop_departure["departure_stop"]).name,
+            Stops.objects.get(id=stop_arrival["arrival_stop"]).name,
+        )
+    
     def getType(type):
         for tuple in Journey.JOURNEY_TYPE_CHOICES:
             if type == tuple[0]:
@@ -539,9 +551,9 @@ class JourneySchedule(models.Model):
     )
     departure_time = models.DateTimeField(verbose_name=_("departure_time"))
     arrival_time = models.DateTimeField(verbose_name=_("arrival_time"))
-    # principal_transport = models.ForeignKey(
-    #     Transport, verbose_name=_("principal_transport"), on_delete=models.CASCADE, null=True, blank=True
-    # )
+    principal_transport = models.ForeignKey(
+        Transport, verbose_name=_("principal_transport"), on_delete=models.CASCADE, null=True, blank=True
+    )
 
     status = models.CharField(
         verbose_name=_("status"),
@@ -729,6 +741,7 @@ class TicketSales(models.Model):
         null=True,
         blank=True,
     )
+    
     status = models.CharField(
         verbose_name=_("status"),
         max_length=1,
@@ -795,21 +808,27 @@ class Ticket(models.Model):
     price = models.DecimalField(
         verbose_name=_("price"), max_digits=10, decimal_places=2, default=0
     )
+    assistance = models.BooleanField(verbose_name=_("assistance"), default=False)
     
     # Funciones
     def revenue_by_seat_category():
         return Ticket.objects.values('seat__category__type').annotate(total_ingresos=Sum('price')).order_by('-total_ingresos')
     
+    def getCategorySeat(self):
+        return self.seat.getCategory()
+    
     # Datos
     def getDataPublic(self):
+        (stop_departure, stop_arrival) = self.schedule.journey.get_start_and_end_stop()
+        
         return {
             "IdVenta": str(self.sale.id),
             "NombrePasajero": self.passenger.name,
             "IdTicket": str(self.id),
             "FechaBoleto": self.schedule.departure_time.strftime("%d/%m/%Y"),
-            "EstacionSalida": "Salta",
+            "EstacionSalida": stop_departure,
             "HorarioPartida": toStringDate(self.schedule.departure_time, 0),
-            "EstacionLlegada": "San Antonio de los Cobres",
+            "EstacionLlegada": stop_arrival,
             "HorarioLlegada": toStringDate(self.schedule.arrival_time, 0),
             "IdAsiento": str(self.seat.seat_number),
             "CategoriaAsiento": str(self.seat.getCategory()),
@@ -819,10 +838,10 @@ class Ticket(models.Model):
         }
 
     # Funcion para reservar el asiento
-    def reserveSeat(self):
-        asiento = self.seat
-        asiento.status = "v"
-        asiento.save()
+    # def reserveSeat(self):
+    #     asiento = self.seat
+    #     asiento.status = "v"
+    #     asiento.save()
 
     def save(self, *args, **kwargs):
         # Si es el mismo asiento con el que se creo la venta no modificar el precio
