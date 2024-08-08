@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.decorators import login_required
 from .forms import CreateUserForm, UserUpdateForm, ProfileUpdateForm
 
@@ -70,3 +70,25 @@ def profile_customer_update(request):
         "p_form": p_form,
     }
     return render(request, "user/profile_customer_update.html", context)
+
+def user_update_dashboard(request,pk):
+    user = User.objects.get(id=pk)
+    print(user)
+    if request.method == "POST":
+        u_form = UserUpdateForm(request.POST, instance=user)
+        p_form = ProfileUpdateForm(
+            request.POST, request.FILES, instance=user.profile
+        )
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            return redirect("dashboard-users")
+    else:
+        u_form = UserUpdateForm(instance=user)
+        p_form = ProfileUpdateForm(instance=user.profile)
+
+    context = {
+        "u_form": u_form,
+        "p_form": p_form,
+    }
+    return render(request, "user/profile_update.html", context)

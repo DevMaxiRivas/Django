@@ -1,30 +1,29 @@
 {% extends 'partials/base.html' %}
-{% block title %}Home Page{% endblock %}
 {% load i18n %}
+{% block title %}{% translate "Página de Inico" %}{% endblock %}
 
 {% block content %}{% include 'partials/topside_planning.html' %}
 <div class="row ">
     <div class="col-md-6 my-4">
         <div class="bg-white">
             <div class="card-body">
-                <canvas id="myChart1" width="400" height="300"></canvas>
+                <canvas id="bar-chart" width="400" height="300"></canvas>
                 <script>
-                    var ctx = document.getElementById('myChart1').getContext('2d');
-                    var myChart1 = new Chart(ctx, {
-                        type: 'pie',
+                    new Chart(document.getElementById("bar-chart"), {
+                        type: 'bar',
                         data: {
-                            labels: [{% for product in product %} '{{product.name}}', {% endfor %}],
-                    datasets: [{
-                        label: 'Number of Products',
-                        data: [{% for product in product %} {{ product.stock }}, {% endfor %}],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
+                            labels: [{% for day in journey_distribution_by_weekday %} '{{day.weekday}}', {% endfor %}],
+                        datasets: [
+                        {
+                            label: "{% translate 'Journeys' %}",
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
                             borderColor: [
                                 'rgba(255, 99, 132, 1)',
                                 'rgba(54, 162, 235, 1)',
@@ -33,19 +32,26 @@
                                 'rgba(153, 102, 255, 1)',
                                 'rgba(255, 159, 64, 1)'
                             ],
-                                borderWidth: 1
-                    }]
-                        },
-                    options: {
-                        scales: {
+                            borderWidth: 1,
+                            data: [{% for day in journey_distribution_by_weekday %} '{{day.count}}', {% endfor %}],
+                                    }
+                                ]
+                            },
+                        options: {
+                            scales: {
                             yAxes: [{
                                 ticks: {
                                     beginAtZero: true
                                 }
                             }]
+                        },
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: '{% translate "Recorridos por dia de la semana" %}'
                         }
                     }
-                    });
+                        });
                 </script>
             </div>
         </div>
@@ -53,45 +59,27 @@
     <div class="col-md-6 my-4">
         <div class="bg-white">
             <div class="card-body">
-                <canvas id="myChart" width="400" height="300"></canvas>
+                <canvas id="doughnut-chart" width="400" height="300"></canvas>
                 <script>
-                    var ctx = document.getElementById('myChart').getContext('2d');
-                    var myChart = new Chart(ctx, {
-                        type: 'bar',
+                    new Chart(document.getElementById("doughnut-chart"), {
+                        type: 'doughnut',
                         data: {
-                            labels: [{% for order in order %} '{{order.name}}',{% endfor %}],
-                    datasets: [{
-                        label: 'Orders',
-                        data: [{% for order in order %} {{ order.order_quantity }}, {% endfor %}],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                                borderWidth: 1
-                    }]
-                        },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
+                            labels: [{% for hour in departure_time_distribution %} '{{hour.hour}}', {% endfor %}],
+                        datasets: [
+                        {
+                            label: "{% translate 'Hora del día' %}",
+                            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
+                            data: [{% for hour in departure_time_distribution %} '{{hour.count}}', {% endfor %}]
+                                    }
+                                ]
+                            },
+                        options: {
+                        title: {
+                            display: true,
+                            text: "{% translate 'Horarios de salidas por Hora' %}"
                         }
                     }
-                    });
+                        });
                 </script>
             </div>
         </div>

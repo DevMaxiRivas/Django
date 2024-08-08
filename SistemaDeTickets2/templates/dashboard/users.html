@@ -1,6 +1,6 @@
 {% extends 'partials/base.html' %}
-{% block title %}Home Page{% endblock %}
 {% load i18n %}
+{% block title %}{% translate "Página de Inico" %}{% endblock %}
 
 {% block content %}{% include 'partials/topside_users.html' %}
 <div class="row ">
@@ -76,6 +76,13 @@
                                 ]
                             },
                         options: {
+                            scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        },
                         legend: { display: false },
                         title: {
                             display: true,

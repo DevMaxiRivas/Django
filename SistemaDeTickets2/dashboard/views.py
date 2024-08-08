@@ -86,6 +86,15 @@ MONTHS = [
     ("December"),
 ]
 
+WEEKDAYS = [
+    _("Sunday"),
+    _("Monday"),
+    _("Tuesday"),
+    _("Wednesday"),
+    _("Thursday"),
+    _("Friday"),
+    _("Saturday"),
+]
 
 # Control de Acceso
 def is_client(user):
@@ -217,7 +226,6 @@ def index_employee(request):
     for sale in TicketSales.sales_by_hour():
         hours[sale["hour"] + 1]["total_sales"] = sale["total_sales"]
 
-    # print(Journey.objects.get(type="BUS_AND_TRAIN").get_start_and_end_stop())
     context = {"hours": hours}
     return render(request, "dashboard/index.html", context)
 
@@ -237,6 +245,7 @@ def product_categories(request):
     else:
         form = ProductCategoryForm()
     context = {
+        "is_admin": is_admin(request.user),
         "categories": categories,
         "form": form,
     }
@@ -284,6 +293,7 @@ def products(request):
     else:
         form = ProductForm()
     context = {
+        "is_admin": is_admin(request.user),
         "product": product,
         "form": form,
     }
@@ -338,6 +348,7 @@ def meal_categories(request):
     else:
         form = MealCategoryForm()
     context = {
+        "is_admin": is_admin(request.user),
         "categories": categories,
         "form": form,
     }
@@ -385,6 +396,7 @@ def meals(request):
     else:
         form = MealForm()
     context = {
+        "is_admin": is_admin(request.user),
         "meals": meals,
         "form": form,
     }
@@ -418,7 +430,7 @@ def meal_delete(request, pk):
 
 
 @login_required(login_url="user-login")
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def customers(request):
 
     users = User.objects.filter(groups=Group.objects.get(name="Customers"))
@@ -444,7 +456,7 @@ def employees(request):
 
 
 @login_required(login_url="user-login")
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def admins(request):
 
     users = User.objects.filter(groups=Group.objects.get(name="Admin"))
@@ -457,7 +469,7 @@ def admins(request):
 
 
 @login_required
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def passengers(request):
     passengers = Passenger.objects.all()
 
@@ -540,7 +552,7 @@ def sale_detail(request, sale_id):
         sale.tickets.all()
     )  # Utiliza el related_name 'tickets' para obtener todos los tickets asociados a esa venta
     return render(
-        request, "dashboard/sale_detail.html", {"sale": sale, "tickets": tickets}
+        request, "dashboard/sale_detail.html", {"is_admin" : is_admin(request.user) ,"sale": sale, "tickets": tickets}
     )
 
 
@@ -557,16 +569,16 @@ def purchase_detail(request, sale_id):
 
 
 @login_required(login_url="user-login")
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def user_detail(request, pk):
 
     user = User.objects.get(id=pk)
-    current_group = user.groups.first()
-
+    current_group = user.groups.first().name
+    print(current_group)
     if request.method == "POST":
         form = ChangeUserGroupForm(request.POST)
         if form.is_valid():
-            group = form.cleaned_data["group"]
+            group = Group.objects.get(name=form.cleaned_data["group"])
             # Remove user from all groups and add to the selected one
             user.groups.clear()
             user.groups.add(group)
@@ -904,7 +916,6 @@ def create_passenger(request):
 @user_passes_test(is_employee)
 def finances(request):
 
-    # print(Payments.sales_by_payment_type())  # Finances
     # print(TicketSales.average_revenue_per_sale())  # Finances
 
     # print(DetailFoodOrder.monthly_food_sales())  # Supplies
@@ -949,7 +960,7 @@ def supplies(request):
 
 
 @login_required
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def journeys(request):
     popular_schedules = list(JourneySchedule.top_5_popular_routes())
     for schedule in popular_schedules:
@@ -977,7 +988,14 @@ def journeys(request):
 @login_required
 @user_passes_test(is_employee)
 def transports(request):
+    seat_distribution_in_trains = Seat.seat_distribution_in_trains()
+    for category in seat_distribution_in_trains:
+        category["category"] = Seat.getCategory2(category["category"])
+    
+    # print(JourneyPrices.average_journey_prices_by_type())
+    
     context = {
+        "seat_distribution_in_trains" : seat_distribution_in_trains,
         "product": Product.objects.all(),
         "order": Order.objects.all(),
     }
@@ -987,7 +1005,14 @@ def transports(request):
 @login_required
 @user_passes_test(is_employee)
 def planning(request):
+    journey_distribution_by_weekday = JourneySchedule.journey_distribution_by_weekday()
+    for day in journey_distribution_by_weekday:
+        day["weekday"] = WEEKDAYS[day["weekday"] - 1]
+        
+    departure_time_distribution = JourneySchedule.departure_time_distribution()    
     context = {
+        "journey_distribution_by_weekday" : journey_distribution_by_weekday,
+        "departure_time_distribution" : departure_time_distribution,
         "product": Product.objects.all(),
         "order": Order.objects.all(),
     }
@@ -995,7 +1020,7 @@ def planning(request):
 
 
 @login_required
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def users(request):
     passengers_by_gender = list(Passenger.passengers_by_gender())
     for passenger in passengers_by_gender:
@@ -1029,7 +1054,6 @@ def ticket_data(request, pk):
 def checkin_ticket(request):
     data = json.loads(request.body)
     ticket_id = data.get("ticket_id")
-    print(ticket_id)
 
     try:
         if Ticket.objects.filter(id=ticket_id).exists():
@@ -1084,7 +1108,7 @@ def receipt_detail(request, sale_id):
 
 
 @login_required
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def journey_prices(request):
     prices = JourneyPrices.objects.all()
 
@@ -1131,7 +1155,7 @@ def journey_price_delete(request, pk):
 
 
 @login_required
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def seats(request):
     seats = Seat.objects.all()
 
@@ -1178,7 +1202,7 @@ def seat_delete(request, pk):
 
 
 @login_required
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def buses(request):
     buses = Bus.objects.all()
 
@@ -1236,7 +1260,7 @@ def bus_delete(request, pk):
 
 
 @login_required
-@user_passes_test(is_employee)
+@user_passes_test(is_admin)
 def trains(request):
     trains = Train.objects.all()
 

@@ -395,12 +395,23 @@ class StopForm(forms.ModelForm):
 
 
 class ChangeUserGroupForm(forms.Form):
-    group = forms.ModelChoiceField(
-        queryset=Group.objects.all(), label=_("Change Group")
+    GROUPS = (
+        ("Admins", _("Admins")),
+        ("Employees", _("Employees")),
+        ("Customers", _("Customers")),
     )
+
+    group = forms.ChoiceField(
+        choices=GROUPS,
+        label=_("Change Group"),
+    )
+    
+    @classmethod
+    def get_group_display(cls, group_value):
+        return dict(cls.GROUPS).get(group_value, group_value)
 
     def __init__(self, *args, **kwargs):
         initial_group = kwargs.pop("initial_group", None)
         super(ChangeUserGroupForm, self).__init__(*args, **kwargs)
         if initial_group:
-            self.fields["group"].initial = initial_group
+            self.fields['group'].initial = initial_group

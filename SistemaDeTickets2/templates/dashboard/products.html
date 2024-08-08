@@ -1,7 +1,8 @@
 {% extends 'partials/base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Productos" %}{% endblock %}
 
 {% load crispy_forms_tags %}
-{% load i18n %}
 
 {% block content %}
 {% include 'partials/topside_supplies.html' %}
@@ -46,12 +47,16 @@
                                 href="{% url 'dashboard-product-edit' product.id %}">
                                 {%translate "Editar" %}
                             </a>
+                            {% if is_admin %}
                             <a class="btn btn-danger btn-sm mr-2 b mb-1" href="" data-toggle="modal"
-                                data-target="#exampleModal{{product.id}}">
-                                {% translate "Eliminar" %}
-                            </a>
-                        </td>
-                        {% include "dashboard/product_delete_modal.html" %}
+                            data-target="#exampleModal{{product.id}}">
+                            {% translate "Eliminar" %}
+                        </a>
+                        {% endif %}
+                    </td>
+                    {% if is_admin %}
+                    {% include "dashboard/product_delete_modal.html" %}
+                    {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

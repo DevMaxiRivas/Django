@@ -11,7 +11,7 @@ from django.utils.timezone import make_aware
 
 # DataBase
 from django.db.models import Count, Sum, Avg, F
-from django.db.models.functions import TruncMonth, ExtractYear, ExtractHour
+from django.db.models.functions import TruncMonth, ExtractYear, ExtractHour, ExtractWeekDay
 
 # Fechas
 from datetime import datetime
@@ -98,7 +98,7 @@ class Transport(models.Model):
     #     return Transport.objects.annotate(
     #         avg_occupancy=Avg(Cast('seats__ticket__id', output_field=IntegerField()) / Cast('seats__count', output_field=FloatField()))
     #     ).values('id', 'avg_occupancy')
-        
+    
 class Train(models.Model):
     transport = models.ForeignKey(
         Transport,
@@ -300,6 +300,9 @@ class JourneyPrices(models.Model):
                 return f"{tuple[1]}"
         return self.category
 
+    def average_journey_prices_by_type():
+        return JourneyPrices.objects.values('journey__type', 'category').annotate(avg_price=Avg('price'))
+
     def __str__(self):
         return self.getCategory() + "-" + str(self.journey)
 
@@ -373,6 +376,9 @@ class Seat(models.Model):
     
     def sales_by_seat_category():
         return Seat.objects.values('category').annotate(total_sales=Sum('ticket__price'))
+    
+    def seat_distribution_in_trains():
+        return Seat.objects.filter(transport__train__isnull=False).values('category').annotate(count=Count('id'))
     
     def __str__(self):
         return f"{self.seat_number} ({self.getCategory()})"
@@ -605,6 +611,17 @@ class JourneySchedule(models.Model):
     #         occupancy_rate=Count('ticket') / Cast(F('journey__stages__transport__seats__count'), output_field=FloatField())
     #     ).values('journey__type', 'occupancy_rate')
 
+    def departure_time_distribution():
+        return JourneySchedule.objects.annotate(
+            hour=ExtractHour('departure_time')
+        ).values('hour').annotate(count=Count('id')).order_by('hour')
+        
+    def journey_distribution_by_weekday():
+        return JourneySchedule.objects.annotate(
+            weekday=ExtractWeekDay('departure_time')
+        ).values('weekday').annotate(count=Count('id')).order_by('weekday')
+        
+        
 class Passenger(models.Model):
     name = models.CharField(verbose_name=_("name"), max_length=100)
     dni_or_passport = models.CharField(verbose_name=_("dni_or_passport"), max_length=50)

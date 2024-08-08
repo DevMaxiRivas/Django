@@ -16,7 +16,10 @@
                     <table class="table table-borderless">
                         <thead>
                             <span class="h4">{% translate "Información de Peril" %}</span class="h4">
-                            <hr>
+                                <a class="btn btn-primary btn-sm float-right" href="{% url 'user_update_dashboard' user_profile.id %}">
+                                    {%translate "Editar" %}
+                                </a>
+                                <hr>
                         </thead>
                         <tbody>
                             <tr>
@@ -46,7 +49,7 @@
                 <form method="POST">
                     {% csrf_token %}
                     {{ form|crispy }}
-                    <input class="btn btn-success btn-block" type="submit" value="Change Group">
+                    <input class="btn btn-success btn-block" type="submit" value="{% translate 'Change Group' %}">
                 </form>
             </div>
         </div>

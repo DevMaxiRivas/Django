@@ -32,6 +32,7 @@ urlpatterns = [
     ),
     path("profile/", user_views.profile, name="user-profile"),
     path("profile/update/", user_views.profile_update, name="user-profile-update"),
+    path("profile_dashboard/update/<int:pk>/", user_views.user_update_dashboard, name="user_update_dashboard"),
     path("profile_customer/", user_views.profile_customer, name="profile_customer"),
     path(
         "profile_customer/update/",

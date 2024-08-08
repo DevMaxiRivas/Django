@@ -45,12 +45,16 @@
                                 href="{% url 'dashboard-meal_category-edit' category.id %}">
                                 {% translate "Editar" %}
                             </a>
+                            {% if is_admin %}
                             <a class="btn btn-danger btn-sm mr-2 b mb-1" href="" data-toggle="modal"
                                 data-target="#exampleModal{{category.id}}">
                                 {% translate "Eliminar" %}
                             </a>
+                            {% endif %}
                         </td>
+                        {% if is_admin %}
                         {% include "dashboard/meal_category_delete_modal.html" %}
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

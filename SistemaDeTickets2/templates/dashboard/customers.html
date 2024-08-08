@@ -24,7 +24,8 @@
                         <td>{{ user.profile.phone }}</td>
                         <td>{{ user.email }}</td>
                         <th scope="row"><a class="btn btn-primary btn-sm"
-                                href="{% url 'dashboard-user-detail' user.id %}">View</a></th>
+                                href="{% url 'dashboard-user-detail' user.id %}">
+                                {% translate "Ver" %}</a></th>
                     </tr>
                     {% endfor %}
                 </tbody>

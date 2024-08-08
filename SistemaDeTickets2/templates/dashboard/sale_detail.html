@@ -1,7 +1,7 @@
 {% extends 'partials/base.html' %}
-
-{% load crispy_forms_tags %}
 {% load i18n %}
+{% block title %}{% translate "Boletos" %}{% endblock %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 {% include 'partials/topside_finances.html' %}
@@ -18,7 +18,9 @@
                         <th>{% translate "Clase" %}</th>
                         <th>{% translate "Recorrido" %}</th>
                         <th>{% translate "Asistencia" %}</th>
+                        {% if is_admin %}
                         <th>{% translate "Acción" %}</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -36,21 +38,25 @@
                             {% translate "No" %}
                             {% endif %}
                         </td>
+                        {% if is_admin %}
                         <td>
                             <a class="btn btn-danger btn-sm mr-2 b mb-1" href="" data-toggle="modal"
                                 data-target="#exampleModal{{ticket.id}}">
                                 {% translate "Cambiar de Pasajero" %}
                             </a>
                         </td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        {% if is_admin %}
         {% for ticket in tickets %}
         {% include 'public/change_passenger_modal.html' %}
         {% endfor %}
-
+        {% endif %}
+        
         {% else %}
         <div class="card shadow p-3 mb-5 bg-white rounded text-center">
             <p>{% translate "No se ha realizado ninguna compra de boletos" %}.</p>
