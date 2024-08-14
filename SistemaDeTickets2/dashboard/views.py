@@ -96,6 +96,7 @@ WEEKDAYS = [
     _("Saturday"),
 ]
 
+
 # Control de Acceso
 def is_client(user):
     return user.groups.filter(name="Customers").exists()
@@ -552,7 +553,9 @@ def sale_detail(request, sale_id):
         sale.tickets.all()
     )  # Utiliza el related_name 'tickets' para obtener todos los tickets asociados a esa venta
     return render(
-        request, "dashboard/sale_detail.html", {"is_admin" : is_admin(request.user) ,"sale": sale, "tickets": tickets}
+        request,
+        "dashboard/sale_detail.html",
+        {"is_admin": is_admin(request.user), "sale": sale, "tickets": tickets},
     )
 
 
@@ -991,11 +994,11 @@ def transports(request):
     seat_distribution_in_trains = Seat.seat_distribution_in_trains()
     for category in seat_distribution_in_trains:
         category["category"] = Seat.getCategory2(category["category"])
-    
+
     # print(JourneyPrices.average_journey_prices_by_type())
-    
+
     context = {
-        "seat_distribution_in_trains" : seat_distribution_in_trains,
+        "seat_distribution_in_trains": seat_distribution_in_trains,
         "product": Product.objects.all(),
         "order": Order.objects.all(),
     }
@@ -1008,11 +1011,11 @@ def planning(request):
     journey_distribution_by_weekday = JourneySchedule.journey_distribution_by_weekday()
     for day in journey_distribution_by_weekday:
         day["weekday"] = WEEKDAYS[day["weekday"] - 1]
-        
-    departure_time_distribution = JourneySchedule.departure_time_distribution()    
+
+    departure_time_distribution = JourneySchedule.departure_time_distribution()
     context = {
-        "journey_distribution_by_weekday" : journey_distribution_by_weekday,
-        "departure_time_distribution" : departure_time_distribution,
+        "journey_distribution_by_weekday": journey_distribution_by_weekday,
+        "departure_time_distribution": departure_time_distribution,
         "product": Product.objects.all(),
         "order": Order.objects.all(),
     }
@@ -1754,6 +1757,12 @@ def api_journey_per_date(request):
     return JsonResponse(schedules, safe=False)
 
 
+def api_get_data_schedule(request):
+    schedule_id = request.GET.get("horario_id")
+    data = JourneySchedule.objects.get(id=schedule_id).getDataSchedule()
+    return JsonResponse({"horario": data}, safe=False)
+
+
 def tickets_reserve(request):
     return render(request, "public/ticket_reserve.html")
 
@@ -1866,3 +1875,7 @@ def api_reserve_tickets(request):
     return JsonResponse(
         {"success": True, "init_point": preference["sandbox_init_point"]}
     )
+
+
+def prueba_reserva(request):
+    return render(request, "public/prueba_reserva.html")

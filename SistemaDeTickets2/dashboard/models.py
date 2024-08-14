@@ -21,7 +21,7 @@ from django.utils.timezone import now
 from django.db.models import Avg, IntegerField, FloatField
 from django.db.models.functions import Cast
 
-def toStringDate(date, minutes):
+def toStringDate_Hour(date, minutes):
         return (timezone.localtime(date) - timedelta(minutes=minutes)).strftime("%H:%M")
 
 STATES1 = (
@@ -585,6 +585,19 @@ class JourneySchedule(models.Model):
         return f"{self.journey} - {timezone.localtime(self.departure_time).strftime("%Y-%m-%d %H:%M")}"
     
     # Funciones
+    
+    def getDataSchedule(self):
+        (stop_departure, stop_arrival) = self.journey.get_start_and_end_stop()
+        
+        return {
+            "EstacionSalida": stop_departure,
+            "HorarioPartida": toStringDate_Hour(self.departure_time, 0),
+            "EstacionLlegada": stop_arrival,
+            "HorarioLlegada": toStringDate_Hour(self.arrival_time, 0),
+            "HorarioEspera": toStringDate_Hour(self.departure_time, 40),
+            "HorarioSalida": toStringDate_Hour(self.departure_time, 0),
+        }
+        
     def getSchedules(type, date):
         # Convertir la fecha a un objeto datetime
         data_datetime = make_aware(datetime.strptime(date, "%Y-%m-%d"))
@@ -594,7 +607,6 @@ class JourneySchedule(models.Model):
         ).order_by('departure_time')
 
         list = []
-        # Mostrar resultados
         for schedule in schedules:
             list.append({
                 "id" : schedule.id,
@@ -602,6 +614,7 @@ class JourneySchedule(models.Model):
                 "arrival_time": timezone.localtime(schedule.arrival_time).strftime("%Y-%m-%d %H:%M"),
             })
         return list
+    
     
     def top_5_popular_routes():
         return JourneySchedule.objects.values('journey__type').annotate(ticket_count=Count('ticket')).order_by('-ticket_count')[:5]
@@ -844,13 +857,13 @@ class Ticket(models.Model):
             "IdTicket": str(self.id),
             "FechaBoleto": self.schedule.departure_time.strftime("%d/%m/%Y"),
             "EstacionSalida": stop_departure,
-            "HorarioPartida": toStringDate(self.schedule.departure_time, 0),
+            "HorarioPartida": toStringDate_Hour(self.schedule.departure_time, 0),
             "EstacionLlegada": stop_arrival,
-            "HorarioLlegada": toStringDate(self.schedule.arrival_time, 0),
+            "HorarioLlegada": toStringDate_Hour(self.schedule.arrival_time, 0),
             "IdAsiento": str(self.seat.seat_number),
             "CategoriaAsiento": str(self.seat.getCategory()),
-            "HorarioEspera": toStringDate(self.schedule.departure_time, 40),
-            "HorarioSalida": toStringDate(self.schedule.departure_time, 0),
+            "HorarioEspera": toStringDate_Hour(self.schedule.departure_time, 40),
+            "HorarioSalida": toStringDate_Hour(self.schedule.departure_time, 0),
             "EnlaceWeb": f"{url_website}ticket-data/{self.id}",
         }
 

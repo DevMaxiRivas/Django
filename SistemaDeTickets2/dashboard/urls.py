@@ -289,6 +289,11 @@ urlpatterns = [
         name="api_journey_per_date",
     ),
     path(
+        "api/get_data_schedule/",
+        views.api_get_data_schedule,
+        name="api_get_data_schedule",
+    ),
+    path(
         "api/available_seats_per_schedule/",
         views.api_available_seats_per_schedule,
         name="api_available_seats_per_schedule",
@@ -302,5 +307,10 @@ urlpatterns = [
         "api/reserve_tickets/",
         views.api_reserve_tickets,
         name="api_reserve_tickets",
+    ),
+    path(
+        "prueba_reserva/",
+        views.prueba_reserva,
+        name="prueba_reserva",
     ),
 ]

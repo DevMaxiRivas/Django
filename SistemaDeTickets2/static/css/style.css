@@ -135,6 +135,33 @@ a {
     justify-content: flex-start;
 }
 
+.background_ps {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 19) 100%), url(../img/background.png);
+    background-size: cover;
+    background-position: bottom center;
+    /* asegura que la imagen cubra todo el contenedor */
+    height: 100vh;
+    /* establece la altura del contenedor al 100% de la altura de la ventana */
+    width: 100%;
+    /* establece el ancho del contenedor al 100% del ancho de la ventana */
+    position: absolute;
+    /* posiciona el contenedor de forma absoluta */
+    top: 0;
+    /* establece la posición superior del contenedor en 0 */
+    left: 0;
+    /* establece la posición izquierda del contenedor en 0 */
+    z-index: -1;
+    /* establece el índice z en -1 para que el contenedor quede detrás del contenido */
+}
+
+.main_ps {
+    position: relative;
+    /* posiciona el contenedor de forma relativa */
+    z-index: 1;
+    /* establece el índice z en 1 para que el contenido quede encima del fondo */
+    /* agrega tus estilos para el contenedor aquí */
+}
+
 .home-text h5 {
     font-size: 18px;
     font-weight: 600;
