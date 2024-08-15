@@ -744,11 +744,11 @@ class Payments(models.Model):
 
     def __str__(self):
         if self.voucher_no and self.type:
-            return f"Pago {self.voucher_no} - {self.type}"
+            return f"Pago {self.voucher_no} - {self.type} - {timezone.localtime(self.created_at).strftime("%Y-%m-%d %H:%M")}"
         return "Pago - " + timezone.localtime(self.created_at).strftime("%Y-%m-%d %H:%M")
 
     class Meta:
-        ordering = ["created_at"]
+        ordering = ["-created_at"]
         verbose_name = _("Payments")
         verbose_name_plural = _("Payments")
 
@@ -816,7 +816,7 @@ class TicketSales(models.Model):
         ).values('year').annotate(total_sales=Sum('price')).order_by('year')
 
     class Meta:
-        ordering = ["user"]
+        ordering = ["-purchase_date"]
         verbose_name = _("Ticket Sale")
         verbose_name_plural = _("Ticket Sales")
 
@@ -905,6 +905,7 @@ class Ticket(models.Model):
         return f"Ticket for {self.passenger.name} - schedule {self.schedule.journey.type}"
 
     class Meta:
+        ordering = ["-id"]
         verbose_name = _("Ticket")
         verbose_name_plural = _("Tickets")
 

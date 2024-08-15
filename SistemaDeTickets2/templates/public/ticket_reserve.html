@@ -78,9 +78,9 @@
         }
 
         function reiniciarSeleccionHorario(horarioSelect) {
-            categoriaSelect.empty();
-            categoriaSelect.append($('<option></option>').val("").text("{% translate 'Seleccione una Horario' %}"));
-            categoriaSelect.prop('disabled', true);
+            horarioSelect.empty();
+            horarioSelect.append($('<option></option>').val("").text("{% translate 'Seleccione una Horario' %}"));
+            horarioSelect.prop('disabled', true);
         }
 
         function cargarTiposRecorrido(select) {
@@ -182,7 +182,7 @@
                                         <span class="d-block">
                                             {% translate "Recorrido" %}:
                                             <select class="form-select tipo-recorrido" required>
-                                                <option value="">{% translate "Cargando Tipos de Recorrido" %}</option>
+                                                <option value>{% translate "Cargando Tipos de Recorrido" %}</option>
                                             </select>
                                         </span>
                                         <div>
@@ -195,7 +195,7 @@
                                                 <div class="col">
                                                     <label for="horario">{% translate "Horarios Disponibles" %}</label>
                                                     <select class="form-select horario" required disabled>
-                                                        <option value="">{% translate "Seleccione un Horario" %}</option>
+                                                        <option value>{% translate "Seleccione un Horario" %}</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -217,14 +217,14 @@
                                                 <div class="d-flex justify-content-between">
                                                     <select class="form-select categoria"
                                                         style="--darkreader-inline-color: #aea79c;" required disabled>
-                                                        <option value="">{% translate "Categoria de Asiento" %}</option>
+                                                        <option value>{% translate "Categoria de Asiento" %}</option>
                                                     </select>
                                                     <p>{% translate "Reserva" %} X</p>
                                                 </div>
                                                 <div class="d-block">
                                                     <select class="m-0 p-0 form-control-lg form-select asiento" required
                                                         disabled>
-                                                        <option value="">{% translate 'Seleccione un Asiento' %}</option>
+                                                        <option value>{% translate 'Seleccione un Asiento' %}</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -356,7 +356,7 @@
             if (categoria && horario && horario != "") {
                 cargarAsientos(categoria, horario, asientoSelect);
             } else {
-                reiniciarSeleccionCategoria(categoriaSelect);
+                reiniciarSeleccionCategoria($(this));
                 reiniciarSeleccionAsiento(asientoSelect);
             }
         });
@@ -388,8 +388,10 @@
 
         $('#reservaForm').submit(function (e) {
             e.preventDefault();
+
             id_user = $('#id-user').val();
             let reserva;
+
             if (id_user === undefined) {
                 reserva = {
                     email: $('#email').val(),
@@ -403,13 +405,19 @@
                 };
             }
             let error_campos = false
+            // Obtener resultado
+            let list_categories = []
+
+            // Obtenemos los datos cargados por el usuario
             $('.pasajero-form').each(function () {
                 let horario = $(this).find('.horario').val();
                 let asiento = $(this).find('.asiento').val();
+
                 if (horario == "" || asiento == "") {
                     error_campos = true
                     return alert('{% translate "Por favor, complete todos los campos" %}');
                 }
+
                 let pasajero = {
                     tipoRecorrido: $(this).find('.tipo-recorrido').val(),
                     fecha: $(this).find('.fecha').val(),
@@ -418,14 +426,25 @@
                     dni_o_pasaporte: $(this).find('.dni_o_pasaporte').val()
                 };
 
+                let categoria = $(this).find('.categoria').val();
+                list_categories.push(categoria)
+
+
                 reserva.pasajeros.push(pasajero);
             });
 
             if (reserva.pasajeros.length == 0 && !error_campos) {
                 alert('{% translate "Por favor, agrega al menos un pasajero" %}');
-                return;
             }
-            console.log(reserva)
+
+            // Guardamos la reserva localmente
+            localStorage.setItem('data_reserva', JSON.stringify(reserva));
+
+            // Generamos el JSON para enviarlo a la API
+            data = {
+                'list_categories': list_categories
+            }
+
             // Llamar a la API para procesar la reserva
             $.ajax({
                 url: '{% url "api_reserve_tickets" %}',
@@ -434,7 +453,7 @@
                 },
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(reserva),
+                data: JSON.stringify(data),
                 success: function (response) {
                     if (response.success) {
                         window.location.href = response.init_point;

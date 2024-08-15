@@ -824,45 +824,93 @@ def send_email(tickets, email):
     send_pdf_via_email(tickets, email)
 
 
+# def payment_success(request):
+#     payment_id = request.GET.get("payment_id")
+#     payment_type = request.GET.get("payment_type")
+#     payment_status = request.GET.get("status")
+#     sale_id = request.GET.get(
+#         "external_reference"
+#     )  # Se aume que se envia el id de la venta por "external_reference"
+#     sale = TicketSales.objects.get(id=sale_id)
+#     tickets = Ticket.objects.filter(sale=sale)
+
+#     if request.user.is_authenticated:
+#         email = sale.user.email
+#     else:
+#         email = sale.email
+
+#     if payment_id and payment_type and sale_id:
+#         sale = get_object_or_404(TicketSales, id=sale_id)
+#         payment = Payments.objects.create(
+#             voucher_no=payment_id,
+#             type=payment_type,
+#             status=payment_status,
+#         )
+#         sale.payment = payment
+#         sale.save()
+#     if email:
+#         send_email(tickets, email)
+
+#     return render(request, "public/payment_success.html")
+
+
 def payment_success(request):
-    payment_id = request.GET.get("payment_id")
-    payment_type = request.GET.get("payment_type")
-    payment_status = request.GET.get("status")
-    sale_id = request.GET.get(
-        "external_reference"
-    )  # Se aume que se envia el id de la venta por "external_reference"
-    sale = TicketSales.objects.get(id=sale_id)
-    tickets = Ticket.objects.filter(sale=sale)
+    if request.method == "POST":
+        data = json.loads(request.body)
+        email = data.get("email")
+        tickets = data.get("pasajeros")
+        details_payment = data.get("detalles_pago")
+        user = data.get("id_user")
 
-    if request.user.is_authenticated:
-        email = sale.user.email
-    else:
-        email = sale.email
+        # Creacion de la Venta
+        if user:
+            user = User.objects.get(id=user)
+            sale = TicketSales.objects.create(email=email, user=user)
+        else:
+            sale = TicketSales.objects.create(email=email)
 
-    if payment_id and payment_type and sale_id:
-        sale = get_object_or_404(TicketSales, id=sale_id)
+        # Creacion de los Tickets
+        for ticket in tickets:
+            # Obtenemos los datos para el Ticket
+            schedule = JourneySchedule.objects.get(id=ticket["horario"])
+            seat = Seat.objects.get(id=ticket["asiento"])
+            passenger = Passenger.objects.filter(
+                dni_or_passport=ticket["dni_o_pasaporte"]
+            ).first()
+
+            # Creamos el ticket
+            Ticket.objects.create(
+                sale=sale, passenger=passenger, schedule=schedule, seat=seat
+            )
+
+        # Actualizacion de Precio
+        sale.update_total_price()
+
         payment = Payments.objects.create(
-            voucher_no=payment_id,
-            type=payment_type,
-            status=payment_status,
+            voucher_no=details_payment["payment_id"],
+            type=details_payment["payment_type"],
+            status=details_payment["payment_status"],
         )
+
         sale.payment = payment
         sale.save()
-    if email:
-        send_email(tickets, email)
 
-    return render(request, "public/payment_success.html")
+        if email:
+            tickets = Ticket.objects.filter(sale=sale)
+            send_email(tickets, email)
+
+        return JsonResponse({"success": True})
+
+    else:
+        return render(request, "public/payment_success.html")
+
 
 
 def payment_failed(request):
-    sale_id = request.GET.get("external_reference")
-    TicketSales.delete(TicketSales.objects.get(id=sale_id))
     return render(request, "public/payment_failed.html")
 
 
 def payment_pending(request):
-    sale_id = request.GET.get("external_reference")
-    TicketSales.delete(TicketSales.objects.get(id=sale_id))
     return render(request, "public/payment_pending.html")
 
 
@@ -1822,27 +1870,11 @@ def api_price_journey(request):
 @transaction.atomic
 def api_reserve_tickets(request):
     data = json.loads(request.body)
-    email = data.get("email")
-    tickets = data.get("pasajeros")
-    user = data.get("id_user")
-
-    if user:
-        user = User.objects.get(id=user)
-        sale = TicketSales.objects.create(email=email, user=user)
-    else:
-        sale = TicketSales.objects.create(email=email)
-
-    for ticket in tickets:
-        schedule = JourneySchedule.objects.get(id=ticket["horario"])
-        seat = Seat.objects.get(id=ticket["asiento"])
-        passenger = Passenger.objects.filter(
-            dni_or_passport=ticket["dni_o_pasaporte"]
-        ).first()
-        Ticket.objects.create(
-            sale=sale, passenger=passenger, schedule=schedule, seat=seat
-        )
-
-    sale.update_total_price()
+    list_categories = data.get("list_categories")
+    print(list_categories)
+    price = 0
+    for category in list_categories:
+        price += JourneyPrices.objects.get(id=category).price
 
     # Crear una instancia de Mercado Pago
     mp = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
@@ -1854,7 +1886,7 @@ def api_reserve_tickets(request):
                 "title": "Tickets",
                 "quantity": 1,
                 "currency_id": "ARS",
-                "unit_price": float(sale.price),
+                "unit_price": float(price),
             }
         ],
         "back_urls": {
@@ -1867,7 +1899,6 @@ def api_reserve_tickets(request):
             "excluded_payment_types": [{"id": "ticket"}],
             "installments": 1,
         },
-        "external_reference": str(sale.id),
     }
     preference_response = mp.preference().create(preference_data)
     preference = preference_response["response"]
@@ -1875,6 +1906,65 @@ def api_reserve_tickets(request):
     return JsonResponse(
         {"success": True, "init_point": preference["sandbox_init_point"]}
     )
+
+
+# @require_http_methods(["GET", "POST"])
+# @transaction.atomic
+# def api_reserve_tickets(request):
+#     data = json.loads(request.body)
+#     email = data.get("email")
+#     tickets = data.get("pasajeros")
+#     user = data.get("id_user")
+
+#     if user:
+#         user = User.objects.get(id=user)
+#         sale = TicketSales.objects.create(email=email, user=user)
+#     else:
+#         sale = TicketSales.objects.create(email=email)
+
+#     for ticket in tickets:
+#         schedule = JourneySchedule.objects.get(id=ticket["horario"])
+#         seat = Seat.objects.get(id=ticket["asiento"])
+#         passenger = Passenger.objects.filter(
+#             dni_or_passport=ticket["dni_o_pasaporte"]
+#         ).first()
+#         Ticket.objects.create(
+#             sale=sale, passenger=passenger, schedule=schedule, seat=seat
+#         )
+
+#     sale.update_total_price()
+
+#     # Crear una instancia de Mercado Pago
+#     mp = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
+
+#     # Crear una preferencia de pago
+#     preference_data = {
+#         "items": [
+#             {
+#                 "title": "Tickets",
+#                 "quantity": 1,
+#                 "currency_id": "ARS",
+#                 "unit_price": float(sale.price),
+#             }
+#         ],
+#         "back_urls": {
+#             "success": request.build_absolute_uri(reverse("payment_success")),
+#             "failure": request.build_absolute_uri(reverse("payment_pending")),
+#             "pending": request.build_absolute_uri(reverse("payment_pending")),
+#         },
+#         "auto_return": "approved",
+#         "payment_methods": {
+#             "excluded_payment_types": [{"id": "ticket"}],
+#             "installments": 1,
+#         },
+#         "external_reference": str(sale.id),
+#     }
+#     preference_response = mp.preference().create(preference_data)
+#     preference = preference_response["response"]
+
+#     return JsonResponse(
+#         {"success": True, "init_point": preference["sandbox_init_point"]}
+#     )
 
 
 def prueba_reserva(request):
